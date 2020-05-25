@@ -1,7 +1,5 @@
 package eu.ezytaget.processing.kotlin_template
 
-import eu.ezytaget.processing.kotlin_template.processing.PApplet
-
 class Main {
 
     companion object {
