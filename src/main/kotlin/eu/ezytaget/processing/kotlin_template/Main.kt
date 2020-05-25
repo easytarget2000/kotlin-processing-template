@@ -1,15 +1,13 @@
 package eu.ezytaget.processing.kotlin_template
 
-import processing.core.PApplet
+import eu.ezytaget.processing.kotlin_template.processing.PApplet
 
 class Main {
-
-    val applet = PApplet()
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-
+            PApplet.runInstance()
         }
     }
 }
