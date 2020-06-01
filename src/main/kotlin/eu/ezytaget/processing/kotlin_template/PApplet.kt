@@ -2,11 +2,13 @@ package eu.ezytaget.processing.kotlin_template
 
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import processing.core.PConstants
+import processing.core.PVector
 import kotlin.random.Random
 
 class PApplet : processing.core.PApplet() {
 
-    private val random = Random(seed = 0)
+
+    private lateinit var camera: Camera
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
@@ -25,33 +27,73 @@ class PApplet : processing.core.PApplet() {
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
         noCursor()
+        camera = Camera(
+                position = PVector(0f, 0f, (height/2f) / tan(PI * 30f / 18f)),
+                focusVector = PVector(0f, 0f, -(height/2f) / tan(PI * 30f / 18f))
+        )
+        lights()
     }
 
     override fun draw() {
+        camera.adjustAppletCamera(pApplet = this)
+
         if (CLICK_TO_DRAW && waitingForClickToDraw) {
             return
         }
 
         if (DRAW_BACKGROUND_ON_DRAW) {
-            backgroundDrawer.draw(pApplet = this)
+            backgroundDrawer.draw(pApplet = this, alpha = 1f)
         }
+//
+//        noStroke()
+//        fill(1f, 1f, 1f, 1f)
+//
+//        translate(width / 2f, height / 2f, -100f)
+//        rotateX(frameCount / 100f * PI / 2f)
+
+//        rect(0f, 0f, 200f, 200f)
+
+        val originLineLength = 100f
+        box(originLineLength / 10f)
+
+        stroke(1f, 1f, 1f, 1f)
+        line(0f, 0f, 0f, originLineLength, 0f, 0f)
+        stroke(0.66f, 1f, 1f, 1f)
+        line(0f, 0f, 0f, 0f, originLineLength, 0f)
+        stroke(0.33f, 1f, 1f, 1f)
+        line(0f, 0f, 0f, 0f, 0f, originLineLength)
+
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
         }
     }
 
+    override fun keyPressed() {
+        when (key) {
+            'w' ->
+                camera.moveForward()
+            'a' ->
+                camera.moveLeft()
+            'd' ->
+                camera.moveRight()
+            's' ->
+                camera.moveBackward()
+            ' ' ->
+                camera.moveUp()
+        }
+    }
+
     private fun clearFrame() {
-        backgroundDrawer.drawRandomColor(
+        backgroundDrawer.draw(
                 pApplet = this,
-                random = random,
                 alpha = 1f
         )
     }
 
     companion object {
         private const val CLICK_TO_DRAW = false
-        private const val FULL_SCREEN = true
+        private const val FULL_SCREEN = false
         private const val WIDTH = 800
         private const val HEIGHT = 600
         private const val RENDERER = PConstants.P3D
