@@ -5,7 +5,7 @@ import processing.core.PConstants.HALF_PI
 import processing.core.PVector
 
 class Camera(
-        private var position: PVector,
+        var position: PVector,
         private var focusVector: PVector
 ) {
 
