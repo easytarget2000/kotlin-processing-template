@@ -32,7 +32,7 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (DRAW_BACKGROUND_ON_DRAW) {
-            backgroundDrawer.draw(pApplet = this, alpha = 0.01f)
+            backgroundDrawer.draw(pApplet = this, alpha = 1f)
         }
 
         drawTunnel()
@@ -63,8 +63,8 @@ class PApplet : processing.core.PApplet() {
 
         val smallestScreenSize = min(width, height)
         val maxRadius = smallestScreenSize
-        val numberOfVertices = 9
-        val numberOfRings = 128
+        val numberOfVertices = 6
+        val numberOfRings = 32
         val ringDepth = smallestScreenSize * 32f
         val patternDepth = numberOfRings * ringDepth
 
@@ -73,22 +73,25 @@ class PApplet : processing.core.PApplet() {
 
         noFill()
 
-        val startAngle = millis() / 10000f
+        val startAngle = millis() / 10_000f
         val hue = (millis() % 10_000).toFloat() / 10_000f
+        val radiusOffset = -((millis() % 10_000).toFloat() / 10_000f) * smallestScreenSize
+        val minBrightness = 0.4f
 
         for (ringIndex in 0 until numberOfRings) {
             val progress = ringIndex.toFloat() / numberOfRings.toFloat()
-            val ringRadius = (1f - progress) * maxRadius
+            val brightness = minBrightness + ((1f - minBrightness) * (1f - progress))
             val ringX = tunnelCenterX
             val ringY = tunnelCenterY
-            val brightness = 1f - progress
+            val ringAngle = startAngle + (progress * PConstants.TWO_PI * 4f)
+            val ringRadius = (1f - progress) * maxRadius
 
             stroke(hue, 1f, brightness, 1f)
             drawPolygon(
                     x = ringX,
                     y = ringY,
-                    angle = startAngle + (progress * PConstants.TWO_PI),
-                    radius = ringRadius,
+                    angle = ringAngle,
+                    radius = ringRadius + radiusOffset,
                     numberOfVertices = numberOfVertices
             )
         }
@@ -110,14 +113,14 @@ class PApplet : processing.core.PApplet() {
 
     companion object {
         private const val CLICK_TO_DRAW = false
-        private const val FULL_SCREEN = false
-        private const val WIDTH = 800
-        private const val HEIGHT = 600
+        private const val FULL_SCREEN = true
+        private const val WIDTH = 1400
+        private const val HEIGHT = 900
         private const val RENDERER = PConstants.P2D
         private const val COLOR_MODE = PConstants.HSB
         private const val MAX_COLOR_VALUE = 1f
         private const val FRAME_RATE = 60f
-        private const val DRAW_BACKGROUND_ON_DRAW = true
+        private const val DRAW_BACKGROUND_ON_DRAW = false
 
         fun runInstance() {
             val instance = PApplet()
