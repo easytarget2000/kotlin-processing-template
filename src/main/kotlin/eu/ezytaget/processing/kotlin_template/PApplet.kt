@@ -18,6 +18,8 @@ class PApplet : processing.core.PApplet() {
 
     private var radiusFactor = DESIRED_RADIUS_FACTOR
 
+    private var drawNoiseSpheres = false
+
     override fun settings() {
         if (FULL_SCREEN) {
             fullScreen(RENDERER)
@@ -48,13 +50,22 @@ class PApplet : processing.core.PApplet() {
 
         translate(width / 2f, height / 2f)
 
-        val baseRotation = ((millis() % 10_000) / 10_000f) * TWO_PI
+        val baseRotation = ((millis() % 100_000) / 100_000f) * TWO_PI
+
+        noFill()
+
+        sphereDetail(16)
 
         spheres.forEach {
             pushMatrix()
             rotateY(baseRotation * it.rotationSpeed)
             stroke(it.colorValue1, it.colorValue2, it.colorValue3, it.alpha)
-            noiseSphere(radius = it.radius * radiusFactor, randomSeed =  it.randomSeed)
+            val radius = it.radius * radiusFactor
+            if (drawNoiseSpheres) {
+                noiseSphere(radius, randomSeed = it.randomSeed)
+            } else {
+                sphere(radius)
+            }
             popMatrix()
         }
 
@@ -65,7 +76,12 @@ class PApplet : processing.core.PApplet() {
 
     override fun keyPressed() {
         when (key) {
-            ' ' -> radiusFactorVelocity = 0.1f
+            ' ' ->
+                bounce()
+            'z' ->
+                initSpheres()
+            'x' ->
+                randomToggleDrawStyle()
         }
     }
 
@@ -76,6 +92,9 @@ class PApplet : processing.core.PApplet() {
         )
     }
 
+    private fun randomToggleDrawStyle() {
+        drawNoiseSpheres = random(1f) > 0.5f
+    }
 
     private fun initSpheres() {
         spheres = mutableListOf()
@@ -122,13 +141,18 @@ class PApplet : processing.core.PApplet() {
     private var radiusFactorVelocity = 0f
 
     private fun updateRadiusFactor() {
-        radiusFactorVelocity -= 0.01f
 
         if (radiusFactor < DESIRED_RADIUS_FACTOR) {
             radiusFactor = DESIRED_RADIUS_FACTOR
-        } else {
-            radiusFactor += radiusFactorVelocity
+        } else if (radiusFactor > DESIRED_RADIUS_FACTOR) {
+            radiusFactorVelocity -= RADIUS_FACTOR_PULL
         }
+
+        radiusFactor += radiusFactorVelocity
+    }
+
+    private fun bounce() {
+        radiusFactorVelocity = 0.05f
     }
 
     companion object {
@@ -143,7 +167,7 @@ class PApplet : processing.core.PApplet() {
         private const val DRAW_BACKGROUND_ON_DRAW = true
         private const val DESIRED_RADIUS_FACTOR = 1f
         private const val RADIUS_FACTOR_TOLERANCE = 0.01f
-        private const val RADIUS_FACTOR_PULL = 0.01f
+        private const val RADIUS_FACTOR_PULL = 0.001f
 
         fun runInstance() {
             val instance = PApplet()
