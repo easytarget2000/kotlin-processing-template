@@ -1,10 +1,16 @@
 package eu.ezytaget.processing.kotlin_template
 
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
+import eu.ezytarget.clapper.BeatInterval
+import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
 import processing.core.PVector
 
 class PApplet : processing.core.PApplet() {
+
+    private val clapper = Clapper()
+
+    private var lastBeatIntervalCount = 0
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
@@ -35,6 +41,7 @@ class PApplet : processing.core.PApplet() {
         noCursor()
         lights()
         initSpheres()
+        clapper.start()
     }
 
     override fun draw() {
@@ -44,6 +51,10 @@ class PApplet : processing.core.PApplet() {
 
         if (DRAW_BACKGROUND_ON_DRAW) {
             backgroundDrawer.draw(pApplet = this, alpha = 0.1f)
+        }
+
+        if(clapper.update()) {
+            handleClapperValue()
         }
 
         updateRadiusFactor()
@@ -77,11 +88,7 @@ class PApplet : processing.core.PApplet() {
     override fun keyPressed() {
         when (key) {
             ' ' ->
-                bounce()
-            'z' ->
-                initSpheres()
-            'x' ->
-                randomToggleDrawStyle()
+                clapper.tapBpm()
         }
     }
 
@@ -92,8 +99,8 @@ class PApplet : processing.core.PApplet() {
         )
     }
 
-    private fun randomToggleDrawStyle() {
-        drawNoiseSpheres = random(1f) > 0.5f
+    private fun toggleDrawStyle() {
+        drawNoiseSpheres = !drawNoiseSpheres
     }
 
     private fun initSpheres() {
@@ -123,6 +130,38 @@ class PApplet : processing.core.PApplet() {
                     alpha = 1f
             )
             spheres.plusAssign(sphere)
+        }
+    }
+
+    private fun handleClapperValue() {
+        val intervalNumbers = clapper.intervalNumbers
+        if (lastBeatIntervalCount != intervalNumbers.getValue(BeatInterval.TwoWhole)) {
+
+//            val random = random(1f)
+//            when {
+//                random < 0.2f -> {
+//                    bounce()
+//                }
+//                random < 0.4f -> {
+//                    initSpheres()
+//                }
+//                random < 0.6f -> {
+//
+//                }
+//            }
+
+            maybe { initSpheres() }
+            maybe { toggleDrawStyle() }
+
+            bounce()
+
+            lastBeatIntervalCount = intervalNumbers.getValue(BeatInterval.TwoWhole)
+        }
+    }
+
+    private fun maybe(probability: Float = 0.5f, lambda: (() -> Unit)) {
+        if (random(1f) < probability) {
+            lambda()
         }
     }
 
@@ -167,7 +206,7 @@ class PApplet : processing.core.PApplet() {
         private const val DRAW_BACKGROUND_ON_DRAW = true
         private const val DESIRED_RADIUS_FACTOR = 1f
         private const val RADIUS_FACTOR_TOLERANCE = 0.01f
-        private const val RADIUS_FACTOR_PULL = 0.001f
+        private const val RADIUS_FACTOR_PULL = 0.01f
 
         fun runInstance() {
             val instance = PApplet()
