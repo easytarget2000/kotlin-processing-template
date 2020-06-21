@@ -65,7 +65,7 @@ class PApplet : processing.core.PApplet() {
 
     override fun keyPressed() {
         when (key) {
-            ' ' -> radiusFactorVelocity = 0.01f
+            ' ' -> radiusFactorVelocity = 0.1f
         }
     }
 
@@ -122,12 +122,13 @@ class PApplet : processing.core.PApplet() {
     private var radiusFactorVelocity = 0f
 
     private fun updateRadiusFactor() {
-        val delta = radiusFactor - DESIRED_RADIUS_FACTOR
-        if (delta > RADIUS_FACTOR_TOLERANCE) {
-            radiusFactorVelocity -= RADIUS_FACTOR_PULL
-        }
+        radiusFactorVelocity -= 0.01f
 
-        radiusFactor += radiusFactorVelocity
+        if (radiusFactor < DESIRED_RADIUS_FACTOR) {
+            radiusFactor = DESIRED_RADIUS_FACTOR
+        } else {
+            radiusFactor += radiusFactorVelocity
+        }
     }
 
     companion object {
