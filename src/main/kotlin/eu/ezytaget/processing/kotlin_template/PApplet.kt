@@ -16,15 +16,15 @@ class PApplet : processing.core.PApplet() {
 
     private var drawBackgroundOnDraw = true
 
-    private var backgroundAlpha = 1f
+    private var backgroundAlpha = 0.01f
 
     private lateinit var starPositions: List<PVector>
 
-    private var numberOfStars = 700
+    private var numberOfStars = 20000
 
     private var maxStarRadius = 8f
 
-    private var speed = 40f
+    private var speed = 20f
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -42,7 +42,6 @@ class PApplet : processing.core.PApplet() {
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
         noCursor()
-        lights()
         clapper.bpm = 128f
         clapper.start()
 
@@ -64,13 +63,14 @@ class PApplet : processing.core.PApplet() {
 
         val width = width.toFloat()
         val height = height.toFloat()
-        stroke(0.3f, 1f, 1f, 0.5f)
-        fill(1f)
+//        fill(1f)
         translate(width / 2f, height / 2f)
+        rotate(frameCount / 1000f)
+
         starPositions = starPositions.map {
-            drawStar(it, width, height)
             val z = it.z - speed
-            if (z < 1f) {
+            drawStar(it, z, width, height)
+            if (z < 100f) {
                 nextRandomPosition(randomZ = false)
             } else {
                 PVector(
@@ -87,11 +87,22 @@ class PApplet : processing.core.PApplet() {
         }
     }
 
-    private fun drawStar(position: PVector, width: Float, height: Float) {
+    override fun mouseClicked() {
+        super.mouseClicked()
+        if (CLICK_TO_DRAW) {
+            waitingForClickToDraw = false
+        }
+    }
+
+    private fun drawStar(position: PVector, nextZ: Float, width: Float, height: Float) {
+//        val brightness = map(nextZ, 0f, maxStarZ, 1f, 0.5f)
+        stroke(position.x / position.y, 1f, 1f, 0.5f)
+
         val depthAdjustedX = map(position.x / position.z, 0f, 1f, 0f, width)
         val depthAdjustedY = map(position.y / position.z, 0f, 1f, 0f, height)
-        val radius = map(position.z, 0f, maxStarZ, maxStarRadius, 0f)
-        ellipse(depthAdjustedX, depthAdjustedY, radius, radius)
+        val depthAdjustedNextX = map(position.x / nextZ, 0f, 1f, 0f, width)
+        val depthAdjustedNextY = map(position.y / nextZ, 0f, 1f, 0f, height)
+        line(depthAdjustedX, depthAdjustedY, depthAdjustedNextX, depthAdjustedNextY)
     }
 
     override fun keyPressed() {
@@ -121,7 +132,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     companion object {
-        private const val CLICK_TO_DRAW = true
+        private const val CLICK_TO_DRAW = false
         private const val FULL_SCREEN = true
         private const val WIDTH = 1400
         private const val HEIGHT = 900
