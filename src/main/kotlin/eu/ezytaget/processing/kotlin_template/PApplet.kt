@@ -33,8 +33,12 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (DRAW_BACKGROUND_ON_DRAW) {
-            backgroundDrawer.draw(pApplet = this)
+            backgroundDrawer.draw(pApplet = this, alpha = 1f)
         }
+
+        noStroke()
+        fill(1f, 1f, 1f, 1f)
+        rect(0f, 0f, 200f, 200f)
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
