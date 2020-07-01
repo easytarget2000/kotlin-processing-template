@@ -2,16 +2,22 @@ package eu.ezytaget.processing.kotlin_template
 
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import processing.core.PConstants
-import processing.core.PVector
 import kotlin.random.Random
 
 class PApplet : processing.core.PApplet() {
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
-
     private var waitingForClickToDraw = false
-
     private val random = Random.Default
+    private var palette = DuskPalette()
+    private var numberOfPointsPerRound = 10_000
+    private var insideCirclePointHue = palette.randomColor(random)
+    private var outsideCirclePointHue = palette.randomColor(random)
+    private var pointBrightness = 1f
+    private var pointSaturation = 1f
+    private var pointAlpha = 1f
+    private var pointCounter = 0
+    private var pointsInCircleCounter = 0
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -26,7 +32,7 @@ class PApplet : processing.core.PApplet() {
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
         noCursor()
-        lights()
+        textMode(PConstants.CENTER)
     }
 
     override fun draw() {
@@ -35,10 +41,15 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (DRAW_BACKGROUND_ON_DRAW) {
-            backgroundDrawer.draw(pApplet = this, alpha = 0.1f)
+            backgroundDrawer.draw(pApplet = this, alpha = 0.01f)
         }
 
-        drawRandomPointsInCircle()
+        val estimatedPi = drawRandomPointsAndEstimatePi()
+//        println(estimatedPi)
+
+        fill(0f, 0.1f)
+        textSize(height / 16f)
+        text(estimatedPi.toString(), 0f, height /2f)
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -54,19 +65,7 @@ class PApplet : processing.core.PApplet() {
         )
     }
 
-    private var numberOfPointsPerRound = 100
-
-    private var insideCirclePointHue = 0.1f
-
-    private var outsideCirclePointHue = 0.8f
-
-    private var pointBrightness = 1f
-
-    private var pointSaturation = 1f
-
-    private var pointAlpha = 1f
-
-    private fun drawRandomPointsInCircle() {
+    private fun drawRandomPointsAndEstimatePi(): Double {
         val fieldStartX = 0.0
         val fieldStartY = 0.0
         val fieldSize = max(width, height).toDouble()
@@ -75,8 +74,13 @@ class PApplet : processing.core.PApplet() {
         val fieldCenterY = fieldStartY + (fieldSize / 2.0)
 
         repeat((0 until numberOfPointsPerRound).count()) {
-            drawRandomPoint(fieldSize, fieldRadius, fieldStartX, fieldStartY, fieldCenterX, fieldCenterY)
+            ++pointCounter
+            if (drawRandomPoint(fieldSize, fieldRadius, fieldStartX, fieldStartY, fieldCenterX, fieldCenterY)) {
+                ++pointsInCircleCounter
+            }
         }
+
+        return (pointsInCircleCounter.toDouble() / pointCounter.toDouble()) * 4.0
     }
 
     private fun drawRandomPoint(
@@ -90,11 +94,12 @@ class PApplet : processing.core.PApplet() {
         val pointX = random.nextDouble(fieldStartX, fieldSize)
         val pointY = random.nextDouble(fieldStartY, fieldSize)
         val isInCircle = if (distance(pointX, pointY, fieldCenterX, fieldCenterY) > fieldRadius) {
-            stroke(insideCirclePointHue, pointBrightness, pointSaturation, pointAlpha)
+            stroke(hue(outsideCirclePointHue), saturation(outsideCirclePointHue), brightness(outsideCirclePointHue), pointAlpha)
             false
         } else {
-            stroke(outsideCirclePointHue, pointBrightness, pointSaturation, pointAlpha)
+            stroke(hue(insideCirclePointHue), saturation(insideCirclePointHue), brightness(insideCirclePointHue), pointAlpha)
             true
+
         }
 
         point(pointX.toFloat(), pointY.toFloat())
@@ -107,7 +112,7 @@ class PApplet : processing.core.PApplet() {
         private const val FULL_SCREEN = false
         private const val WIDTH = 800
         private const val HEIGHT = 700
-        private const val RENDERER = PConstants.P3D
+        private const val RENDERER = PConstants.P2D
         private const val COLOR_MODE = PConstants.HSB
         private const val MAX_COLOR_VALUE = 1f
         private const val FRAME_RATE = 60f
