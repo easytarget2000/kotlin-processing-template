@@ -3,10 +3,8 @@ package eu.ezytaget.processing.kotlin_template
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import processing.core.PConstants
 import processing.core.PVector
-import kotlin.random.Random
 
 class PApplet : processing.core.PApplet() {
-
 
     private lateinit var camera: Camera
 
