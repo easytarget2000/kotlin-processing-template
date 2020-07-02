@@ -17,6 +17,7 @@ class PApplet : processing.core.PApplet() {
     private var radiusFactor = DESIRED_RADIUS_FACTOR
     private var drawNoiseSpheres = false
     private var radiusFactorVelocity = 0f
+    private var backgroundAlpha = 0.1f
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -34,6 +35,8 @@ class PApplet : processing.core.PApplet() {
         lights()
         initSpheres()
         clapper.start()
+
+        setPerspective()
     }
 
     override fun draw() {
@@ -42,7 +45,7 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (DRAW_BACKGROUND_ON_DRAW) {
-            backgroundDrawer.draw(pApplet = this, alpha = 0.1f)
+            backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
         }
 
         updateClapper()
@@ -64,6 +67,16 @@ class PApplet : processing.core.PApplet() {
     /*
     Implementations
      */
+
+    private fun setPerspective() {
+        val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
+        perspective(
+                PI / 3f,
+                width.toFloat() / height.toFloat(),
+                cameraZ / 10f,
+                cameraZ * 30f
+        )
+    }
 
     private fun clearFrame() {
         backgroundDrawer.draw(
@@ -142,21 +155,23 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun updateClapper() {
-        if (!clapper.update(BeatInterval.Whole)) {
+        if (!clapper.update(BeatInterval.TwoWhole)) {
             return
         }
 
         randomSeed(System.currentTimeMillis())
 
-        maybe {
+        maybe(probability = 0.2f) {
             initSpheres()
         }
-        maybe {
+        maybe(probability = 0.2f) {
             toggleDrawStyle()
+        }
+        maybe {
+            setRandomBackgroundAlpha()
         }
 
         bounce()
-        println(random(1f))
     }
 
     private fun bounce() {
@@ -164,7 +179,6 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun updateRadiusFactor() {
-
         if (radiusFactor < DESIRED_RADIUS_FACTOR) {
             radiusFactor = DESIRED_RADIUS_FACTOR
         } else if (radiusFactor > DESIRED_RADIUS_FACTOR) {
@@ -172,6 +186,12 @@ class PApplet : processing.core.PApplet() {
         }
 
         radiusFactor += radiusFactorVelocity
+    }
+
+    private fun setRandomBackgroundAlpha() {
+        if (!maybe { backgroundAlpha = random(MAX_COLOR_VALUE / 64f) }) {
+            backgroundAlpha = 1f
+        }
     }
 
     companion object {
