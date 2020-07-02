@@ -18,6 +18,10 @@ class PApplet : processing.core.PApplet() {
     private var drawNoiseSpheres = false
     private var radiusFactorVelocity = 0f
     private var backgroundAlpha = 0.1f
+    private var xRotation = 0f
+    private var zRotation = 0f
+    private var xRotationVelocity = 0.01f
+    private var zRotationVelocity = 0.02f
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -121,6 +125,10 @@ class PApplet : processing.core.PApplet() {
 
     private fun drawSpheres() {
         translate(width / 2f, height / 2f)
+        xRotation += xRotationVelocity
+        rotateX(xRotation)
+        zRotation += zRotationVelocity
+        rotateZ(zRotation)
 
         val baseRotation = ((millis() % 100_000) / 100_000f) * TWO_PI
 
@@ -170,6 +178,12 @@ class PApplet : processing.core.PApplet() {
         maybe {
             setRandomBackgroundAlpha()
         }
+        maybe {
+            setRandomXRotationVelocity()
+        }
+        maybe {
+            setRandomZRotationVelocity()
+        }
 
         bounce()
     }
@@ -194,6 +208,14 @@ class PApplet : processing.core.PApplet() {
         }
     }
 
+    private fun setRandomXRotationVelocity() {
+        xRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
+    }
+
+    private fun setRandomZRotationVelocity() {
+        zRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
+    }
+
     companion object {
         private const val CLICK_TO_DRAW = false
         private const val FULL_SCREEN = false
@@ -207,6 +229,7 @@ class PApplet : processing.core.PApplet() {
         private const val DESIRED_RADIUS_FACTOR = 1f
         private const val RADIUS_FACTOR_TOLERANCE = 0.01f
         private const val RADIUS_FACTOR_PULL = 0.01f
+        private const val MAX_ROTATION_VELOCITY = 0.05f
 
         fun runInstance() {
             val instance = PApplet()
