@@ -149,17 +149,14 @@ class PApplet : processing.core.PApplet() {
         randomSeed(System.currentTimeMillis())
 
         maybe {
-            kotlin.io.println("initSpheres()")
             initSpheres()
         }
         maybe {
-            println("toggleDrawStyle()")
             toggleDrawStyle()
         }
 
         bounce()
         println(random(1f))
-        kotlin.io.println("bounce()")
     }
 
     private fun bounce() {
