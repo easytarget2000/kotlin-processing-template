@@ -163,29 +163,37 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun updateClapper() {
-        if (!clapper.update(BeatInterval.TwoWhole)) {
-            return
-        }
+        val clapperResult = clapper.update()
 
         randomSeed(System.currentTimeMillis())
 
-        maybe(probability = 0.2f) {
-            initSpheres()
-        }
-        maybe(probability = 0.2f) {
-            toggleDrawStyle()
-        }
-        maybe {
-            setRandomBackgroundAlpha()
-        }
-        maybe {
-            setRandomXRotationVelocity()
-        }
-        maybe {
-            setRandomZRotationVelocity()
+        if (clapperResult[BeatInterval.Whole]?.didChange == true) {
+            maybe(probability = 0.9f) {
+                bounce()
+            }
         }
 
-        bounce()
+        if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
+            maybe(probability = 0.2f) {
+                initSpheres()
+            }
+            maybe(probability = 0.2f) {
+                toggleDrawStyle()
+            }
+            maybe {
+                setRandomBackgroundAlpha()
+            }
+            maybe {
+                setRandomXRotationVelocity()
+            }
+            maybe {
+                setRandomZRotationVelocity()
+            }
+        }
+
+        if (clapperResult[BeatInterval.SixteenWhole]?.didChange == true) {
+            background(0)
+        }
     }
 
     private fun bounce() {
@@ -229,7 +237,7 @@ class PApplet : processing.core.PApplet() {
         private const val DESIRED_RADIUS_FACTOR = 1f
         private const val RADIUS_FACTOR_TOLERANCE = 0.01f
         private const val RADIUS_FACTOR_PULL = 0.01f
-        private const val MAX_ROTATION_VELOCITY = 0.05f
+        private const val MAX_ROTATION_VELOCITY = 0.03f
 
         fun runInstance() {
             val instance = PApplet()
