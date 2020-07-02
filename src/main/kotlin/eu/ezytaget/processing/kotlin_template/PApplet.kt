@@ -9,9 +9,7 @@ import processing.core.PVector
 class PApplet : processing.core.PApplet() {
 
     private val clapper = Clapper()
-
-    private var lastBeatIntervalCount = 0
-
+    
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
     private var waitingForClickToDraw = false
@@ -53,10 +51,7 @@ class PApplet : processing.core.PApplet() {
             backgroundDrawer.draw(pApplet = this, alpha = 0.1f)
         }
 
-        if(clapper.update()) {
-            handleClapperValue()
-        }
-
+        updateClapper()
         updateRadiusFactor()
 
         translate(width / 2f, height / 2f)
@@ -133,30 +128,15 @@ class PApplet : processing.core.PApplet() {
         }
     }
 
-    private fun handleClapperValue() {
-        val intervalNumbers = clapper.intervalNumbers
-        if (lastBeatIntervalCount != intervalNumbers.getValue(BeatInterval.TwoWhole)) {
-
-//            val random = random(1f)
-//            when {
-//                random < 0.2f -> {
-//                    bounce()
-//                }
-//                random < 0.4f -> {
-//                    initSpheres()
-//                }
-//                random < 0.6f -> {
-//
-//                }
-//            }
-
-            maybe { initSpheres() }
-            maybe { toggleDrawStyle() }
-
-            bounce()
-
-            lastBeatIntervalCount = intervalNumbers.getValue(BeatInterval.TwoWhole)
+    private fun updateClapper() {
+        if (!clapper.update(BeatInterval.Whole)) {
+            return
         }
+
+        maybe { initSpheres() }
+        maybe { toggleDrawStyle() }
+
+        bounce()
     }
 
     private fun maybe(probability: Float = 0.5f, lambda: (() -> Unit)) {
