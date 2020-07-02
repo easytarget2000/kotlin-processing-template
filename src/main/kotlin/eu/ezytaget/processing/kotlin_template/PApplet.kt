@@ -9,20 +9,14 @@ import processing.core.PVector
 class PApplet : processing.core.PApplet() {
 
     private val clapper = Clapper()
-    
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
-
     private var waitingForClickToDraw = false
-
     private var spheres: MutableList<Sphere> = mutableListOf()
-
     private var minNumberOfSpheres = 2
-
     private var maxNumberOfSpheres = 16
-
     private var radiusFactor = DESIRED_RADIUS_FACTOR
-
     private var drawNoiseSpheres = false
+    private var radiusFactorVelocity = 0f
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -53,27 +47,7 @@ class PApplet : processing.core.PApplet() {
 
         updateClapper()
         updateRadiusFactor()
-
-        translate(width / 2f, height / 2f)
-
-        val baseRotation = ((millis() % 100_000) / 100_000f) * TWO_PI
-
-        noFill()
-
-        sphereDetail(16)
-
-        spheres.forEach {
-            pushMatrix()
-            rotateY(baseRotation * it.rotationSpeed)
-            stroke(it.colorValue1, it.colorValue2, it.colorValue3, it.alpha)
-            val radius = it.radius * radiusFactor
-            if (drawNoiseSpheres) {
-                noiseSphere(radius, randomSeed = it.randomSeed)
-            } else {
-                sphere(radius)
-            }
-            popMatrix()
-        }
+        drawSpheres()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -86,6 +60,10 @@ class PApplet : processing.core.PApplet() {
                 clapper.tapBpm()
         }
     }
+
+    /*
+    Implementations
+     */
 
     private fun clearFrame() {
         backgroundDrawer.draw(
@@ -128,20 +106,26 @@ class PApplet : processing.core.PApplet() {
         }
     }
 
-    private fun updateClapper() {
-        if (!clapper.update(BeatInterval.Whole)) {
-            return
-        }
+    private fun drawSpheres() {
+        translate(width / 2f, height / 2f)
 
-        maybe { initSpheres() }
-        maybe { toggleDrawStyle() }
+        val baseRotation = ((millis() % 100_000) / 100_000f) * TWO_PI
 
-        bounce()
-    }
+        noFill()
 
-    private fun maybe(probability: Float = 0.5f, lambda: (() -> Unit)) {
-        if (random(1f) < probability) {
-            lambda()
+        sphereDetail(16)
+
+        spheres.forEach {
+            pushMatrix()
+            rotateY(baseRotation * it.rotationSpeed)
+            stroke(it.colorValue1, it.colorValue2, it.colorValue3, it.alpha)
+            val radius = it.radius * radiusFactor
+            if (drawNoiseSpheres) {
+                noiseSphere(radius, randomSeed = it.randomSeed)
+            } else {
+                sphere(radius)
+            }
+            popMatrix()
         }
     }
 
@@ -157,7 +141,30 @@ class PApplet : processing.core.PApplet() {
         }
     }
 
-    private var radiusFactorVelocity = 0f
+    private fun updateClapper() {
+        if (!clapper.update(BeatInterval.Whole)) {
+            return
+        }
+
+        randomSeed(System.currentTimeMillis())
+
+        maybe {
+            kotlin.io.println("initSpheres()")
+            initSpheres()
+        }
+        maybe {
+            println("toggleDrawStyle()")
+            toggleDrawStyle()
+        }
+
+        bounce()
+        println(random(1f))
+        kotlin.io.println("bounce()")
+    }
+
+    private fun bounce() {
+        radiusFactorVelocity = 0.05f
+    }
 
     private fun updateRadiusFactor() {
 
@@ -168,10 +175,6 @@ class PApplet : processing.core.PApplet() {
         }
 
         radiusFactor += radiusFactorVelocity
-    }
-
-    private fun bounce() {
-        radiusFactorVelocity = 0.05f
     }
 
     companion object {
