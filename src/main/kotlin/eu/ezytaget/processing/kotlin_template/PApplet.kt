@@ -12,8 +12,8 @@ class PApplet : processing.core.PApplet() {
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
     private var waitingForClickToDraw = false
     private val tracks = mutableListOf<LorenzAttractorTrack>()
-    private var minNumberOfSpheres = 2
-    private var maxNumberOfSpheres = 16
+    private var minNumberOfSpheres = 4
+    private var maxNumberOfSpheres = 32
     private var radiusFactor = DESIRED_RADIUS_FACTOR
     private var drawNoiseSpheres = false
     private var radiusFactorVelocity = 0f
@@ -114,7 +114,9 @@ class PApplet : processing.core.PApplet() {
 
             tracks += LorenzAttractorTrack(
                     initialPosition = initialPosition,
-                    startHue = random(0f, MAX_COLOR_VALUE)
+                    startHue = random(0f, MAX_COLOR_VALUE),
+                    sigma = random(-10f, 20f),
+                    rho = random(24f, 32f)
             )
         }
     }
@@ -130,8 +132,9 @@ class PApplet : processing.core.PApplet() {
 
         stroke(1f)
 
+        scale(radiusFactor)
         tracks.forEach {
-            it.update(deltaTime = 0.01f, steps = 1)
+            it.update(deltaTime = 0.001f, steps = 64)
             it.draw(pApplet = this)
         }
     }
