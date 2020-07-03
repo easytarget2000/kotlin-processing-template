@@ -11,7 +11,7 @@ class PApplet : processing.core.PApplet() {
     private val clapper = Clapper()
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
     private var waitingForClickToDraw = false
-    private var spheres: MutableList<Sphere> = mutableListOf()
+    private val tracks = mutableListOf<LorenzAttractorTrack>()
     private var minNumberOfSpheres = 2
     private var maxNumberOfSpheres = 16
     private var radiusFactor = DESIRED_RADIUS_FACTOR
@@ -37,7 +37,7 @@ class PApplet : processing.core.PApplet() {
         clearFrame()
         noCursor()
         lights()
-        initSpheres()
+        initLorenzAttractorTracks()
         clapper.start()
 
         setPerspective()
@@ -54,7 +54,7 @@ class PApplet : processing.core.PApplet() {
 
         updateClapper()
         updateRadiusFactor()
-        drawSpheres()
+        updateAndDrawTracks()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -93,72 +93,46 @@ class PApplet : processing.core.PApplet() {
         drawNoiseSpheres = !drawNoiseSpheres
     }
 
-    private fun initSpheres() {
-        spheres = mutableListOf()
-        val numberOfSpheres = random(minNumberOfSpheres.toFloat(), (maxNumberOfSpheres + 1).toFloat()).toInt()
+    private fun initLorenzAttractorTracks() {
+        tracks.clear()
+        val numberOfTracks = random(minNumberOfSpheres.toFloat(), (maxNumberOfSpheres + 1).toFloat()).toInt()
         val minRadius = width / 16f
         val maxRadius = width / 2f
 
-        val minRotationSpeed = 2f
-        val maxRotationSpeed = 8f
-        val colorValue1 = random(1f)
-
-        repeat((0..numberOfSpheres).count()) {
+        repeat((0 until numberOfTracks).count()) {
             val radius = if (it == 0) {
                 maxRadius
             } else {
                 random(minRadius, maxRadius)
             }
 
-            val sphere = Sphere(
-                    radius = radius,
-                    randomSeed = random(2000f).toLong(),
-                    rotationSpeed = random(minRotationSpeed, maxRotationSpeed),
-                    colorValue1 = colorValue1,
-                    colorValue3 = 1f,
-                    colorValue2 = 1f,
-                    alpha = 1f
+            val initialPosition = PVector(
+                    random(-1f, 1f),
+                    random(-1f, 1f),
+                    random(-1f, 1f)
             )
-            spheres.plusAssign(sphere)
+
+            tracks += LorenzAttractorTrack(
+                    initialPosition = initialPosition,
+                    startHue = random(0f, MAX_COLOR_VALUE)
+            )
         }
     }
 
-    private fun drawSpheres() {
+    private fun updateAndDrawTracks() {
         translate(width / 2f, height / 2f)
         xRotation += xRotationVelocity
         rotateX(xRotation)
         zRotation += zRotationVelocity
         rotateZ(zRotation)
 
-        val baseRotation = ((millis() % 100_000) / 100_000f) * TWO_PI
-
         noFill()
 
-        sphereDetail(16)
+        stroke(1f)
 
-        spheres.forEach {
-            pushMatrix()
-            rotateY(baseRotation * it.rotationSpeed)
-            stroke(it.colorValue1, it.colorValue2, it.colorValue3, it.alpha)
-            val radius = it.radius * radiusFactor
-            if (drawNoiseSpheres) {
-                noiseSphere(radius, randomSeed = it.randomSeed)
-            } else {
-                sphere(radius)
-            }
-            popMatrix()
-        }
-    }
-
-    private fun noiseSphere(radius: Float, randomSeed: Long, numberOfPoints: Int = 4096 * 2) {
-        randomSeed(randomSeed)
-        repeat((0..numberOfPoints).count()) {
-            val randomVector = PVector(
-                    random(-100f, 100f),
-                    random(-100f, 100f),
-                    random(-100f, 100f)
-            ).setMag(radius)
-            point(randomVector.x, randomVector.y, randomVector.z)
+        tracks.forEach {
+            it.update(deltaTime = 0.01f, steps = 1)
+            it.draw(pApplet = this)
         }
     }
 
@@ -175,7 +149,7 @@ class PApplet : processing.core.PApplet() {
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
             maybe(probability = 0.2f) {
-                initSpheres()
+                initLorenzAttractorTracks()
             }
             maybe(probability = 0.2f) {
                 toggleDrawStyle()
