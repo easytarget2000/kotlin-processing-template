@@ -17,7 +17,7 @@ class PApplet : processing.core.PApplet() {
     private var zRotationVelocity = 0.02f
 
     private var t = 0f
-    private lateinit var fluid: Fluid
+    private lateinit var fluidField: FluidField
 
     override fun settings() {
         size(N * SCALE, N * SCALE)
@@ -28,12 +28,12 @@ class PApplet : processing.core.PApplet() {
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
         noCursor()
-        lights()
+//        lights()
 
         clapper.bpm = INITIAL_BPM
         clapper.start()
 
-        initFluid()
+        initFluidField()
     }
 
     override fun draw() {
@@ -63,8 +63,8 @@ class PApplet : processing.core.PApplet() {
     Implementations
      */
 
-    private fun initFluid() {
-        fluid = Fluid(0.2f, 0f, 0.0000001f)
+    private fun initFluidField() {
+        fluidField = FluidField(0.2f, 0f, 0.0000001f)
 //        fluid.N = N
 //        fluid.iter = iter
 //        fluid.SCALE = SCALE
@@ -96,7 +96,7 @@ class PApplet : processing.core.PApplet() {
 
         (-1 .. 1).forEach {  i ->
             (-1 .. 1).forEach {j ->
-                fluid.addDensity(cx + i, cy + j, random(50f, 150f));
+                fluidField.addDensity(cx + i, cy + j, random(50f, 150f));
             }
         }
 
@@ -105,11 +105,11 @@ class PApplet : processing.core.PApplet() {
             val v = PVector.fromAngle(angle);
             v.mult(0.2f);
             t += 0.01f;
-            fluid.addVelocity(cx, cy, v.x, v.y);
+            fluidField.addVelocity(cx, cy, v.x, v.y);
         }
 
-        fluid.step(this);
-        fluid.renderD(this);
+        fluidField.step(this);
+        fluidField.renderD(this);
     }
 
     private fun setRandomXRotationVelocity() {
