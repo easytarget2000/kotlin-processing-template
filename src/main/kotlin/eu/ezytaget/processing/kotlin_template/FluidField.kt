@@ -28,7 +28,7 @@ class FluidField(var dt: Float, diffusion: Float, viscosity: Float) {
     }
 
     fun step(pApplet: PApplet?) {
-        val N = size
+//        val N = size
         val visc = visc
         val diff = diff
         val dt = dt

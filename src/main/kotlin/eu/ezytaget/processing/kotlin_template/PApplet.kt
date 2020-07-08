@@ -25,7 +25,7 @@ class PApplet : processing.core.PApplet() {
 
     override fun setup() {
         frameRate(FRAME_RATE)
-        colorMode(COLOR_MODE, MAX_COLOR_VALUE)
+//        colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
         noCursor()
 //        lights()
@@ -47,6 +47,7 @@ class PApplet : processing.core.PApplet() {
 
         updateAndDrawFluidField()
 
+
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
         }
@@ -64,10 +65,7 @@ class PApplet : processing.core.PApplet() {
      */
 
     private fun initFluidField() {
-        fluidField = FluidField(0.2f, 0f, 0.0000001f)
-//        fluid.N = N
-//        fluid.iter = iter
-//        fluid.SCALE = SCALE
+        fluidField = FluidField(dt = 0.2f, diffusion = 0f, viscosity = 0.0000001f)
     }
 
     private fun setPerspective() {
@@ -94,22 +92,22 @@ class PApplet : processing.core.PApplet() {
         val cx = (0.5f * width / SCALE).toInt()
         val cy = (0.5f * height / SCALE).toInt()
 
-        (-1 .. 1).forEach {  i ->
-            (-1 .. 1).forEach {j ->
+        (-1..1).forEach { i ->
+            (-1..1).forEach { j ->
                 fluidField.addDensity(cx + i, cy + j, random(50f, 150f));
             }
         }
 
         repeat((0 until 2).count()) {
-            val angle = noise (t) * TWO_PI * 2;
+            val angle = noise(t) * TWO_PI * 2;
             val v = PVector.fromAngle(angle);
             v.mult(0.2f);
             t += 0.01f;
             fluidField.addVelocity(cx, cy, v.x, v.y);
         }
 
-        fluidField.step(this);
-        fluidField.renderD(this);
+        fluidField.step(this)
+        fluidField.renderD(this)
     }
 
     private fun setRandomXRotationVelocity() {
