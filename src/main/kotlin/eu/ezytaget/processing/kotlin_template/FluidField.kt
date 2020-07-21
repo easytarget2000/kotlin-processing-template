@@ -1,6 +1,7 @@
 package eu.ezytaget.processing.kotlin_template
 
 import processing.core.PConstants.HSB
+import kotlin.math.floor
 
 class FluidField(var dt: Float, diffusion: Float, viscosity: Float) {
 
@@ -9,7 +10,7 @@ class FluidField(var dt: Float, diffusion: Float, viscosity: Float) {
     var visc = viscosity
 
     private var s: FloatArray
-    private var density: FloatArray
+    private var densities: FloatArray
 
     private var Vx: FloatArray
     private var Vy: FloatArray
@@ -20,14 +21,14 @@ class FluidField(var dt: Float, diffusion: Float, viscosity: Float) {
     init {
         size = GlobalConstants.N
         s = FloatArray(GlobalConstants.N * GlobalConstants.N)
-        density = FloatArray(GlobalConstants.N * GlobalConstants.N)
+        densities = FloatArray(GlobalConstants.N * GlobalConstants.N)
         Vx = FloatArray(GlobalConstants.N * GlobalConstants.N)
         Vy = FloatArray(GlobalConstants.N * GlobalConstants.N)
         Vx0 = FloatArray(GlobalConstants.N * GlobalConstants.N)
         Vy0 = FloatArray(GlobalConstants.N * GlobalConstants.N)
     }
 
-    fun step(pApplet: PApplet?) {
+    fun step() {
 //        val N = size
         val visc = visc
         val diff = diff
@@ -37,7 +38,7 @@ class FluidField(var dt: Float, diffusion: Float, viscosity: Float) {
         val Vx0 = Vx0
         val Vy0 = Vy0
         val s = s
-        val density = density
+        val density = densities
         diffuse(1, Vx0, Vx, visc, dt)
         diffuse(2, Vy0, Vy, visc, dt)
         project(Vx0, Vy0, Vx, Vy)
@@ -50,7 +51,7 @@ class FluidField(var dt: Float, diffusion: Float, viscosity: Float) {
 
     fun addDensity(x: Int, y: Int, amount: Float) {
         val index = IX(x, y)
-        density[index] += amount
+        densities[index] += amount
     }
 
     fun addVelocity(x: Int, y: Int, amountX: Float, amountY: Float) {
@@ -59,16 +60,22 @@ class FluidField(var dt: Float, diffusion: Float, viscosity: Float) {
         Vy[index] += amountY
     }
 
-    fun renderD(pApplet: PApplet) {
+    fun drawDensity(pApplet: PApplet) {
         pApplet.colorMode(HSB, 255f)
+        val floatScale = GlobalConstants.SCALE.toFloat()
         for (i in 0 until GlobalConstants.N) {
             for (j in 0 until GlobalConstants.N) {
-                val x = i * GlobalConstants.SCALE.toFloat()
-                val y = j * GlobalConstants.SCALE.toFloat()
-                val d = density[IX(i, j)]
-                pApplet.fill((d + 50) % 255, 200f, d)
+                val x = i * floatScale
+                val y = j * floatScale
+                val density = densities[IX(i, j)]
+
+//                if (density < 150) {
+//                    continue
+//                }
+
+                pApplet.fill(100f, (density + 50) % 255, 200f, density)
                 pApplet.noStroke()
-                pApplet.square(x, y, GlobalConstants.SCALE.toFloat())
+                pApplet.square(x, y, floatScale)
             }
         }
     }
@@ -89,9 +96,9 @@ class FluidField(var dt: Float, diffusion: Float, viscosity: Float) {
     }
 
     fun fadeD() {
-        for (i in density.indices) {
-            val d = density[i]
-            density[i] = processing.core.PApplet.constrain(d - 0.02f, 0f, 255f)
+        for (i in densities.indices) {
+            val d = densities[i]
+            densities[i] = processing.core.PApplet.constrain(d - 0.02f, 0f, 255f)
         }
     }
 
@@ -169,13 +176,21 @@ class FluidField(var dt: Float, diffusion: Float, viscosity: Float) {
                 tmp2 = dty * velocY[IX(i, j)]
                 x = iFloat - tmp1
                 y = jfloat - tmp2
-                if (x < 0.5f) x = 0.5f
-                if (x > nFloat + 0.5f) x = nFloat + 0.5f
-                i0 = processing.core.PApplet.floor(x).toFloat()
+                if (x < 0.5f) {
+                    x = 0.5f
+                } else if (x > nFloat + 0.5f) {
+                    x = nFloat + 0.5f
+                }
+                i0 = floor(x)
                 i1 = i0 + 1.0f
-                if (y < 0.5f) y = 0.5f
-                if (y > nFloat + 0.5f) y = nFloat + 0.5f
-                j0 = processing.core.PApplet.floor(y).toFloat()
+
+                if (y < 0.5f) {
+                    y = 0.5f
+                } else if (y > nFloat + 0.5f) {
+                    y = nFloat + 0.5f
+                }
+
+                j0 = floor(y)
                 j1 = j0 + 1.0f
                 s1 = x - i0
                 s0 = 1.0f - s1

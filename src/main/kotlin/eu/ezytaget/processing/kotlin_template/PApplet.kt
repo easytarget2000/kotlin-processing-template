@@ -1,6 +1,5 @@
 package eu.ezytaget.processing.kotlin_template
 
-import eu.ezytaget.processing.kotlin_template.GlobalConstants.N
 import eu.ezytaget.processing.kotlin_template.GlobalConstants.SCALE
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytarget.clapper.Clapper
@@ -20,7 +19,8 @@ class PApplet : processing.core.PApplet() {
     private lateinit var fluidField: FluidField
 
     override fun settings() {
-        size(N * SCALE, N * SCALE)
+//        size(N * SCALE, N * SCALE)
+        fullScreen(RENDERER)
     }
 
     override fun setup() {
@@ -68,24 +68,11 @@ class PApplet : processing.core.PApplet() {
         fluidField = FluidField(dt = 0.2f, diffusion = 0f, viscosity = 0.0000001f)
     }
 
-    private fun setPerspective() {
-        val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
-        perspective(
-                PI / 3f,
-                width.toFloat() / height.toFloat(),
-                cameraZ / 10f,
-                cameraZ * 30f
-        )
-    }
-
     private fun clearFrame() {
         backgroundDrawer.draw(
                 pApplet = this,
                 alpha = 1f
         )
-    }
-
-    private fun updateClapper() {
     }
 
     private fun updateAndDrawFluidField() {
@@ -106,8 +93,8 @@ class PApplet : processing.core.PApplet() {
             fluidField.addVelocity(cx, cy, v.x, v.y);
         }
 
-        fluidField.step(this)
-        fluidField.renderD(this)
+        fluidField.step()
+        fluidField.drawDensity(this)
     }
 
     private fun setRandomXRotationVelocity() {
@@ -128,7 +115,7 @@ class PApplet : processing.core.PApplet() {
         private const val COLOR_MODE = PConstants.HSB
         private const val MAX_COLOR_VALUE = 1f
         private const val FRAME_RATE = 60f
-        private const val DRAW_BACKGROUND_ON_DRAW = true
+        private const val DRAW_BACKGROUND_ON_DRAW = false
         private const val DESIRED_RADIUS_FACTOR = 1f
         private const val RADIUS_FACTOR_TOLERANCE = 0.01f
         private const val RADIUS_FACTOR_PULL = 0.01f
