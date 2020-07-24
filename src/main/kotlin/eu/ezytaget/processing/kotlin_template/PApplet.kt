@@ -17,6 +17,7 @@ class PApplet : processing.core.PApplet() {
     private var zRotation = 0f
     private var xRotationVelocity = 0.01f
     private var zRotationVelocity = 0.02f
+    private lateinit var cellAutomaton3D: CellAutomaton3D
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -33,6 +34,7 @@ class PApplet : processing.core.PApplet() {
         noCursor()
         lights()
         clapper.start()
+        initAutomaton()
 
         setPerspective()
     }
@@ -46,7 +48,13 @@ class PApplet : processing.core.PApplet() {
             backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
         }
 
+//        zRotation += zRotationVelocity
+//        rotateX(zRotation)
+
         updateClapper()
+
+        cellAutomaton3D.update()
+        cellAutomaton3D.draw(pApplet = this)
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -64,14 +72,18 @@ class PApplet : processing.core.PApplet() {
     Implementations
      */
 
+    private fun initAutomaton() {
+        cellAutomaton3D = CellAutomaton3D()
+    }
+
     private fun setPerspective() {
         val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
-        perspective(
-                PI / 3f,
-                width.toFloat() / height.toFloat(),
-                cameraZ / 10f,
-                cameraZ * 30f
-        )
+//        perspective(
+//                PI / 3f,
+//                width.toFloat() / height.toFloat(),
+//                cameraZ / 10f,
+//                cameraZ * 30f
+//        )
     }
 
     private fun clearFrame() {
