@@ -11,11 +11,6 @@ class PApplet : processing.core.PApplet() {
     private val clapper = Clapper()
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
     private var waitingForClickToDraw = false
-    private val tracks = mutableListOf<LorenzAttractorTrack>()
-    private var minNumberOfSpheres = 4
-    private var maxNumberOfSpheres = 32
-    private var radiusFactor = DESIRED_RADIUS_FACTOR
-    private var drawNoiseSpheres = false
     private var radiusFactorVelocity = 0f
     private var backgroundAlpha = 0.1f
     private var xRotation = 0f
@@ -37,7 +32,6 @@ class PApplet : processing.core.PApplet() {
         clearFrame()
         noCursor()
         lights()
-        initLorenzAttractorTracks()
         clapper.start()
 
         setPerspective()
@@ -53,8 +47,6 @@ class PApplet : processing.core.PApplet() {
         }
 
         updateClapper()
-        updateRadiusFactor()
-        updateAndDrawTracks()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -89,56 +81,6 @@ class PApplet : processing.core.PApplet() {
         )
     }
 
-    private fun toggleDrawStyle() {
-        drawNoiseSpheres = !drawNoiseSpheres
-    }
-
-    private fun initLorenzAttractorTracks() {
-        tracks.clear()
-        val numberOfTracks = random(minNumberOfSpheres.toFloat(), (maxNumberOfSpheres + 1).toFloat()).toInt()
-        val minRadius = width / 16f
-        val maxRadius = width / 2f
-
-        repeat((0 until numberOfTracks).count()) {
-            val radius = if (it == 0) {
-                maxRadius
-            } else {
-                random(minRadius, maxRadius)
-            }
-
-            val initialPosition = PVector(
-                    random(-1f, 1f),
-                    random(-1f, 1f),
-                    random(-1f, 1f)
-            )
-
-            tracks += LorenzAttractorTrack(
-                    initialPosition = initialPosition,
-                    startHue = random(0f, MAX_COLOR_VALUE),
-                    sigma = random(-10f, 20f),
-                    rho = random(24f, 32f)
-            )
-        }
-    }
-
-    private fun updateAndDrawTracks() {
-        translate(width / 2f, height / 2f)
-        xRotation += xRotationVelocity
-        rotateX(xRotation)
-        zRotation += zRotationVelocity
-        rotateZ(zRotation)
-
-        noFill()
-
-        stroke(1f)
-
-        scale(radiusFactor)
-        tracks.forEach {
-            it.update(deltaTime = 0.001f, steps = 64)
-            it.draw(pApplet = this)
-        }
-    }
-
     private fun updateClapper() {
         val clapperResult = clapper.update()
 
@@ -152,10 +94,8 @@ class PApplet : processing.core.PApplet() {
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
             maybe(probability = 0.2f) {
-                initLorenzAttractorTracks()
             }
             maybe(probability = 0.2f) {
-                toggleDrawStyle()
             }
             maybe {
                 setRandomBackgroundAlpha()
@@ -175,16 +115,6 @@ class PApplet : processing.core.PApplet() {
 
     private fun bounce() {
         radiusFactorVelocity = 0.05f
-    }
-
-    private fun updateRadiusFactor() {
-        if (radiusFactor < DESIRED_RADIUS_FACTOR) {
-            radiusFactor = DESIRED_RADIUS_FACTOR
-        } else if (radiusFactor > DESIRED_RADIUS_FACTOR) {
-            radiusFactorVelocity -= RADIUS_FACTOR_PULL
-        }
-
-        radiusFactor += radiusFactorVelocity
     }
 
     private fun setRandomBackgroundAlpha() {
