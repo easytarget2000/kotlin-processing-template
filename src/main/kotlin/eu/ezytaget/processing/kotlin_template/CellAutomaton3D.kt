@@ -3,54 +3,76 @@ package eu.ezytaget.processing.kotlin_template
 import kotlin.math.min
 import kotlin.random.Random
 
-class CellAutomaton3D(numOfCellsPerSide: Int = 8, random: Random = Random.Default) {
+class CellAutomaton3D(numOfCellsPerSide: Int = 64, var sideLength: Float, random: Random = Random.Default) {
 
-    var cellSizeRatio = 0.02f
+    private val cellSize
+        get() = sideLength / numOfCellsPerSide
 
-    private val cells = Array(numOfCellsPerSide) { xIndex ->
+    private fun nowMillis() = System.currentTimeMillis()
+
+    private var cells = Array(numOfCellsPerSide) { xIndex ->
         Array(numOfCellsPerSide) { yIndex ->
             BooleanArray(numOfCellsPerSide) { zIndex ->
-                true
-//                if (random.nextBoolean()) {
-//                    ACTIVE_VALUE
-//                } else {
-//                    INACTIVE_VALUE
-//                }
+//                xIndex == (numOfCellsPerSide / 2) && yIndex == (numOfCellsPerSide / 2) && zIndex == (numOfCellsPerSide / 2)
+                random.nextBoolean()
             }
         }
     }
 
-    fun updateAndDraw(pApplet: PApplet) {
-        val cellSize = min(pApplet.width, pApplet.height) * cellSizeRatio
+    private val numOfCellsPerSide = cells.size
 
-        pApplet.noFill()
-        pApplet.stroke(1f, 1f, 1f, 1f)
+    fun update() {
+        val benchmarkStartMillis = nowMillis()
 
-        pApplet.pushMatrix()
-        val distanceToCenter = (cells.size / 2f) * cellSize
-        pApplet.translate(
-                -distanceToCenter,
-                -distanceToCenter
-        )
+        val newCells = cells.copyOf()
 
-        val numOfCellsPerSide = cells.size
-
-        cells.indices.forEach { xIndex ->
-            val xStrip = cells[xIndex]
-            xStrip.indices.forEach { yIndex ->
-                val yStrip = xStrip[yIndex]
-                yStrip.indices.forEach { zIndex ->
-                    val cellValue = yStrip[zIndex]
-                    var activeNeighbourCounter = numberOfVonNeumannNeighbours(xIndex, numOfCellsPerSide, yIndex, zIndex)
-
-                    println(activeNeighbourCounter)
-
-                    drawCell(pApplet, cellValue, cellSize, xIndex, yIndex, zIndex, activeNeighbourCounter)
+        forEachCell { cellValue, xIndex, yIndex, zIndex ->
+            val activeNeighbourCounter = numberOfVonNeumannNeighbours(xIndex, numOfCellsPerSide, yIndex, zIndex)
+            if (cellValue) {
+                if (activeNeighbourCounter !in 0..6) {
+                    newCells[xIndex][yIndex][zIndex] = false
+                }
+            } else {
+                if (activeNeighbourCounter == 1 || activeNeighbourCounter == 3) {
+                    newCells[xIndex][yIndex][zIndex] = true
                 }
             }
         }
 
-        pApplet.popMatrix()
+        cells = newCells
+
+        if (BENCHMARK) {
+            val duration = nowMillis() - benchmarkStartMillis
+            println("Benchmark: update(): $duration ms")
+        }
+    }
+
+    fun draw(pApplet: PApplet) {
+        val benchmarkStartMillis = nowMillis()
+
+        pApplet.push()
+        pApplet.noFill()
+        pApplet.stroke(1f, 1f, 1f, 1f)
+
+        val distanceToCenter = (cells.size / 2f) * cellSize
+        pApplet.translate(
+                -distanceToCenter,
+                -distanceToCenter,
+                -distanceToCenter
+        )
+
+        forEachCell { cellValue, xIndex, yIndex, zIndex ->
+            drawCell(pApplet, cellValue, xIndex, yIndex, zIndex)
+        }
+
+        pApplet.pop()
+
+        drawBoundingBox(pApplet)
+
+        if (BENCHMARK) {
+            val duration = nowMillis() - benchmarkStartMillis
+            println("Benchmark: draw(): $duration ms")
+        }
     }
 
     private fun numberOfVonNeumannNeighbours(xIndex: Int, numOfCellsPerSide: Int, yIndex: Int, zIndex: Int): Int {
@@ -88,35 +110,60 @@ class CellAutomaton3D(numOfCellsPerSide: Int = 8, random: Random = Random.Defaul
                 ++activeNeighbourCounter
             }
         }
+
         return activeNeighbourCounter
     }
 
     private fun drawCell(
             pApplet: PApplet,
             cellValue: Boolean,
-            cellSize: Float,
             xIndex: Int,
             yIndex: Int,
-            zIndex: Int,
-            numberOfActiveNeighbours: Int
+            zIndex: Int
     ) {
-        pApplet.pushMatrix()
+        if (!cellValue) {
+            return
+        }
+
+        pApplet.push()
         pApplet.translate(
                 xIndex * cellSize,
                 yIndex * cellSize,
                 zIndex * cellSize
         )
         pApplet.stroke(
-                numberOfActiveNeighbours.toFloat() / 6f,
-                1f,
-                1f,
+                xIndex.toFloat() / numOfCellsPerSide.toFloat(),
+                yIndex.toFloat() / numOfCellsPerSide.toFloat(),
+                zIndex.toFloat() / numOfCellsPerSide.toFloat(),
                 1f
         )
         pApplet.box(cellSize)
-        pApplet.popMatrix()
+        pApplet.pop()
+    }
+
+    private fun drawBoundingBox(pApplet: PApplet) {
+        pApplet.pushStyle()
+        pApplet.stroke(1f)
+        pApplet.noFill()
+        pApplet.box(sideLength)
+        pApplet.popStyle()
+    }
+
+    private fun forEachCell(action: (cellValue: Boolean, xIndex: Int, yIndex: Int, zIndex: Int) -> Unit) {
+        cells.indices.forEach { xIndex ->
+            val xStrip = cells[xIndex]
+            xStrip.indices.forEach { yIndex ->
+                val yStrip = xStrip[yIndex]
+                yStrip.indices.forEach { zIndex ->
+                    val cellValue = yStrip[zIndex]
+                    action(cellValue, xIndex, yIndex, zIndex)
+                }
+            }
+        }
     }
 
     companion object {
+        private const val BENCHMARK = false
         private const val ACTIVE_VALUE: Short = 1
         private const val INACTIVE_VALUE: Short = 0
     }
