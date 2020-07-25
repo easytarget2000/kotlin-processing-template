@@ -4,7 +4,6 @@ import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
-import processing.core.PVector
 
 class PApplet : processing.core.PApplet() {
 
@@ -12,7 +11,7 @@ class PApplet : processing.core.PApplet() {
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
     private var waitingForClickToDraw = false
     private var radiusFactorVelocity = 0f
-    private var backgroundAlpha = 0.1f
+    private var backgroundAlpha = 1f
     private var xRotation = 0f
     private var zRotation = 0f
     private var xRotationVelocity = 0.01f
@@ -31,7 +30,6 @@ class PApplet : processing.core.PApplet() {
         frameRate(FRAME_RATE)
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
-        noCursor()
         lights()
         clapper.start()
         initAutomaton()
@@ -48,13 +46,11 @@ class PApplet : processing.core.PApplet() {
             backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
         }
 
-//        zRotation += zRotationVelocity
-//        rotateX(zRotation)
+        translate(width / 2f, height / 2f)
+//        updateRotations()
+//        updateClapper()
 
-        updateClapper()
-
-        cellAutomaton3D.update()
-        cellAutomaton3D.draw(pApplet = this)
+        cellAutomaton3D.updateAndDraw(pApplet = this)
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -91,6 +87,11 @@ class PApplet : processing.core.PApplet() {
                 pApplet = this,
                 alpha = 1f
         )
+    }
+
+    private fun updateRotations() {
+        zRotation += zRotationVelocity
+        rotateX(zRotation)
     }
 
     private fun updateClapper() {
