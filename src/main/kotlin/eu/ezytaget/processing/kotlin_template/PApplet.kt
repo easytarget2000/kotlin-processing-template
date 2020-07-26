@@ -1,5 +1,6 @@
 package eu.ezytaget.processing.kotlin_template
 
+import eu.ezytaget.processing.kotlin_template.cell_automaton_3d.CellAutomaton3D
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
