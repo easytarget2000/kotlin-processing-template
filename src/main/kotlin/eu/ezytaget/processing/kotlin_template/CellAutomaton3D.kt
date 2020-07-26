@@ -3,7 +3,7 @@ package eu.ezytaget.processing.kotlin_template
 import kotlin.random.Random
 
 class CellAutomaton3D(
-        private val numOfCellsPerSide: Int = 64,
+        private val numOfCellsPerSide: Int = 128,
         val sideLength: Float,
         random: Random = Random.Default
 ) {
@@ -46,8 +46,8 @@ class CellAutomaton3D(
         forEachCell { cellValue, xIndex, yIndex, zIndex ->
             val activeNeighbourCounter = numberOfVonNeumannNeighbours(xIndex, numOfCellsPerSide, yIndex, zIndex)
             if (cellValue) {
-                if (activeNeighbourCounter !in 0..6) {
-                    newCells[xIndex][yIndex][zIndex] = false
+                if (activeNeighbourCounter in 0..6) {
+                    newCells[xIndex][yIndex][zIndex] = true
                 }
             } else {
                 if (activeNeighbourCounter == 1 || activeNeighbourCounter == 3) {
