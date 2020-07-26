@@ -5,7 +5,12 @@ import kotlin.random.Random
 class CellAutomaton3D(
         private val numOfCellsPerSide: Int = 128,
         val sideLength: Float,
-        private val nearDeathSurvivalRange: IntRange = 0..6,
+        private val nearDeathCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
+            numberOfAliveNeighbors in 0..6
+        },
+        private val birthCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
+            numberOfAliveNeighbors == 1 || numberOfAliveNeighbors == 3
+        },
         private val numberOfStates: Int = 2,
         random: Random = Random.Default
 ) {
@@ -49,13 +54,13 @@ class CellAutomaton3D(
         }
 
         forEachCell { cellValue, xIndex, yIndex, zIndex ->
-            val activeNeighbourCounter = numberOfVonNeumannNeighbours(xIndex, numOfCellsPerSide, yIndex, zIndex)
+            val numberOfAliveNeighbours = numberOfVonNeumannNeighbours(xIndex, numOfCellsPerSide, yIndex, zIndex)
             if (cellValue == NEAR_DEATH_CELL_VALUE) {
-                if (activeNeighbourCounter in nearDeathSurvivalRange) {
+                if (nearDeathCondition(numberOfAliveNeighbours)) {
                     newCells[xIndex][yIndex][zIndex] = NEAR_DEATH_CELL_VALUE
                 }
             } else if (cellValue == DEAD_CELL_VALUE) {
-                if (activeNeighbourCounter == 1 || activeNeighbourCounter == 3) {
+                if (birthCondition(numberOfAliveNeighbours)) {
                     newCells[xIndex][yIndex][zIndex] = BIRTH_VALUE
                 }
             } else {
