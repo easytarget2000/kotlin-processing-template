@@ -1,30 +1,47 @@
 package eu.ezytaget.processing.kotlin_template
 
-import kotlin.math.min
 import kotlin.random.Random
 
-class CellAutomaton3D(numOfCellsPerSide: Int = 64, var sideLength: Float, random: Random = Random.Default) {
+class CellAutomaton3D(
+        private val numOfCellsPerSide: Int = 64,
+        val sideLength: Float,
+        random: Random = Random.Default
+) {
 
     private val cellSize
         get() = sideLength / numOfCellsPerSide
 
     private fun nowMillis() = System.currentTimeMillis()
 
-    private var cells = Array(numOfCellsPerSide) { xIndex ->
+    private var cells = cells { xIndex, yIndex, zIndex ->
+        val centerIndex = numOfCellsPerSide / 2
+        xIndex in (centerIndex - 1..centerIndex + 1) &&
+                yIndex in (centerIndex - 1..centerIndex + 1) &&
+                zIndex in (centerIndex - 1..centerIndex + 1)
+
+//                random.nextBoolean()
+//                val lastIndex = numOfCellsPerSide - 1
+//                (xIndex == 0) or (xIndex == lastIndex) or
+//                        (yIndex == 0) or (yIndex == lastIndex) or
+//                        (zIndex == 0) or (zIndex == lastIndex)
+    }
+
+    private fun cells(
+            initialization: (xIndex: Int, yIndex: Int, zIndex: Int) -> Boolean
+    ) = Array(numOfCellsPerSide) { xIndex ->
         Array(numOfCellsPerSide) { yIndex ->
             BooleanArray(numOfCellsPerSide) { zIndex ->
-//                xIndex == (numOfCellsPerSide / 2) && yIndex == (numOfCellsPerSide / 2) && zIndex == (numOfCellsPerSide / 2)
-                random.nextBoolean()
+                initialization(xIndex, yIndex, zIndex)
             }
         }
     }
 
-    private val numOfCellsPerSide = cells.size
-
     fun update() {
         val benchmarkStartMillis = nowMillis()
 
-        val newCells = cells.copyOf()
+        val newCells = cells { _, _, _ ->
+            false
+        }
 
         forEachCell { cellValue, xIndex, yIndex, zIndex ->
             val activeNeighbourCounter = numberOfVonNeumannNeighbours(xIndex, numOfCellsPerSide, yIndex, zIndex)
@@ -131,12 +148,13 @@ class CellAutomaton3D(numOfCellsPerSide: Int = 64, var sideLength: Float, random
                 yIndex * cellSize,
                 zIndex * cellSize
         )
-        pApplet.stroke(
+        pApplet.fill(
                 xIndex.toFloat() / numOfCellsPerSide.toFloat(),
                 yIndex.toFloat() / numOfCellsPerSide.toFloat(),
                 zIndex.toFloat() / numOfCellsPerSide.toFloat(),
                 1f
         )
+        pApplet.noStroke()
         pApplet.box(cellSize)
         pApplet.pop()
     }

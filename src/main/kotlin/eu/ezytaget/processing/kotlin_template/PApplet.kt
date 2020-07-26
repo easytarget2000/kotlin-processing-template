@@ -48,10 +48,12 @@ class PApplet : processing.core.PApplet() {
         }
 
         translate(width / 2f, height / 2f)
-//        updateRotations()
-        updateClapper()
+        updateRotations()
+//        updateClapper()
 
-//        cellAutomaton3D.update()
+        if (frameCount % 100 == 0) {
+            cellAutomaton3D.update()
+        }
         cellAutomaton3D.draw(pApplet = this)
 
         if (CLICK_TO_DRAW) {
@@ -155,7 +157,7 @@ class PApplet : processing.core.PApplet() {
         private const val RENDERER = PConstants.P3D
         private const val COLOR_MODE = PConstants.HSB
         private const val MAX_COLOR_VALUE = 1f
-        private const val FRAME_RATE = 1f
+        private const val FRAME_RATE = 60f
         private const val DRAW_BACKGROUND_ON_DRAW = true
         private const val DESIRED_RADIUS_FACTOR = 1f
         private const val RADIUS_FACTOR_TOLERANCE = 0.01f
