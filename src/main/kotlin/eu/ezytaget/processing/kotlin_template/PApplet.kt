@@ -51,7 +51,7 @@ class PApplet : processing.core.PApplet() {
         updateRotations()
 //        updateClapper()
 
-        if (frameCount % 10 == 0) {
+        if (frameCount % 2 == 0) {
             cellAutomaton3D.update()
         }
         cellAutomaton3D.draw(pApplet = this)

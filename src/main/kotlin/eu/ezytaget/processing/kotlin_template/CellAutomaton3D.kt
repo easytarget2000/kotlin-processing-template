@@ -6,14 +6,19 @@ class CellAutomaton3D(
         private val numOfCellsPerSide: Int = 128,
         val sideLength: Float,
         private val nearDeathCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
-            numberOfAliveNeighbors in 0..6
+            numberOfAliveNeighbors in 0 .. 6
         },
         private val birthCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
             numberOfAliveNeighbors == 1 || numberOfAliveNeighbors == 3
         },
         private val numberOfStates: Int = 2,
+        private val countingAlgorithm: NeighborCountingAlgorithm = NeighborCountingAlgorithm.VonNeumann,
         random: Random = Random.Default
 ) {
+
+    enum class NeighborCountingAlgorithm {
+        VonNeumann, Moore
+    }
 
     private val cellSize = sideLength / numOfCellsPerSide
     private fun nowMillis() = System.currentTimeMillis()
@@ -53,14 +58,21 @@ class CellAutomaton3D(
             false
         }
 
+        val maxCellIndex = numOfCellsPerSide - 1
+
         forEachCell { cellValue, xIndex, yIndex, zIndex ->
-            val numberOfAliveNeighbours = numberOfVonNeumannNeighbours(xIndex, numOfCellsPerSide, yIndex, zIndex)
+            val numberOfAliveNeighbors = when (countingAlgorithm) {
+                NeighborCountingAlgorithm.Moore ->
+                    numberOfMooreNeighbors(xIndex, maxCellIndex, yIndex, zIndex)
+                NeighborCountingAlgorithm.VonNeumann ->
+                    numberOfVonNeumannNeighbors(xIndex, maxCellIndex, yIndex, zIndex)
+            }
             if (cellValue == NEAR_DEATH_CELL_VALUE) {
-                if (nearDeathCondition(numberOfAliveNeighbours)) {
+                if (nearDeathCondition(numberOfAliveNeighbors)) {
                     newCells[xIndex][yIndex][zIndex] = NEAR_DEATH_CELL_VALUE
                 }
             } else if (cellValue == DEAD_CELL_VALUE) {
-                if (birthCondition(numberOfAliveNeighbours)) {
+                if (birthCondition(numberOfAliveNeighbors)) {
                     newCells[xIndex][yIndex][zIndex] = BIRTH_VALUE
                 }
             } else {
@@ -104,43 +116,60 @@ class CellAutomaton3D(
         }
     }
 
-    private fun numberOfVonNeumannNeighbours(xIndex: Int, numOfCellsPerSide: Int, yIndex: Int, zIndex: Int): Int {
-        var activeNeighbourCounter = 0
-        if (xIndex in 1 until numOfCellsPerSide - 1) {
-            val previousXStrip = cells[xIndex - 1]
-            if (previousXStrip[yIndex][zIndex] > DEAD_CELL_VALUE) {
-                ++activeNeighbourCounter
-            }
-            val nextXStrip = cells[xIndex + 1]
-            if (nextXStrip[yIndex][zIndex] > DEAD_CELL_VALUE) {
-                ++activeNeighbourCounter
-            }
-        }
+    private fun numberOfVonNeumannNeighbors(xIndex: Int, maxCellIndex: Int, yIndex: Int, zIndex: Int): Int {
+        var aliveNeighborCounter = 0
 
-        if (yIndex in 1 until numOfCellsPerSide - 1) {
-            val previousYStrip = cells[xIndex][yIndex - 1]
-            if (previousYStrip[zIndex] > DEAD_CELL_VALUE) {
-                ++activeNeighbourCounter
-            }
-            val nextYStrip = cells[xIndex][yIndex + 1]
-            if (nextYStrip[zIndex] > DEAD_CELL_VALUE) {
-                ++activeNeighbourCounter
-            }
-        }
+        aliveNeighborCounter += oneIfAlive(xIndex - 1, yIndex, zIndex, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex + 1, yIndex, zIndex, maxCellIndex)
 
-        if (zIndex in 1 until numOfCellsPerSide - 1) {
-            val previousZCell = cells[xIndex][yIndex][zIndex - 1]
-            if (previousZCell > DEAD_CELL_VALUE) {
-                ++activeNeighbourCounter
-            }
+        aliveNeighborCounter += oneIfAlive(xIndex, yIndex - 1, zIndex, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex, yIndex + 1, zIndex, maxCellIndex)
 
-            val nextZCell = cells[xIndex][yIndex][zIndex + 1]
-            if (nextZCell > DEAD_CELL_VALUE) {
-                ++activeNeighbourCounter
-            }
-        }
+        aliveNeighborCounter += oneIfAlive(xIndex, yIndex, zIndex - 1, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex, yIndex, zIndex + 1, maxCellIndex)
 
-        return activeNeighbourCounter
+        return aliveNeighborCounter
+    }
+
+    private fun numberOfMooreNeighbors(xIndex: Int, maxCellIndex: Int, yIndex: Int, zIndex: Int): Int {
+        var aliveNeighborCounter = 0
+
+        aliveNeighborCounter += oneIfAlive(xIndex - 1, yIndex - 1, zIndex - 1, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex - 1, yIndex - 1, zIndex, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex - 1, yIndex - 1, zIndex + 1, maxCellIndex)
+
+        aliveNeighborCounter += oneIfAlive(xIndex - 1, yIndex, zIndex - 1, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex - 1, yIndex, zIndex, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex - 1, yIndex, zIndex + 1, maxCellIndex)
+
+        aliveNeighborCounter += oneIfAlive(xIndex - 1, yIndex + 1, zIndex - 1, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex - 1, yIndex + 1, zIndex, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex - 1, yIndex + 1, zIndex + 1, maxCellIndex)
+
+        aliveNeighborCounter += oneIfAlive(xIndex, yIndex - 1, zIndex - 1, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex, yIndex - 1, zIndex, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex, yIndex - 1, zIndex + 1, maxCellIndex)
+
+        aliveNeighborCounter += oneIfAlive(xIndex, yIndex, zIndex - 1, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex, yIndex, zIndex + 1, maxCellIndex)
+
+        aliveNeighborCounter += oneIfAlive(xIndex, yIndex + 1, zIndex - 1, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex, yIndex + 1, zIndex, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex, yIndex + 1, zIndex + 1, maxCellIndex)
+
+        aliveNeighborCounter += oneIfAlive(xIndex + 1, yIndex - 1, zIndex - 1, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex + 1, yIndex - 1, zIndex, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex + 1, yIndex - 1, zIndex + 1, maxCellIndex)
+
+        aliveNeighborCounter += oneIfAlive(xIndex + 1, yIndex, zIndex - 1, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex + 1, yIndex, zIndex, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex + 1, yIndex, zIndex + 1, maxCellIndex)
+
+        aliveNeighborCounter += oneIfAlive(xIndex + 1, yIndex + 1, zIndex - 1, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex + 1, yIndex + 1, zIndex, maxCellIndex)
+        aliveNeighborCounter += oneIfAlive(xIndex + 1, yIndex + 1, zIndex + 1, maxCellIndex)
+
+        return aliveNeighborCounter
     }
 
     private fun drawCell(
@@ -192,9 +221,28 @@ class CellAutomaton3D(
         }
     }
 
+    private fun isAlive(xIndex: Int, yIndex: Int, zIndex: Int, maxCellIndex: Int) =
+            if (xIndex in 0 until maxCellIndex &&
+                    yIndex in 0 until maxCellIndex &&
+                    zIndex in 0 until maxCellIndex
+            ) {
+                cells[xIndex][yIndex][zIndex] > DEAD_CELL_VALUE
+            } else {
+                false
+            }
+
+    private fun oneIfAlive(xIndex: Int, yIndex: Int, zIndex: Int, maxCellIndex: Int) =
+            if (isAlive(xIndex, yIndex, zIndex, maxCellIndex)) {
+                1
+            } else {
+                0
+            }
+
     companion object {
         private const val BENCHMARK = false
         private const val NEAR_DEATH_CELL_VALUE: Short = 1
         private const val DEAD_CELL_VALUE: Short = 0
+
+        private fun isAlive(cellValue: Short) = cellValue > DEAD_CELL_VALUE
     }
 }
