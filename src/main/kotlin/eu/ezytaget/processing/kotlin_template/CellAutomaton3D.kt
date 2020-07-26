@@ -5,13 +5,14 @@ import kotlin.random.Random
 class CellAutomaton3D(
         private val numOfCellsPerSide: Int = 128,
         val sideLength: Float,
+        private val nearDeathSurvivalRange: IntRange = 0..6,
+        private val numberOfStates: Int = 2,
         random: Random = Random.Default
 ) {
 
-    private val cellSize
-        get() = sideLength / numOfCellsPerSide
-
+    private val cellSize = sideLength / numOfCellsPerSide
     private fun nowMillis() = System.currentTimeMillis()
+    private val BIRTH_VALUE = (numberOfStates - 1).toShort()
 
     private var cells = cells { xIndex, yIndex, zIndex ->
         val centerIndex = numOfCellsPerSide / 2
@@ -30,8 +31,12 @@ class CellAutomaton3D(
             initialization: (xIndex: Int, yIndex: Int, zIndex: Int) -> Boolean
     ) = Array(numOfCellsPerSide) { xIndex ->
         Array(numOfCellsPerSide) { yIndex ->
-            BooleanArray(numOfCellsPerSide) { zIndex ->
-                initialization(xIndex, yIndex, zIndex)
+            ShortArray(numOfCellsPerSide) { zIndex ->
+                if (initialization(xIndex, yIndex, zIndex)) {
+                    BIRTH_VALUE
+                } else {
+                    DEAD_CELL_VALUE
+                }
             }
         }
     }
@@ -45,14 +50,16 @@ class CellAutomaton3D(
 
         forEachCell { cellValue, xIndex, yIndex, zIndex ->
             val activeNeighbourCounter = numberOfVonNeumannNeighbours(xIndex, numOfCellsPerSide, yIndex, zIndex)
-            if (cellValue) {
-                if (activeNeighbourCounter in 0..6) {
-                    newCells[xIndex][yIndex][zIndex] = true
+            if (cellValue == NEAR_DEATH_CELL_VALUE) {
+                if (activeNeighbourCounter in nearDeathSurvivalRange) {
+                    newCells[xIndex][yIndex][zIndex] = NEAR_DEATH_CELL_VALUE
+                }
+            } else if (cellValue == DEAD_CELL_VALUE) {
+                if (activeNeighbourCounter == 1 || activeNeighbourCounter == 3) {
+                    newCells[xIndex][yIndex][zIndex] = BIRTH_VALUE
                 }
             } else {
-                if (activeNeighbourCounter == 1 || activeNeighbourCounter == 3) {
-                    newCells[xIndex][yIndex][zIndex] = true
-                }
+                newCells[xIndex][yIndex][zIndex] = (cellValue - 1).toShort()
             }
         }
 
@@ -96,34 +103,34 @@ class CellAutomaton3D(
         var activeNeighbourCounter = 0
         if (xIndex in 1 until numOfCellsPerSide - 1) {
             val previousXStrip = cells[xIndex - 1]
-            if (previousXStrip[yIndex][zIndex]) {
+            if (previousXStrip[yIndex][zIndex] > DEAD_CELL_VALUE) {
                 ++activeNeighbourCounter
             }
             val nextXStrip = cells[xIndex + 1]
-            if (nextXStrip[yIndex][zIndex]) {
+            if (nextXStrip[yIndex][zIndex] > DEAD_CELL_VALUE) {
                 ++activeNeighbourCounter
             }
         }
 
         if (yIndex in 1 until numOfCellsPerSide - 1) {
             val previousYStrip = cells[xIndex][yIndex - 1]
-            if (previousYStrip[zIndex]) {
+            if (previousYStrip[zIndex] > DEAD_CELL_VALUE) {
                 ++activeNeighbourCounter
             }
             val nextYStrip = cells[xIndex][yIndex + 1]
-            if (nextYStrip[zIndex]) {
+            if (nextYStrip[zIndex] > DEAD_CELL_VALUE) {
                 ++activeNeighbourCounter
             }
         }
 
         if (zIndex in 1 until numOfCellsPerSide - 1) {
             val previousZCell = cells[xIndex][yIndex][zIndex - 1]
-            if (previousZCell) {
+            if (previousZCell > DEAD_CELL_VALUE) {
                 ++activeNeighbourCounter
             }
 
             val nextZCell = cells[xIndex][yIndex][zIndex + 1]
-            if (nextZCell) {
+            if (nextZCell > DEAD_CELL_VALUE) {
                 ++activeNeighbourCounter
             }
         }
@@ -133,12 +140,12 @@ class CellAutomaton3D(
 
     private fun drawCell(
             pApplet: PApplet,
-            cellValue: Boolean,
+            cellValue: Short,
             xIndex: Int,
             yIndex: Int,
             zIndex: Int
     ) {
-        if (!cellValue) {
+        if (cellValue == DEAD_CELL_VALUE) {
             return
         }
 
@@ -152,7 +159,7 @@ class CellAutomaton3D(
                 xIndex.toFloat() / numOfCellsPerSide.toFloat(),
                 yIndex.toFloat() / numOfCellsPerSide.toFloat(),
                 zIndex.toFloat() / numOfCellsPerSide.toFloat(),
-                1f
+                cellValue.toFloat() / numberOfStates.toFloat()
         )
         pApplet.noStroke()
         pApplet.box(cellSize)
@@ -167,7 +174,7 @@ class CellAutomaton3D(
         pApplet.popStyle()
     }
 
-    private fun forEachCell(action: (cellValue: Boolean, xIndex: Int, yIndex: Int, zIndex: Int) -> Unit) {
+    private fun forEachCell(action: (cellValue: Short, xIndex: Int, yIndex: Int, zIndex: Int) -> Unit) {
         cells.indices.forEach { xIndex ->
             val xStrip = cells[xIndex]
             xStrip.indices.forEach { yIndex ->
@@ -182,7 +189,7 @@ class CellAutomaton3D(
 
     companion object {
         private const val BENCHMARK = false
-        private const val ACTIVE_VALUE: Short = 1
-        private const val INACTIVE_VALUE: Short = 0
+        private const val NEAR_DEATH_CELL_VALUE: Short = 1
+        private const val DEAD_CELL_VALUE: Short = 0
     }
 }
