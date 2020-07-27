@@ -62,25 +62,48 @@ internal class MooreNeighborCounterTest {
 
     @Test
     fun count_given3x3CellValues_returnsExpectedSideCenterValues() {
-        val sideCenterResult1 = target.count(
-                cells3x3,
-                xIndex = 1,
-                yIndex = 2,
-                zIndex = 2,
-                maxCellIndex = maxCellIndexFor3x3,
-                minAliveCellValue = aliveCellValue
-        )
-        val sideCenterResult2 = target.count(
-                cells3x3,
-                xIndex = 3,
-                yIndex = 2,
-                zIndex = 2,
-                maxCellIndex = maxCellIndexFor3x3,
-                minAliveCellValue = aliveCellValue
-        )
+        val sideIndices = listOf(1, 3)
+        val centerIndex = 2
+        val expectedResult = 17
 
-        assert(sideCenterResult1 == sideCenterResult2)
-        assert(sideCenterResult1 == 17)
+        sideIndices.forEach {
+            val sideCenterResult = target.count(
+                    cells3x3,
+                    xIndex = it,
+                    yIndex = centerIndex,
+                    zIndex = centerIndex,
+                    maxCellIndex = maxCellIndexFor3x3,
+                    minAliveCellValue = aliveCellValue
+            )
+
+            assert(sideCenterResult == expectedResult)
+        }
+
+        sideIndices.forEach {
+            val sideCenterResult = target.count(
+                    cells3x3,
+                    xIndex = centerIndex,
+                    yIndex = it,
+                    zIndex = centerIndex,
+                    maxCellIndex = maxCellIndexFor3x3,
+                    minAliveCellValue = aliveCellValue
+            )
+
+            assert(sideCenterResult == expectedResult)
+        }
+
+        sideIndices.forEach {
+            val sideCenterResult = target.count(
+                    cells3x3,
+                    xIndex = centerIndex,
+                    yIndex = centerIndex,
+                    zIndex = it,
+                    maxCellIndex = maxCellIndexFor3x3,
+                    minAliveCellValue = aliveCellValue
+            )
+
+            assert(sideCenterResult == expectedResult)
+        }
     }
 
 }
