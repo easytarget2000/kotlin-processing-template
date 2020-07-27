@@ -16,7 +16,7 @@ class PApplet : processing.core.PApplet() {
     private var xRotation = 0f
     private var zRotation = 0f
     private var xRotationVelocity = 0.01f
-    private var zRotationVelocity = 0.02f
+    private var zRotationVelocity = 0.0002f
     private lateinit var cellAutomaton3D: CellAutomaton3D
 
     override fun settings() {
@@ -52,7 +52,7 @@ class PApplet : processing.core.PApplet() {
 //        updateClapper()
 
         if (frameCount % 8 == 0) {
-            cellAutomaton3D.update()
+//            cellAutomaton3D.update()
         }
         lights()
         cellAutomaton3D.draw(pApplet = this)

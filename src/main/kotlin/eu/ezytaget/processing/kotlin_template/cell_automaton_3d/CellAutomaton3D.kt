@@ -7,7 +7,7 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 class CellAutomaton3D(
-        private val numOfCellsPerSide: Int = 64,
+        private val numOfCellsPerSide: Int = 8,
         val sideLength: Float,
         private val nearDeathSurvivalCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
             numberOfAliveNeighbors in 4..7
@@ -15,7 +15,7 @@ class CellAutomaton3D(
         private val birthCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
             numberOfAliveNeighbors in 6..8
         },
-        private val numberOfStates: Short = 20,
+        private val numberOfStates: Short = 10,
         private val neighborCounter: NeighborCounter = MooreNeighborCounter(),
         random: Random = Random.Default
 ) {
@@ -125,7 +125,7 @@ class CellAutomaton3D(
             yIndex: Int,
             zIndex: Int
     ) {
-        if (cellValue == DEAD_CELL_VALUE) {
+        if (cellValue == DEAD_CELL_VALUE && !DRAW_GRID) {
             return
         }
 
@@ -142,6 +142,13 @@ class CellAutomaton3D(
                         (zIndex - centerIndex).toFloat().pow(2f)
         )
 
+        if (DRAW_GRID) {
+            pApplet.stroke(1f)
+            pApplet.noFill()
+            pApplet.box(cellSize)
+        }
+
+        pApplet.noStroke()
         pApplet.fill(
                 distanceToCenter / numOfCellsPerSide,
                 1f,
@@ -178,6 +185,7 @@ class CellAutomaton3D(
         private const val BENCHMARK = false
         private const val NEAR_DEATH_CELL_VALUE: Short = 1
         private const val DEAD_CELL_VALUE: Short = 0
+        private const val DRAW_GRID = true
     }
 
 }
