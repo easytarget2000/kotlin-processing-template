@@ -7,7 +7,7 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 class CellAutomaton3D(
-        private val numOfCellsPerSide: Int = 8,
+        private val numOfCellsPerSide: Int = 64,
         val sideLength: Float,
         private val nearDeathSurvivalCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
             numberOfAliveNeighbors in 4..7
@@ -15,7 +15,7 @@ class CellAutomaton3D(
         private val birthCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
             numberOfAliveNeighbors in 6..8
         },
-        private val numberOfStates: Short = 10,
+        private val numberOfStates: Short = 50,
         private val neighborCounter: NeighborCounter = MooreNeighborCounter(),
         random: Random = Random.Default
 ) {
@@ -26,13 +26,26 @@ class CellAutomaton3D(
 
     private var cells = cells { xIndex, yIndex, zIndex ->
         val centerIndex = numOfCellsPerSide / 2
-        val centerCubeSizeHalf = 2
+        val centerCubeSizeHalf = 16
         val centerCubeStart = centerIndex - centerCubeSizeHalf
         val centerCubeEnd = centerIndex + centerCubeSizeHalf
 
         xIndex in centerCubeStart..centerCubeEnd &&
                 yIndex in centerCubeStart..centerCubeEnd &&
-                zIndex in centerCubeStart..centerCubeEnd
+                zIndex in centerCubeStart..centerCubeEnd &&
+                random.nextBoolean()
+
+//        ((xIndex == centerCubeStart || xIndex == centerCubeEnd) and (
+//                (yIndex in centerCubeStart..centerCubeEnd) and
+//                        (zIndex in centerCubeStart..centerCubeEnd)
+//                )) or
+//                ((xIndex in centerCubeStart..centerCubeEnd) and (
+//                        (yIndex == centerCubeStart || yIndex == centerCubeEnd) and
+//                                (zIndex in centerCubeStart..centerCubeEnd)
+//                        )) or
+//                        ((xIndex in centerCubeStart..centerCubeEnd) and
+//                                (yIndex in centerCubeStart..centerCubeEnd) and
+//                                (zIndex == centerCubeStart || zIndex == centerCubeEnd))
 
 //        (xIndex == centerIndex) and
 //                (yIndex == centerIndex) and
@@ -72,10 +85,14 @@ class CellAutomaton3D(
                     minAliveCellValue = birthValue
             )
 
-            if (cellValue == NEAR_DEATH_CELL_VALUE && nearDeathSurvivalCondition(numberOfAliveNeighbors)) {
-                newCells[xIndex][yIndex][zIndex] = NEAR_DEATH_CELL_VALUE
-            } else if (cellValue == DEAD_CELL_VALUE && birthCondition(numberOfAliveNeighbors)) {
-                newCells[xIndex][yIndex][zIndex] = birthValue
+            if (cellValue == NEAR_DEATH_CELL_VALUE) {
+                if (nearDeathSurvivalCondition(numberOfAliveNeighbors)) {
+                    newCells[xIndex][yIndex][zIndex] = NEAR_DEATH_CELL_VALUE
+                }
+            } else if (cellValue == DEAD_CELL_VALUE) {
+                if (birthCondition(numberOfAliveNeighbors)) {
+                    newCells[xIndex][yIndex][zIndex] = birthValue
+                }
             } else {
                 newCells[xIndex][yIndex][zIndex] = (cellValue - 1).toShort()
             }
@@ -102,7 +119,6 @@ class CellAutomaton3D(
                 -distanceToCenter,
                 -distanceToCenter
         )
-//        pApplet.strokeWeight(4f)
 
         forEachCell { cellValue, xIndex, yIndex, zIndex ->
             drawCell(pApplet, cellValue, xIndex, yIndex, zIndex)
@@ -146,16 +162,15 @@ class CellAutomaton3D(
             pApplet.stroke(1f)
             pApplet.noFill()
             pApplet.box(cellSize)
+            pApplet.noStroke()
         }
 
-        pApplet.noStroke()
         pApplet.fill(
                 distanceToCenter / numOfCellsPerSide,
                 1f,
                 1f,
-                cellValue.toFloat() / numberOfStates.toFloat()
+                0.1f
         )
-//        pApplet.point(0f, 0f)
         pApplet.box(cellSize)
         pApplet.pop()
     }
@@ -185,7 +200,7 @@ class CellAutomaton3D(
         private const val BENCHMARK = false
         private const val NEAR_DEATH_CELL_VALUE: Short = 1
         private const val DEAD_CELL_VALUE: Short = 0
-        private const val DRAW_GRID = true
+        private const val DRAW_GRID = false
     }
 
 }
