@@ -7,6 +7,7 @@ internal class MooreNeighborCounterTest {
     private val target = MooreNeighborCounter()
 
     private val numOfCellsPerSideFor3x3 = 5
+    private val maxCellIndexFor3x3 = numOfCellsPerSideFor3x3 - 1
 
     private val deadCellValue: Short = 0
     private val aliveCellValue: Short = 5
@@ -40,46 +41,33 @@ internal class MooreNeighborCounterTest {
 
     @Test
     fun count_given3x3Cube_returnsExpectedCornerValues() {
-        val deadCellValue: Short = 0
-        val aliveCellValue: Short = 1
-        val numOfCellsPerSide = 5
-        val maxCellIndex = numOfCellsPerSide - 1
+        val cornerIndices = listOf(1, 3)
 
-        val cornerResult1 = target.count(
-                cells3x3,
-                yIndex = 1,
-                xIndex = 1,
-                zIndex = 1,
-                maxCellIndex = maxCellIndex,
-                minAliveCellValue = aliveCellValue
-        )
-        assert(cornerResult1 == 7)
-
-        val cornerResult2 = target.count(
-                cells3x3,
-                yIndex = 3,
-                xIndex = 3,
-                zIndex = 3,
-                maxCellIndex = maxCellIndex,
-                minAliveCellValue = aliveCellValue
-        )
-        assert(cornerResult1 == cornerResult2)
-
+        cornerIndices.forEach { xIndex ->
+            cornerIndices.forEach {yIndex ->
+                cornerIndices.forEach{ zIndex ->
+                    val cornerResult = target.count(
+                            cells3x3,
+                            yIndex = xIndex,
+                            xIndex = yIndex,
+                            zIndex = zIndex,
+                            maxCellIndex = maxCellIndexFor3x3,
+                            minAliveCellValue = aliveCellValue
+                    )
+                    assert(cornerResult == 7)
+                }
+            }
+        }
     }
 
     @Test
     fun count_given3x3CellValues_returnsExpectedSideCenterValues() {
-        val deadCellValue: Short = 0
-        val aliveCellValue: Short = 1
-        val numOfCellsPerSide = 5
-        val maxCellIndex = numOfCellsPerSide - 1
-
         val sideCenterResult1 = target.count(
                 cells3x3,
                 xIndex = 1,
                 yIndex = 2,
                 zIndex = 2,
-                maxCellIndex = maxCellIndex,
+                maxCellIndex = maxCellIndexFor3x3,
                 minAliveCellValue = aliveCellValue
         )
         val sideCenterResult2 = target.count(
@@ -87,7 +75,7 @@ internal class MooreNeighborCounterTest {
                 xIndex = 3,
                 yIndex = 2,
                 zIndex = 2,
-                maxCellIndex = maxCellIndex,
+                maxCellIndex = maxCellIndexFor3x3,
                 minAliveCellValue = aliveCellValue
         )
 
