@@ -1,13 +1,17 @@
 package eu.ezytaget.processing.kotlin_template
 
 import eu.ezytaget.processing.kotlin_template.cell_automaton_3d.CellAutomaton3D
+import eu.ezytaget.processing.kotlin_template.cell_automaton_3d.MooreNeighborCounter
+import eu.ezytaget.processing.kotlin_template.cell_automaton_3d.VonNeumannNeighborCounter
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
+import kotlin.random.Random
 
 class PApplet : processing.core.PApplet() {
 
+    private val random = Random.Default
     private val clapper = Clapper()
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
     private var waitingForClickToDraw = false
@@ -56,9 +60,9 @@ class PApplet : processing.core.PApplet() {
         updateRotations()
         updateClapper()
 
-        if (frameCount % automatonUpdateDelay == 0) {
-            cellAutomaton3D.update()
-        }
+//        if (frameCount % automatonUpdateDelay == 0) {
+//            cellAutomaton3D.update()
+//        }
 
         lights()
         cellAutomaton3D.draw(pApplet = this)
@@ -83,9 +87,17 @@ class PApplet : processing.core.PApplet() {
 
     private fun initAutomaton() {
         val automatonSize = min(width, height) * 0.9f
+
+        val neighborCounter = if (random(1f) > 0.5f) {
+            VonNeumannNeighborCounter()
+        } else {
+            MooreNeighborCounter()
+        }
+
         cellAutomaton3D = CellAutomaton3D(
                 numOfCellsPerSide = random(24f, 48f).toInt(),
-                sideLength = automatonSize
+                sideLength = automatonSize,
+                neighborCounter = neighborCounter
         )
         automatonUpdateDelay = random(8f, 32f).toInt()
     }
@@ -127,6 +139,10 @@ class PApplet : processing.core.PApplet() {
         randomSeed(System.currentTimeMillis())
 
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
+            cellAutomaton3D.update()
+        }
+
+        if (clapperResult[BeatInterval.Whole]?.didChange == true) {
             maybe(probability = 0.9f) {
                 bounce()
             }
@@ -136,7 +152,7 @@ class PApplet : processing.core.PApplet() {
             maybe(probability = 0.2f) {
                 initAutomaton()
             }
-            maybe() {
+            maybe {
                 clearFrame()
             }
             maybe {

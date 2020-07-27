@@ -10,7 +10,7 @@ class CellAutomaton3D(
         private val numOfCellsPerSide: Int = 32,
         val sideLength: Float,
         private val nearDeathSurvivalCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
-            numberOfAliveNeighbors in 0 .. 6
+            numberOfAliveNeighbors in 0..6
         },
         private val birthCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
             numberOfAliveNeighbors == 1 || numberOfAliveNeighbors == 3
@@ -25,14 +25,14 @@ class CellAutomaton3D(
 
     private var cells = cells { xIndex, yIndex, zIndex ->
         val centerIndex = numOfCellsPerSide / 2
-        val centerCubeSize = numOfCellsPerSide / 6
-        val centerCubeSizeHalf = 1
+        val centerCubeSize = random.nextInt(2, 8)
+        val centerCubeSizeHalf = centerCubeSize / 2
         val centerCubeStart = centerIndex - centerCubeSizeHalf
         val centerCubeEnd = centerIndex + centerCubeSizeHalf
 
-        xIndex in centerCubeStart..centerCubeEnd &&
-                yIndex in centerCubeStart..centerCubeEnd &&
-                zIndex in centerCubeStart..centerCubeEnd
+//        xIndex in centerCubeStart..centerCubeEnd &&
+//                yIndex in centerCubeStart..centerCubeEnd &&
+//                zIndex in centerCubeStart..centerCubeEnd
 
 //        ((xIndex == centerCubeStart || xIndex == centerCubeEnd) and (
 //                (yIndex in centerCubeStart..centerCubeEnd) and
@@ -46,9 +46,12 @@ class CellAutomaton3D(
 //                                (yIndex in centerCubeStart..centerCubeEnd) and
 //                                (zIndex == centerCubeStart || zIndex == centerCubeEnd))
 
-//        (xIndex == centerIndex) and
-//                (yIndex == centerIndex) and
-//                (zIndex == centerIndex)
+        (random.nextFloat() < 0.0001f) or
+                ((xIndex == centerIndex) and
+                        (yIndex == centerIndex) and
+                        (zIndex == centerIndex))
+
+
     }
 
     private fun cells(
@@ -169,7 +172,7 @@ class CellAutomaton3D(
         }
 
         pApplet.fill(
-                distanceToCenter / numOfCellsPerSide,
+                distanceToCenter / centerIndex,
                 1f,
                 1f,
                 cellValue.toFloat() / birthValue.toFloat()
