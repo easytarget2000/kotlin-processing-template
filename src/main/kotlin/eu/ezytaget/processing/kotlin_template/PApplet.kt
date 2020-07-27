@@ -13,11 +13,12 @@ class PApplet : processing.core.PApplet() {
     private var waitingForClickToDraw = false
     private var radiusFactorVelocity = 0f
     private var backgroundAlpha = 1f
-    private var xRotation = 0f
-    private var zRotation = 0f
+    private var xRotation = 1f
+    private var zRotation = 1f
     private var xRotationVelocity = 0.021f
     private var zRotationVelocity = 0.002f
     private lateinit var cellAutomaton3D: CellAutomaton3D
+    private var automatonUpdateDelay = 16
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -47,19 +48,20 @@ class PApplet : processing.core.PApplet() {
             backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
         }
 
-        drawFrameRate()
+        if (DRAW_FRAME_RATE) {
+            drawFrameRate()
+        }
 
         translate(width / 2f, height / 2f)
         updateRotations()
-//        updateClapper()
+        updateClapper()
 
-        if (frameCount % 4 == 0) {
+        if (frameCount % automatonUpdateDelay == 0) {
             cellAutomaton3D.update()
         }
 
         lights()
         cellAutomaton3D.draw(pApplet = this)
-
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -68,6 +70,8 @@ class PApplet : processing.core.PApplet() {
 
     override fun keyPressed() {
         when (key) {
+            'x' ->
+                initAutomaton()
             ' ' ->
                 clapper.tapBpm()
         }
@@ -78,8 +82,12 @@ class PApplet : processing.core.PApplet() {
      */
 
     private fun initAutomaton() {
-        val automatonSize = min(width, height) * 0.66f
-        cellAutomaton3D = CellAutomaton3D(sideLength = automatonSize)
+        val automatonSize = min(width, height) * 0.9f
+        cellAutomaton3D = CellAutomaton3D(
+                numOfCellsPerSide = random(24f, 48f).toInt(),
+                sideLength = automatonSize
+        )
+        automatonUpdateDelay = random(8f, 32f).toInt()
     }
 
     private fun setPerspective() {
@@ -126,8 +134,10 @@ class PApplet : processing.core.PApplet() {
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
             maybe(probability = 0.2f) {
+                initAutomaton()
             }
-            maybe(probability = 0.2f) {
+            maybe() {
+                clearFrame()
             }
             maybe {
                 setRandomBackgroundAlpha()
@@ -172,7 +182,8 @@ class PApplet : processing.core.PApplet() {
         private const val COLOR_MODE = PConstants.HSB
         private const val MAX_COLOR_VALUE = 1f
         private const val FRAME_RATE = 60f
-        private const val DRAW_BACKGROUND_ON_DRAW = true
+        private const val DRAW_BACKGROUND_ON_DRAW = false
+        private const val DRAW_FRAME_RATE = false
         private const val DESIRED_RADIUS_FACTOR = 1f
         private const val RADIUS_FACTOR_TOLERANCE = 0.01f
         private const val RADIUS_FACTOR_PULL = 0.01f

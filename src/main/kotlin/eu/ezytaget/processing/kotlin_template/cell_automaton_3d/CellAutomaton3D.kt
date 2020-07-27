@@ -1,23 +1,22 @@
 package eu.ezytaget.processing.kotlin_template.cell_automaton_3d
 
 import eu.ezytaget.processing.kotlin_template.PApplet
-import kotlin.math.exp
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
 
 class CellAutomaton3D(
-        private val numOfCellsPerSide: Int = 64,
+        private val random: Random = Random.Default,
+        private val numOfCellsPerSide: Int = 32,
         val sideLength: Float,
         private val nearDeathSurvivalCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
-            numberOfAliveNeighbors in 4..7
+            numberOfAliveNeighbors in 0 .. 6
         },
         private val birthCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
-            numberOfAliveNeighbors in 6..8
+            numberOfAliveNeighbors == 1 || numberOfAliveNeighbors == 3
         },
-        private val numberOfStates: Short = 50,
-        private val neighborCounter: NeighborCounter = MooreNeighborCounter(),
-        random: Random = Random.Default
+        numberOfStates: Short = random.nextInt(from = 2, until = 20).toShort(),
+        private val neighborCounter: NeighborCounter = MooreNeighborCounter()
 ) {
 
     private val cellSize = sideLength / numOfCellsPerSide
@@ -26,14 +25,14 @@ class CellAutomaton3D(
 
     private var cells = cells { xIndex, yIndex, zIndex ->
         val centerIndex = numOfCellsPerSide / 2
-        val centerCubeSizeHalf = 16
+        val centerCubeSize = numOfCellsPerSide / 6
+        val centerCubeSizeHalf = 1
         val centerCubeStart = centerIndex - centerCubeSizeHalf
         val centerCubeEnd = centerIndex + centerCubeSizeHalf
 
         xIndex in centerCubeStart..centerCubeEnd &&
                 yIndex in centerCubeStart..centerCubeEnd &&
-                zIndex in centerCubeStart..centerCubeEnd &&
-                random.nextBoolean()
+                zIndex in centerCubeStart..centerCubeEnd
 
 //        ((xIndex == centerCubeStart || xIndex == centerCubeEnd) and (
 //                (yIndex in centerCubeStart..centerCubeEnd) and
@@ -106,7 +105,7 @@ class CellAutomaton3D(
         }
     }
 
-    fun draw(pApplet: PApplet) {
+    fun draw(pApplet: PApplet, cellDrawProbability: Float = 1f) {
         val benchmarkStartMillis = nowMillis()
 
         pApplet.push()
@@ -120,13 +119,17 @@ class CellAutomaton3D(
                 -distanceToCenter
         )
 
+        if (DRAW_BOUNDING_BOX) {
+            drawBoundingBox(pApplet)
+        }
+
         forEachCell { cellValue, xIndex, yIndex, zIndex ->
-            drawCell(pApplet, cellValue, xIndex, yIndex, zIndex)
+            if (cellDrawProbability == 1f || random.nextFloat() < cellDrawProbability) {
+                drawCell(pApplet, cellValue, xIndex, yIndex, zIndex)
+            }
         }
 
         pApplet.pop()
-
-        drawBoundingBox(pApplet)
 
         if (BENCHMARK) {
             val duration = nowMillis() - benchmarkStartMillis
@@ -169,7 +172,7 @@ class CellAutomaton3D(
                 distanceToCenter / numOfCellsPerSide,
                 1f,
                 1f,
-                0.1f
+                cellValue.toFloat() / birthValue.toFloat()
         )
         pApplet.box(cellSize)
         pApplet.pop()
@@ -201,6 +204,7 @@ class CellAutomaton3D(
         private const val NEAR_DEATH_CELL_VALUE: Short = 1
         private const val DEAD_CELL_VALUE: Short = 0
         private const val DRAW_GRID = false
+        private const val DRAW_BOUNDING_BOX = false
     }
 
 }
