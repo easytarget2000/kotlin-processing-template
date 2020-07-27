@@ -1,18 +1,21 @@
 package eu.ezytaget.processing.kotlin_template.cell_automaton_3d
 
 import eu.ezytaget.processing.kotlin_template.PApplet
+import kotlin.math.exp
+import kotlin.math.pow
+import kotlin.math.sqrt
 import kotlin.random.Random
 
 class CellAutomaton3D(
         private val numOfCellsPerSide: Int = 64,
         val sideLength: Float,
         private val nearDeathSurvivalCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
-            numberOfAliveNeighbors == 2
+            numberOfAliveNeighbors in 4..7
         },
         private val birthCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
-            numberOfAliveNeighbors == 2
+            numberOfAliveNeighbors in 6..8
         },
-        private val numberOfStates: Int = 3,
+        private val numberOfStates: Short = 20,
         private val neighborCounter: NeighborCounter = MooreNeighborCounter(),
         random: Random = Random.Default
 ) {
@@ -23,20 +26,17 @@ class CellAutomaton3D(
 
     private var cells = cells { xIndex, yIndex, zIndex ->
         val centerIndex = numOfCellsPerSide / 2
-        val centerCubeSizeHalf = numOfCellsPerSide / 16
+        val centerCubeSizeHalf = 2
         val centerCubeStart = centerIndex - centerCubeSizeHalf
         val centerCubeEnd = centerIndex + centerCubeSizeHalf
 
         xIndex in centerCubeStart..centerCubeEnd &&
                 yIndex in centerCubeStart..centerCubeEnd &&
-                zIndex in centerCubeStart..centerCubeEnd &&
-                random.nextBoolean()
+                zIndex in centerCubeStart..centerCubeEnd
 
-//                random.nextBoolean()
-//                val lastIndex = numOfCellsPerSide - 1
-//                (xIndex == 0) or (xIndex == lastIndex) or
-//                        (yIndex == 0) or (yIndex == lastIndex) or
-//                        (zIndex == 0) or (zIndex == lastIndex)
+//        (xIndex == centerIndex) and
+//                (yIndex == centerIndex) and
+//                (zIndex == centerIndex)
     }
 
     private fun cells(
@@ -68,17 +68,14 @@ class CellAutomaton3D(
                     xIndex,
                     yIndex,
                     zIndex,
-                    maxCellIndex
+                    maxCellIndex,
+                    minAliveCellValue = birthValue
             )
 
-            if (cellValue == NEAR_DEATH_CELL_VALUE) {
-                if (nearDeathSurvivalCondition(numberOfAliveNeighbors)) {
-                    newCells[xIndex][yIndex][zIndex] = NEAR_DEATH_CELL_VALUE
-                }
-            } else if (cellValue == DEAD_CELL_VALUE) {
-                if (birthCondition(numberOfAliveNeighbors)) {
-                    newCells[xIndex][yIndex][zIndex] = birthValue
-                }
+            if (cellValue == NEAR_DEATH_CELL_VALUE && nearDeathSurvivalCondition(numberOfAliveNeighbors)) {
+                newCells[xIndex][yIndex][zIndex] = NEAR_DEATH_CELL_VALUE
+            } else if (cellValue == DEAD_CELL_VALUE && birthCondition(numberOfAliveNeighbors)) {
+                newCells[xIndex][yIndex][zIndex] = birthValue
             } else {
                 newCells[xIndex][yIndex][zIndex] = (cellValue - 1).toShort()
             }
@@ -96,8 +93,8 @@ class CellAutomaton3D(
         val benchmarkStartMillis = nowMillis()
 
         pApplet.push()
-        pApplet.noFill()
-        pApplet.stroke(1f, 1f, 1f, 1f)
+        pApplet.noStroke()
+//        pApplet.stroke(1f, 1f, 1f, 1f)
 
         val distanceToCenter = (cells.size / 2f) * cellSize
         pApplet.translate(
@@ -105,6 +102,7 @@ class CellAutomaton3D(
                 -distanceToCenter,
                 -distanceToCenter
         )
+//        pApplet.strokeWeight(4f)
 
         forEachCell { cellValue, xIndex, yIndex, zIndex ->
             drawCell(pApplet, cellValue, xIndex, yIndex, zIndex)
@@ -137,13 +135,20 @@ class CellAutomaton3D(
                 yIndex * cellSize,
                 zIndex * cellSize
         )
-        pApplet.fill(
-                xIndex.toFloat() / numOfCellsPerSide.toFloat(),
-                cellValue.toFloat() / numberOfStates.toFloat(),
-                (yIndex * zIndex).toFloat() / numOfCellsPerSide.toFloat(),
-                1f
+        val centerIndex = numOfCellsPerSide / 2
+        val distanceToCenter = sqrt(
+                (xIndex - centerIndex).toFloat().pow(2f) +
+                        (yIndex - centerIndex).toFloat().pow(2f) +
+                        (zIndex - centerIndex).toFloat().pow(2f)
         )
-        pApplet.noStroke()
+
+        pApplet.fill(
+                distanceToCenter / numOfCellsPerSide,
+                1f,
+                1f,
+                cellValue.toFloat() / numberOfStates.toFloat()
+        )
+//        pApplet.point(0f, 0f)
         pApplet.box(cellSize)
         pApplet.pop()
     }

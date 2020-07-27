@@ -31,7 +31,6 @@ class PApplet : processing.core.PApplet() {
         frameRate(FRAME_RATE)
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
-        lights()
         frameRate(FRAME_RATE)
         clapper.start()
         initAutomaton()
@@ -52,9 +51,10 @@ class PApplet : processing.core.PApplet() {
         updateRotations()
 //        updateClapper()
 
-        if (frameCount % 2 == 0) {
+        if (frameCount % 8 == 0) {
             cellAutomaton3D.update()
         }
+        lights()
         cellAutomaton3D.draw(pApplet = this)
 
         if (CLICK_TO_DRAW) {
