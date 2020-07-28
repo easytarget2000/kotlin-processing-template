@@ -1,13 +1,15 @@
 package eu.ezytaget.processing.kotlin_template
 
-import eu.ezytaget.processing.kotlin_template.cell_automaton_3d.CellAutomaton3D
-import eu.ezytaget.processing.kotlin_template.cell_automaton_3d.MooreNeighborCounter
-import eu.ezytaget.processing.kotlin_template.cell_automaton_3d.VonNeumannNeighborCounter
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
+import eu.ezytaget.processing.kotlin_template.tesseract.MatrixCalculator.matmul
+import eu.ezytaget.processing.kotlin_template.tesseract.MatrixCalculator.matmul4
+import eu.ezytaget.processing.kotlin_template.tesseract.P4Vector
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
+import processing.core.PVector
 import kotlin.random.Random
+
 
 class PApplet : processing.core.PApplet() {
 
@@ -21,8 +23,10 @@ class PApplet : processing.core.PApplet() {
     private var zRotation = 1f
     private var xRotationVelocity = 0.021f
     private var zRotationVelocity = 0.002f
-    private lateinit var cellAutomaton3D: CellAutomaton3D
     private var automatonUpdateDelay = 16
+
+    private var points = arrayOfNulls<P4Vector>(16)
+    private var angle = 0f
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -38,9 +42,24 @@ class PApplet : processing.core.PApplet() {
         clearFrame()
         frameRate(FRAME_RATE)
         clapper.start()
-        initAutomaton()
-
         setPerspective()
+
+        points[0] = P4Vector(-1f, -1f, -1f, 1f)
+        points[1] = P4Vector(1f, -1f, -1f, 1f)
+        points[2] = P4Vector(1f, 1f, -1f, 1f)
+        points[3] = P4Vector(-1f, 1f, -1f, 1f)
+        points[4] = P4Vector(-1f, -1f, 1f, 1f)
+        points[5] = P4Vector(1f, -1f, 1f, 1f)
+        points[6] = P4Vector(1f, 1f, 1f, 1f)
+        points[7] = P4Vector(-1f, 1f, 1f, 1f)
+        points[8] = P4Vector(-1f, -1f, -1f, -1f)
+        points[9] = P4Vector(1f, -1f, -1f, -1f)
+        points[10] = P4Vector(1f, 1f, -1f, -1f)
+        points[11] = P4Vector(-1f, 1f, -1f, -1f)
+        points[12] = P4Vector(-1f, -1f, 1f, -1f)
+        points[13] = P4Vector(1f, -1f, 1f, -1f)
+        points[14] = P4Vector(1f, 1f, 1f, -1f)
+        points[15] = P4Vector(-1f, 1f, 1f, -1f)
     }
 
     override fun draw() {
@@ -56,26 +75,77 @@ class PApplet : processing.core.PApplet() {
             drawFrameRate()
         }
 
-        translate(width / 2f, height / 2f)
-        updateRotations()
+//        translate(width / 2f, height / 2f)
+//        updateRotations()
         updateClapper()
-
-//        if (frameCount % automatonUpdateDelay == 0) {
-//            cellAutomaton3D.update()
-//        }
+        drawTesseract()
 
         lights()
-        cellAutomaton3D.draw(pApplet = this)
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
         }
     }
 
+    private fun drawTesseract() {
+        background(0)
+        translate(width / 2.toFloat(), height / 2.toFloat())
+        rotateX(-PConstants.PI / 2)
+
+
+
+        val projected3d = points.mapIndexed { index, v ->
+            val v = v!!
+
+            val rotationXY = arrayOf(
+                    floatArrayOf(cos(angle), -sin(angle), 0f, 0f),
+                    floatArrayOf(sin(angle), cos(angle), 0f, 0f),
+                    floatArrayOf(0f, 0f, 1f, 0f),
+                    floatArrayOf(0f, 0f, 0f, 1f)
+            )
+            val rotationZW = arrayOf(
+                    floatArrayOf(1f, 0f, 0f, 0f),
+                    floatArrayOf(0f, 1f, 0f, 0f),
+                    floatArrayOf(0f, 0f, cos(angle), -sin(angle)),
+                    floatArrayOf(0f, 0f, sin(angle), cos(angle))
+            )
+
+            var rotated: P4Vector = matmul4(rotationXY, v)
+            rotated = matmul4(rotationZW, rotated)
+            val distance = 2f
+            val w = 1 / (distance - rotated.w)
+            val projection = arrayOf(floatArrayOf(w, 0f, 0f, 0f), floatArrayOf(0f, w, 0f, 0f), floatArrayOf(0f, 0f, w, 0f))
+            val projected: PVector = matmul(projection, rotated)
+            projected.mult(width / 8.toFloat())
+            stroke(1f, 1f)
+            strokeWeight(32f)
+            noFill()
+            point(projected.x, projected.y, projected.z)
+
+            projected
+        }
+
+        // Connecting
+        for (i in 0..3) {
+            connect(0, i, (i + 1) % 4, projected3d)
+            connect(0, i + 4, (i + 1) % 4 + 4, projected3d)
+            connect(0, i, i + 4, projected3d)
+        }
+        for (i in 0..3) {
+            connect(8, i, (i + 1) % 4, projected3d)
+            connect(8, i + 4, (i + 1) % 4 + 4, projected3d)
+            connect(8, i, i + 4, projected3d)
+        }
+        for (i in 0..7) {
+            connect(0, i, i + 8, projected3d)
+        }
+
+        //angle = map(mouseX, 0, width, 0, TWO_PI);
+        angle += 0.02f
+    }
+
     override fun keyPressed() {
         when (key) {
-            'x' ->
-                initAutomaton()
             ' ' ->
                 clapper.tapBpm()
         }
@@ -84,23 +154,6 @@ class PApplet : processing.core.PApplet() {
     /*
     Implementations
      */
-
-    private fun initAutomaton() {
-        val automatonSize = min(width, height) * 0.9f
-
-        val neighborCounter = if (random(1f) > 0.5f) {
-            VonNeumannNeighborCounter()
-        } else {
-            MooreNeighborCounter()
-        }
-
-        cellAutomaton3D = CellAutomaton3D(
-                numOfCellsPerSide = random(24f, 48f).toInt(),
-                sideLength = automatonSize,
-                neighborCounter = neighborCounter
-        )
-        automatonUpdateDelay = random(8f, 32f).toInt()
-    }
 
     private fun setPerspective() {
         val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
@@ -133,13 +186,20 @@ class PApplet : processing.core.PApplet() {
         rotateX(xRotation)
     }
 
+    private fun connect(offset: Int, i: Int, j: Int, points: List<PVector>) {
+        val a = points[i + offset]
+        val b = points[j + offset]
+        strokeWeight(4f)
+        stroke(1f)
+        line(a.x, a.y, a.z, b.x, b.y, b.z)
+    }
+
     private fun updateClapper() {
         val clapperResult = clapper.update()
 
         randomSeed(System.currentTimeMillis())
 
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-            cellAutomaton3D.update()
         }
 
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
@@ -150,7 +210,6 @@ class PApplet : processing.core.PApplet() {
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
             maybe(probability = 0.2f) {
-                initAutomaton()
             }
             maybe {
                 clearFrame()
@@ -190,7 +249,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     companion object {
-        private const val CLICK_TO_DRAW = false         
+        private const val CLICK_TO_DRAW = false
         private const val FULL_SCREEN = true
         private const val WIDTH = 1400
         private const val HEIGHT = 900
