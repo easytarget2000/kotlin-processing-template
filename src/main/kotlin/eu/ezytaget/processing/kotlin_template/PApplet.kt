@@ -190,8 +190,8 @@ class PApplet : processing.core.PApplet() {
     }
 
     companion object {
-        private const val CLICK_TO_DRAW = false
-        private const val FULL_SCREEN = false
+        private const val CLICK_TO_DRAW = false         
+        private const val FULL_SCREEN = true
         private const val WIDTH = 1400
         private const val HEIGHT = 900
         private const val RENDERER = PConstants.P3D

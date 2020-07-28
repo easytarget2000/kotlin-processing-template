@@ -175,7 +175,7 @@ class CellAutomaton3D(
                 distanceToCenter / centerIndex,
                 1f,
                 1f,
-                cellValue.toFloat() / birthValue.toFloat()
+                cellValue.toFloat() / (birthValue * 2f)
         )
         pApplet.box(cellSize)
         pApplet.pop()
