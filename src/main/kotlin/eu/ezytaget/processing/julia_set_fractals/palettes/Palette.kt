@@ -1,7 +1,6 @@
-package eu.ezytaget.processing.kotlin_template.palettes
+package eu.ezytaget.processing.julia_set_fractals.palettes
 
 import kotlin.random.Random
-import kotlin.random.nextUInt
 
 abstract class Palette {
 

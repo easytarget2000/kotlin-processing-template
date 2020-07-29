@@ -1,6 +1,6 @@
-package eu.ezytaget.processing.kotlin_template
+package eu.ezytaget.processing.julia_set_fractals
 
-import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
+import eu.ezytaget.processing.julia_set_fractals.palettes.DuskPalette
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants

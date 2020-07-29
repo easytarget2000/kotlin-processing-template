@@ -1,4 +1,4 @@
-package eu.ezytaget.processing.kotlin_template.palettes
+package eu.ezytaget.processing.julia_set_fractals.palettes
 
 class DuskPalette : Palette() {
 
