@@ -9,20 +9,21 @@ package eu.ezytaget.processing.julia_set_fractals
 import kotlin.math.cos
 import kotlin.math.sin
 
-class JuliaSet(angle: Float = 0f, private val angleVelocity: Float = 0.1f) {
+class JuliaSet(
+        val scaleWidth: Float,
+        val scaleHeight: Float,
+        private var angle: Float = 0f,
+        private val angleVelocity: Float = 0.05f
+) {
 
-    private var angle: Float = angle
-
-    val ca: Float
+    val cA: Float
         get() = cos(angle * 3.213f)
 
-    val cb: Float
+    val cB: Float
         get() = sin(angle)
-
 
     fun update() {
         angle += angleVelocity
     }
-
 
 }

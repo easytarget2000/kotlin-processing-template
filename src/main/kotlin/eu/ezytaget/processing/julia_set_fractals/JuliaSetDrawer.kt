@@ -6,84 +6,91 @@
 
 package eu.ezytaget.processing.julia_set_fractals
 
-import kotlin.math.sqrt
+class JuliaSetDrawer(var maxColorValue: Float = 1f) {
 
-class JuliaSetDrawer {
+    var maxIterationsPerPoint = 32
+    var minIterationsPerPointToDraw = 16
+    var maxIterationsPerPointToDraw = maxIterationsPerPoint - 1
+    var maxDivergence = 4f
+    var hue = 0f
+    var hueVelocity = 0.01f
+    var saturation = maxColorValue
+    var brightness = maxColorValue
+    var alpha = maxColorValue * 0.9f
 
-    var maxNumberOfIterationsPerPoint = 32
-
-    fun draw(juliaSet: JuliaSet, pApplet: PApplet) {
-
-        val width = pApplet.width
-        val height = pApplet.height
-        val widthF = width.toFloat()
-        val heightF = height.toFloat()
-
+    fun draw(juliaSet: JuliaSet, pApplet: PApplet, pixelStepSize: Int = 1) {
         // Establish a range of values on the complex plane
         // A different range will allow us to "zoom" in or out on the fractal
 
-        // It all starts with the width, try higher or lower values
-        //float w = abs(sin(angle))*5
-        val w = 5f
-        val h = (w * heightF) / widthF
+        val scaleWidth = juliaSet.scaleWidth / pixelStepSize.toFloat()
+        val scaleHeight = juliaSet.scaleHeight / pixelStepSize.toFloat()
 
         // Start at negative half the width and height
-        val startX = -w / 2f
-        val startY = -h / 2f
+        val startX = -scaleWidth / 2f
+        val startY = -scaleHeight / 2f
 
         // Make sure we can write to the pixels[] array.
         // Only need to do this once since we don't do any other drawing.
         pApplet.loadPixels()
 
         // x goes from xmin to xmax
-        val xmax = startX + w
+        val maxX = startX + scaleWidth
         // y goes from ymin to ymax
-        val ymax = startY + h
+        val maxY = startY + scaleHeight
 
         // Calculate amount we increment x,y for each pixel
-        val dx = (xmax - startX) / width
-        val dy = (ymax - startY) / height
+        val width = pApplet.width
+        val height = pApplet.height
+        val scaleXDelta = (maxX - startX) / width
+        val scaleYDelta = (maxY - startY) / height
 
         // Start y
         var y = startY
-        val ca = juliaSet.ca
-        val cb = juliaSet.cb
+        val ca = juliaSet.cA
+        val cb = juliaSet.cB
 
-        (0 until height).forEach { pixelY ->
+        (0 until height step pixelStepSize).forEach { pixelY ->
             var x = startX
-            (0 until width).forEach { pixelX ->
+            (0 until width step pixelStepSize).forEach { pixelX ->
+                var a = x
+                var b = y
+                var n = 0
+                while (n < maxIterationsPerPoint) {
+                    val aSquared = a * a
+                    val bSquared = b * b
 
-            // Now we test, as we iterate z = z^2 + cm does z tend towards infinity?
-            var a = x
-            var b = y
-            var n = 0
-            while (n < maxNumberOfIterationsPerPoint) {
-                val aa = a * a
-                val bb = b * b
-                // Infinity in our finite world is simple, let's just consider it 16
-                if (aa + bb > 4.0) {
-                    break  // Bail
+                    if (aSquared + bSquared > maxDivergence) {
+                        break
+                    }
+
+                    val twoAB = 2f * a * b
+                    a = aSquared - bSquared + ca
+                    b = twoAB + cb
+                    n++
                 }
-                val twoab = 2f * a * b
-                a = aa - bb + ca
-                b = twoab + cb
-                n++
+
+                if (n in minIterationsPerPointToDraw..maxIterationsPerPointToDraw) {
+//                    val hue = sqrt(n.toFloat() / maxIterationsPerPoint)
+                    setPixel(
+                            pApplet,
+                            width,
+                            pixelX,
+                            pixelY,
+                            pApplet.color(hue, saturation, brightness, alpha)
+                    )
+                }
+
+                x += scaleXDelta
             }
 
-            // We color each pixel based on how long it takes to get to infinity
-            // If we never got there, let's pick the color black
-            if (n == maxNumberOfIterationsPerPoint) {
-//                pApplet.pixels[i+j*width] = pApplet.color(0)
-            } else {
-                // Gosh, we could make fancy colors here if we wanted
-                val hue = sqrt(n.toFloat() / maxNumberOfIterationsPerPoint)
-                setPixel(pApplet, width, pixelX, pixelY, pApplet.color(hue, 1f, 0.75f))
-            }
-            x += dx
-        }
-            y += dy
+            y += scaleYDelta
         }
         pApplet.updatePixels()
+
+        hue += hueVelocity
+        if (hue > maxColorValue) {
+            hue = 0f
+        }
     }
 
     companion object {
