@@ -19,6 +19,7 @@ class PApplet : processing.core.PApplet() {
     private var xRotationVelocity = 0.021f
     private var zRotationVelocity = 0.002f
     private var automatonUpdateDelay = 16
+    private var juliaSet = JuliaSet()
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -51,9 +52,10 @@ class PApplet : processing.core.PApplet() {
             drawFrameRate()
         }
 
-        translate(width / 2f, height / 2f)
-        updateRotations()
-        updateClapper()
+//        translate(width / 2f, height / 2f)
+        JuliaSetDrawer.draw(juliaSet, pApplet = this)
+//        updateRotations()
+//        updateClapper()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -154,6 +156,8 @@ class PApplet : processing.core.PApplet() {
     private fun setRandomZRotationVelocity() {
         zRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
     }
+
+
 
     companion object {
         private const val CLICK_TO_DRAW = false
