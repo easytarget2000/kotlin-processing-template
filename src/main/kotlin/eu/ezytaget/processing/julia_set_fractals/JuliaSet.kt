@@ -1,3 +1,9 @@
+// Based on Julia Set by
+// The Coding Train / Daniel Shiffman
+// https://thecodingtrain.com/CodingChallenges/022-juliaset.html
+// https://youtu.be/fAsaSkmbF5s
+// https://editor.p5js.org/codingtrain/sketches/G6qbMmaI
+
 package eu.ezytaget.processing.julia_set_fractals
 
 import kotlin.math.cos
