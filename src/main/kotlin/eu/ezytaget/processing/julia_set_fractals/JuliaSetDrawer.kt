@@ -8,7 +8,9 @@ package eu.ezytaget.processing.julia_set_fractals
 
 import kotlin.math.sqrt
 
-object JuliaSetDrawer {
+class JuliaSetDrawer {
+
+    var maxNumberOfIterationsPerPoint = 32
 
     fun draw(juliaSet: JuliaSet, pApplet: PApplet) {
 
@@ -33,9 +35,6 @@ object JuliaSetDrawer {
         // Only need to do this once since we don't do any other drawing.
         pApplet.loadPixels()
 
-        // Maximum number of iterations for each point on the complex plane
-        val maxiterations = 100
-
         // x goes from xmin to xmax
         val xmax = startX + w
         // y goes from ymin to ymax
@@ -50,16 +49,15 @@ object JuliaSetDrawer {
         val ca = juliaSet.ca
         val cb = juliaSet.cb
 
-        (0 until height).forEach { j ->
-
+        (0 until height).forEach { pixelY ->
             var x = startX
-            (0 until width).forEach { i ->
+            (0 until width).forEach { pixelX ->
 
             // Now we test, as we iterate z = z^2 + cm does z tend towards infinity?
             var a = x
             var b = y
             var n = 0
-            while (n < maxiterations) {
+            while (n < maxNumberOfIterationsPerPoint) {
                 val aa = a * a
                 val bb = b * b
                 // Infinity in our finite world is simple, let's just consider it 16
@@ -74,17 +72,23 @@ object JuliaSetDrawer {
 
             // We color each pixel based on how long it takes to get to infinity
             // If we never got there, let's pick the color black
-            if (n == maxiterations) {
-                pApplet.pixels[i+j*width] = pApplet.color(0)
+            if (n == maxNumberOfIterationsPerPoint) {
+//                pApplet.pixels[i+j*width] = pApplet.color(0)
             } else {
                 // Gosh, we could make fancy colors here if we wanted
-                val hu = sqrt(n.toFloat() / maxiterations)
-                pApplet.pixels[i+j*width] = pApplet.color(hu, 1f, 0.75f)
+                val hue = sqrt(n.toFloat() / maxNumberOfIterationsPerPoint)
+                setPixel(pApplet, width, pixelX, pixelY, pApplet.color(hue, 1f, 0.75f))
             }
             x += dx
         }
             y += dy
         }
         pApplet.updatePixels()
+    }
+
+    companion object {
+        private fun setPixel(pApplet: PApplet, width: Int, x: Int, y: Int, color: Int) {
+            pApplet.pixels[x + (y * width)] = color
+        }
     }
 }
