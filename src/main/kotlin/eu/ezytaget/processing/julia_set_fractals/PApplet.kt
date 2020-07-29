@@ -61,7 +61,7 @@ class PApplet : processing.core.PApplet() {
         juliaSetDrawer.draw(juliaSet, pApplet = this)
 
 //        updateRotations()
-//        updateClapper()
+        updateClapper()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -80,13 +80,16 @@ class PApplet : processing.core.PApplet() {
      */
 
     private fun initJuliaSet() {
-        val scaleWidth = 2f//random.nextDouble(from = 2.0, until = 5.0).toFloat()
+        val scaleWidth = random.nextFloat(from = 2f, until = 3f)
         val scaleHeight = (scaleWidth * height.toFloat()) / width.toFloat()
-        val angleVelocity = random(0.01f, 0.1f)
+        val angleVelocity = random.nextFloat(from = 0.01f, until = 0.1f)
+        val aAngleFactor = random.nextFloat(from = -10f, until = 10f)
+
         juliaSet = JuliaSet(
                 scaleWidth,
                 scaleHeight,
-                angleVelocity
+                angleVelocity,
+                aAngleFactor
         )
     }
 
@@ -130,25 +133,25 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-            maybe(probability = 0.9f) {
+            random.maybe(probability = 0.9f) {
                 bounce()
             }
         }
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
-            maybe(probability = 0.2f) {
+            random.maybe(probability = 0.2f) {
                 initJuliaSet()
             }
-            maybe {
+            random.maybe {
                 clearFrame()
             }
-            maybe {
+            random.maybe {
                 setRandomBackgroundAlpha()
             }
-            maybe {
+            random.maybe {
                 setRandomXRotationVelocity()
             }
-            maybe {
+            random.maybe {
                 setRandomZRotationVelocity()
             }
         }
@@ -163,7 +166,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setRandomBackgroundAlpha() {
-        if (!maybe { backgroundAlpha = random(MAX_COLOR_VALUE / 64f) }) {
+        if (!random.maybe { backgroundAlpha = random(MAX_COLOR_VALUE / 64f) }) {
             backgroundAlpha = 1f
         }
     }

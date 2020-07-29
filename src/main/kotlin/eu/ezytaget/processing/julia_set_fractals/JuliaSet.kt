@@ -13,11 +13,12 @@ class JuliaSet(
         val scaleWidth: Float,
         val scaleHeight: Float,
         private var angle: Float = 0f,
-        private val angleVelocity: Float = 0.05f
+        private val angleVelocity: Float = 0.05f,
+        private val aAngleFactor: Float = -2.1f
 ) {
 
     val cA: Float
-        get() = cos(angle * 3.213f)
+        get() = cos(angle * aAngleFactor)
 
     val cB: Float
         get() = sin(angle)

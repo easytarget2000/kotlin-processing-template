@@ -8,15 +8,15 @@ package eu.ezytaget.processing.julia_set_fractals
 
 class JuliaSetDrawer(var maxColorValue: Float = 1f) {
 
-    var maxIterationsPerPoint = 32
-    var minIterationsPerPointToDraw = 16
+    var maxIterationsPerPoint = 16
+    var minIterationsPerPointToDraw = maxIterationsPerPoint / 2
     var maxIterationsPerPointToDraw = maxIterationsPerPoint - 1
     var maxDivergence = 4f
     var hue = 0f
     var hueVelocity = 0.01f
-    var saturation = maxColorValue
-    var brightness = maxColorValue
-    var alpha = maxColorValue * 0.9f
+    var saturation = maxColorValue * 0.66f
+    var brightness = maxColorValue * 0.7f
+    var alpha = maxColorValue * 0.8f
 
     fun draw(juliaSet: JuliaSet, pApplet: PApplet, pixelStepSize: Int = 1) {
         // Establish a range of values on the complex plane
