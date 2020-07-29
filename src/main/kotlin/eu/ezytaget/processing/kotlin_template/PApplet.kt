@@ -1,8 +1,5 @@
 package eu.ezytaget.processing.kotlin_template
 
-import eu.ezytaget.processing.kotlin_template.cell_automaton_3d.CellAutomaton3D
-import eu.ezytaget.processing.kotlin_template.cell_automaton_3d.MooreNeighborCounter
-import eu.ezytaget.processing.kotlin_template.cell_automaton_3d.VonNeumannNeighborCounter
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
@@ -21,7 +18,6 @@ class PApplet : processing.core.PApplet() {
     private var zRotation = 1f
     private var xRotationVelocity = 0.021f
     private var zRotationVelocity = 0.002f
-    private lateinit var cellAutomaton3D: CellAutomaton3D
     private var automatonUpdateDelay = 16
 
     override fun settings() {
@@ -38,7 +34,6 @@ class PApplet : processing.core.PApplet() {
         clearFrame()
         frameRate(FRAME_RATE)
         clapper.start()
-        initAutomaton()
 
         setPerspective()
     }
@@ -60,13 +55,6 @@ class PApplet : processing.core.PApplet() {
         updateRotations()
         updateClapper()
 
-//        if (frameCount % automatonUpdateDelay == 0) {
-//            cellAutomaton3D.update()
-//        }
-
-        lights()
-        cellAutomaton3D.draw(pApplet = this)
-
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
         }
@@ -74,8 +62,6 @@ class PApplet : processing.core.PApplet() {
 
     override fun keyPressed() {
         when (key) {
-            'x' ->
-                initAutomaton()
             ' ' ->
                 clapper.tapBpm()
         }
@@ -84,23 +70,6 @@ class PApplet : processing.core.PApplet() {
     /*
     Implementations
      */
-
-    private fun initAutomaton() {
-        val automatonSize = min(width, height) * 0.9f
-
-        val neighborCounter = if (random(1f) > 0.5f) {
-            VonNeumannNeighborCounter()
-        } else {
-            MooreNeighborCounter()
-        }
-
-        cellAutomaton3D = CellAutomaton3D(
-                numOfCellsPerSide = random(24f, 48f).toInt(),
-                sideLength = automatonSize,
-                neighborCounter = neighborCounter
-        )
-        automatonUpdateDelay = random(8f, 32f).toInt()
-    }
 
     private fun setPerspective() {
         val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
@@ -139,7 +108,6 @@ class PApplet : processing.core.PApplet() {
         randomSeed(System.currentTimeMillis())
 
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-            cellAutomaton3D.update()
         }
 
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
@@ -149,9 +117,7 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
-            maybe(probability = 0.2f) {
-                initAutomaton()
-            }
+            maybe(probability = 0.2f) { }
             maybe {
                 clearFrame()
             }
@@ -190,19 +156,16 @@ class PApplet : processing.core.PApplet() {
     }
 
     companion object {
-        private const val CLICK_TO_DRAW = false         
+        private const val CLICK_TO_DRAW = false
         private const val FULL_SCREEN = true
         private const val WIDTH = 1400
         private const val HEIGHT = 900
-        private const val RENDERER = PConstants.P3D
+        private const val RENDERER = PConstants.P2D
         private const val COLOR_MODE = PConstants.HSB
         private const val MAX_COLOR_VALUE = 1f
         private const val FRAME_RATE = 60f
         private const val DRAW_BACKGROUND_ON_DRAW = false
         private const val DRAW_FRAME_RATE = false
-        private const val DESIRED_RADIUS_FACTOR = 1f
-        private const val RADIUS_FACTOR_TOLERANCE = 0.01f
-        private const val RADIUS_FACTOR_PULL = 0.01f
         private const val MAX_ROTATION_VELOCITY = 0.03f
 
         fun runInstance() {
