@@ -12,6 +12,8 @@ import kotlin.math.sin
 class JuliaSet(
         val scaleWidth: Float,
         val scaleHeight: Float,
+        private var cAFactor: Float = 1f,
+        private var cBFactor: Float = -1f,
         private var angle: Float = 0f,
         private val angleVelocity: Float = 0.05f,
         private val aAngleFactor: Float = -2.1f

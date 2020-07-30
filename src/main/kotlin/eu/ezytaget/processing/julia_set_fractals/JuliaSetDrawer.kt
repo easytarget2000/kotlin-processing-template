@@ -12,8 +12,10 @@ class JuliaSetDrawer(var maxColorValue: Float = 1f) {
     var minIterationsPerPointToDraw = maxIterationsPerPoint / 2
     var maxIterationsPerPointToDraw = maxIterationsPerPoint - 1
     var maxDivergence = 4f
-    var hue = 0f
+    var hue = 0.9f
     var hueVelocity = 0.01f
+    var maxHue = maxColorValue
+    var minHue = maxColorValue * 0.7f
     var saturation = maxColorValue * 0.66f
     var brightness = maxColorValue * 0.7f
     var alpha = maxColorValue * 0.8f
@@ -88,8 +90,8 @@ class JuliaSetDrawer(var maxColorValue: Float = 1f) {
         pApplet.updatePixels()
 
         hue += hueVelocity
-        if (hue > maxColorValue) {
-            hue = 0f
+        if (hue > maxHue) {
+            hue = minHue
         }
     }
 

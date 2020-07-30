@@ -35,6 +35,7 @@ class PApplet : processing.core.PApplet() {
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
         frameRate(FRAME_RATE)
+        clapper.bpm = 130f
         clapper.start()
 
         initJuliaSet()
@@ -70,8 +71,12 @@ class PApplet : processing.core.PApplet() {
 
     override fun keyPressed() {
         when (key) {
-            ' ' ->
+            'x' -> {
+                clearAll()
+            }
+            ' ' -> {
                 clapper.tapBpm()
+            }
         }
     }
 
@@ -80,16 +85,18 @@ class PApplet : processing.core.PApplet() {
      */
 
     private fun initJuliaSet() {
-        val scaleWidth = random.nextFloat(from = 2f, until = 3f)
+        val scaleWidth = random.nextFloat(from = 1.5f, until = 2.5f)
         val scaleHeight = (scaleWidth * height.toFloat()) / width.toFloat()
-        val angleVelocity = random.nextFloat(from = 0.01f, until = 0.1f)
-        val aAngleFactor = random.nextFloat(from = -10f, until = 10f)
+        val angle = random.nextFloat(from = 0f, until = PConstants.TWO_PI)
+        val angleVelocity = random.nextFloat(from = -0.05f, until = 0.1f)
+        val aAngleFactor = random.nextFloat(from = -2f, until = 2f)
 
         juliaSet = JuliaSet(
-                scaleWidth,
-                scaleHeight,
-                angleVelocity,
-                aAngleFactor
+                scaleWidth = scaleWidth,
+                scaleHeight = scaleHeight,
+                angle = angle,
+                angleVelocity = angleVelocity,
+                aAngleFactor = aAngleFactor
         )
     }
 
@@ -101,6 +108,11 @@ class PApplet : processing.core.PApplet() {
 //                cameraZ / 10f,
 //                cameraZ * 30f
 //        )
+    }
+
+    private fun clearAll() {
+        initJuliaSet()
+        clearFrame()
     }
 
     private fun clearFrame() {
@@ -156,8 +168,8 @@ class PApplet : processing.core.PApplet() {
             }
         }
 
-        if (clapperResult[BeatInterval.SixteenWhole]?.didChange == true) {
-            background(0)
+        if (clapperResult[BeatInterval.EightWhole]?.didChange == true) {
+            clearAll()
         }
     }
 
