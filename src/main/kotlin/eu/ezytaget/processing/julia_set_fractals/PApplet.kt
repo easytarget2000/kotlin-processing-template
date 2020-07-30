@@ -85,10 +85,10 @@ class PApplet : processing.core.PApplet() {
      */
 
     private fun initJuliaSet() {
-        val scaleWidth = random.nextFloat(from = 1.5f, until = 2.5f)
+        val scaleWidth = random.nextFloat(from = 2f, until = 6f)
         val scaleHeight = (scaleWidth * height.toFloat()) / width.toFloat()
         val angle = random.nextFloat(from = 0f, until = PConstants.TWO_PI)
-        val angleVelocity = random.nextFloat(from = -0.05f, until = 0.1f)
+        val angleVelocity = random.nextFloat(from = -0.5f, until = 0.1f)
         val aAngleFactor = random.nextFloat(from = -2f, until = 2f)
 
         juliaSet = JuliaSet(
