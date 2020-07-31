@@ -1,4 +1,4 @@
-package eu.ezytaget.processing.kotlin_template.palettes
+package eu.ezytaget.processing.flowfield.palettes
 
 class DuskPalette : Palette() {
 

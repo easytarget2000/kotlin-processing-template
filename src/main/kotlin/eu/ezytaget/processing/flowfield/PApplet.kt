@@ -1,9 +1,10 @@
-package eu.ezytaget.processing.kotlin_template
+package eu.ezytaget.processing.flowfield
 
-import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
+import eu.ezytaget.processing.flowfield.palettes.DuskPalette
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
+import processing.core.PVector
 import kotlin.random.Random
 
 class PApplet : processing.core.PApplet() {
@@ -18,6 +19,8 @@ class PApplet : processing.core.PApplet() {
     private var zRotation = 1f
     private var xRotationVelocity = 0.021f
     private var zRotationVelocity = 0.002f
+    private lateinit var flowField: FlowField
+    private lateinit var particles: List<Particle>
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -33,6 +36,8 @@ class PApplet : processing.core.PApplet() {
         clearFrame()
         frameRate(FRAME_RATE)
         clapper.start()
+        initFlowField()
+        initParticles()
 
         setPerspective()
     }
@@ -54,6 +59,12 @@ class PApplet : processing.core.PApplet() {
         updateRotations()
         updateClapper()
 
+        flowField.update(pApplet = this)
+        particles.forEach {
+            it.update(endX = width.toFloat(), endY = height.toFloat(), flowField = flowField)
+            it.show(pApplet = this)
+        }
+
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
         }
@@ -70,6 +81,22 @@ class PApplet : processing.core.PApplet() {
     Implementations
      */
 
+    private fun initFlowField() {
+        flowField = FlowField(
+                width,
+                height,
+                scale = 10f
+        )
+    }
+
+    private fun initParticles() {
+        val numberOfParticles = 1000
+        particles = (0 until numberOfParticles).map {
+            val particleStartPosition = PVector.random2D()
+            val particleMaxSpeed = random.nextFloat(from = 2f, until =  8f)
+            Particle(particleStartPosition, particleMaxSpeed)
+        }
+    }
 
     private fun setPerspective() {
         val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
@@ -156,11 +183,11 @@ class PApplet : processing.core.PApplet() {
     }
 
     companion object {
-        private const val CLICK_TO_DRAW = false         
+        private const val CLICK_TO_DRAW = false
         private const val FULL_SCREEN = true
         private const val WIDTH = 1400
         private const val HEIGHT = 900
-        private const val RENDERER = PConstants.P3D
+        private const val RENDERER = PConstants.P2D
         private const val COLOR_MODE = PConstants.HSB
         private const val MAX_COLOR_VALUE = 1f
         private const val FRAME_RATE = 60f
