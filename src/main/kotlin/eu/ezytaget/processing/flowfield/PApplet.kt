@@ -21,6 +21,7 @@ class PApplet : processing.core.PApplet() {
     private var zRotationVelocity = 0.002f
     private lateinit var flowField: FlowField
     private lateinit var particles: List<Particle>
+    private val numberOfParticles = 10_000
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -55,8 +56,8 @@ class PApplet : processing.core.PApplet() {
             drawFrameRate()
         }
 
-        translate(width / 2f, height / 2f)
-        updateRotations()
+//        translate(width / 2f, height / 2f)
+//        updateRotations()
         updateClapper()
 
         flowField.update(pApplet = this)
@@ -85,15 +86,21 @@ class PApplet : processing.core.PApplet() {
         flowField = FlowField(
                 width,
                 height,
-                scale = 10f
+                scale = 40f
         )
     }
 
     private fun initParticles() {
-        val numberOfParticles = 1000
+        val minX = 0f
+        val minY = 0f
+        val maxX = width.toFloat()
+        val maxY = height.toFloat()
         particles = (0 until numberOfParticles).map {
-            val particleStartPosition = PVector.random2D()
-            val particleMaxSpeed = random.nextFloat(from = 2f, until =  8f)
+            val particleStartPosition = PVector(
+                    random.nextFloat(from = minX, until = maxX),
+                    random.nextFloat(from = minY, until = maxY)
+            )
+            val particleMaxSpeed = random.nextFloat(from = 2f, until = 8f)
             Particle(particleStartPosition, particleMaxSpeed)
         }
     }
@@ -132,22 +139,20 @@ class PApplet : processing.core.PApplet() {
     private fun updateClapper() {
         val clapperResult = clapper.update()
 
-        randomSeed(System.currentTimeMillis())
-
-        if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-        }
-
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
             random.maybe(probability = 0.9f) {
-                bounce()
+                clearFrame()
             }
         }
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
-            random.maybe(probability = 0.2f) {}
-            random.maybe {
-                clearFrame()
+            random.maybe(probability = 0.2f) {
+                initFlowField()
             }
+            random.maybe(probability = 0.2f) {
+                initParticles()
+            }
+
             random.maybe {
                 setRandomBackgroundAlpha()
             }
@@ -169,7 +174,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setRandomBackgroundAlpha() {
-        if (!maybe { backgroundAlpha = random(MAX_COLOR_VALUE / 64f) }) {
+        if (!random.maybe { backgroundAlpha = random(MAX_COLOR_VALUE / 64f) }) {
             backgroundAlpha = 1f
         }
     }
