@@ -21,7 +21,7 @@ class PApplet : processing.core.PApplet() {
     private var zRotationVelocity = 0.002f
     private lateinit var flowField: FlowField
     private lateinit var particles: List<Particle>
-    private val numberOfParticles = 10_000
+    private val numberOfParticles = 30_000
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -36,6 +36,7 @@ class PApplet : processing.core.PApplet() {
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
         frameRate(FRAME_RATE)
+        clapper.bpm = 60f
         clapper.start()
         initFlowField()
         initParticles()
@@ -56,8 +57,7 @@ class PApplet : processing.core.PApplet() {
             drawFrameRate()
         }
 
-//        translate(width / 2f, height / 2f)
-//        updateRotations()
+        updateRotations()
         updateClapper()
 
         flowField.update(pApplet = this)
@@ -130,20 +130,19 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun updateRotations() {
+        val rotationTranslationX = width / 2f
+        val rotationTranslationY = height / 2f
+
+        translate(rotationTranslationX, rotationTranslationY)
         zRotation += zRotationVelocity
         rotateZ(zRotation)
         xRotation += xRotationVelocity
         rotateX(xRotation)
+        translate(-rotationTranslationX, -rotationTranslationY)
     }
 
     private fun updateClapper() {
         val clapperResult = clapper.update()
-
-        if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-            random.maybe(probability = 0.9f) {
-                clearFrame()
-            }
-        }
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
             random.maybe(probability = 0.2f) {
@@ -162,15 +161,15 @@ class PApplet : processing.core.PApplet() {
             random.maybe {
                 setRandomZRotationVelocity()
             }
+
+            random.maybe(probability = 0.9f) {
+                clearFrame()
+            }
         }
 
         if (clapperResult[BeatInterval.SixteenWhole]?.didChange == true) {
             background(0)
         }
-    }
-
-    private fun bounce() {
-        radiusFactorVelocity = 0.05f
     }
 
     private fun setRandomBackgroundAlpha() {
@@ -192,7 +191,7 @@ class PApplet : processing.core.PApplet() {
         private const val FULL_SCREEN = true
         private const val WIDTH = 1400
         private const val HEIGHT = 900
-        private const val RENDERER = PConstants.P2D
+        private const val RENDERER = PConstants.P3D
         private const val COLOR_MODE = PConstants.HSB
         private const val MAX_COLOR_VALUE = 1f
         private const val FRAME_RATE = 60f
