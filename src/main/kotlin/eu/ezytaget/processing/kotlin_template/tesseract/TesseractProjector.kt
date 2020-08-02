@@ -3,7 +3,16 @@ package eu.ezytaget.processing.kotlin_template.tesseract
 import processing.core.PApplet
 import processing.core.PVector
 
-object TesseractProjector {
+class TesseractProjector(maxColorValue: Float = 1f) {
+
+    var strokeWeight = 2f
+    var hue = 0.5f
+    var hueVelocity = 0.01f
+    var minHue = 0f
+    var maxHue = maxColorValue
+    var saturation = 0.7f
+    var brightness = 1f
+    var alpha = 0.2f
 
     fun draw(tesseract: Tesseract, angle: Float, pApplet: PApplet) {
         val projectedVerticesIn3D = tesseract.vertices.map { vertex4D ->
@@ -36,8 +45,8 @@ object TesseractProjector {
             projected
         }
 
-        pApplet.strokeWeight(4f)
-        pApplet.stroke(1f)
+        pApplet.strokeWeight(strokeWeight)
+        pApplet.stroke(hue, saturation, brightness, alpha)
 
         (0..3).forEach { vertexIndex ->
             connectVertices(0, vertexIndex, (vertexIndex + 1) % 4, projectedVerticesIn3D, pApplet)
@@ -56,9 +65,17 @@ object TesseractProjector {
         }
     }
 
+    fun updateColorValues() {
+        hue += hueVelocity
+        if (hueVelocity > maxHue) {
+            hue = minHue
+        }
+    }
+
     private fun connectVertices(offset: Int = 0, index1: Int, index2: Int, vertices: List<PVector>, pApplet: PApplet) {
         val vertex1 = vertices[index1 + offset]
         val vertex2 = vertices[index2 + offset]
         pApplet.line(vertex1.x, vertex1.y, vertex1.z, vertex2.x, vertex2.y, vertex2.z)
     }
+
 }

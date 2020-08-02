@@ -26,6 +26,7 @@ class PApplet : processing.core.PApplet() {
     private var xRotationVelocity = 0.021f
     private var zRotationVelocity = 0.002f
     private lateinit var tesseract: Tesseract
+    private var tesseractProjector = TesseractProjector()
     private var angle = 0f
 
     override fun settings() {
@@ -69,7 +70,8 @@ class PApplet : processing.core.PApplet() {
         angle += 0.02f
 
         strokeWeight(1f)
-        TesseractProjector.draw(tesseract, angle, pApplet = this)
+        tesseractProjector.draw(tesseract, angle, pApplet = this)
+
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
         }
