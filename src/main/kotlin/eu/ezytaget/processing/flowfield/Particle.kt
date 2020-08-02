@@ -20,18 +20,22 @@ class Particle internal constructor(
     private var position = startPosition
     private var previousPos: PVector = position.copy()
 
+    val x
+        get() = position.x
+
+    val y
+        get() = position.y
+
+    val previousX
+        get() = previousPos.x
+
+    val previousY
+        get() = previousPos.y
+
     fun update(startX: Float = 0f, startY: Float = 0f, endX: Float, endY: Float, flowField: FlowField) {
         updatePosition()
         wrapAroundEdges(startX = startX, startY = startY, endX = endX, endY = endY)
         follow(flowField)
-    }
-
-    fun show(pApplet: PApplet, maxColorValue: Float = 1f) {
-        pApplet.stroke(maxColorValue, maxColorValue * 0.05f)
-        pApplet.strokeWeight(1f)
-        pApplet.line(position.x, position.y, previousPos.x, previousPos.y)
-        //point(pos.x, pos.y);
-        updatePreviousPos()
     }
 
     private fun follow(flowField: FlowField) {
@@ -56,22 +60,22 @@ class Particle internal constructor(
     private fun wrapAroundEdges(startX: Float, startY: Float, endX: Float, endY: Float) {
         if (position.x > endX) {
             position.x = startX
-            updatePreviousPos()
+            updatePreviouslyDrawnPos()
         } else if (position.x < startX) {
             position.x = endX
-            updatePreviousPos()
+            updatePreviouslyDrawnPos()
         }
 
         if (position.y > endY) {
             position.y = startY
-            updatePreviousPos()
+            updatePreviouslyDrawnPos()
         } else if (position.y < startY) {
             position.y = endY
-            updatePreviousPos()
+            updatePreviouslyDrawnPos()
         }
     }
 
-    private fun updatePreviousPos() {
+    fun updatePreviouslyDrawnPos() {
         previousPos = position.copy()
     }
 

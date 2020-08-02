@@ -13,7 +13,6 @@ class PApplet : processing.core.PApplet() {
     private val clapper = Clapper()
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
     private var waitingForClickToDraw = false
-    private var radiusFactorVelocity = 0f
     private var backgroundAlpha = 1f
     private var xRotation = 1f
     private var zRotation = 1f
@@ -21,6 +20,7 @@ class PApplet : processing.core.PApplet() {
     private var zRotationVelocity = 0.002f
     private lateinit var flowField: FlowField
     private lateinit var particles: List<Particle>
+    private val particleDrawer = ParticleDrawer()
     private val numberOfParticles = 30_000
 
     override fun settings() {
@@ -34,14 +34,17 @@ class PApplet : processing.core.PApplet() {
     override fun setup() {
         frameRate(FRAME_RATE)
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
-        clearFrame()
         frameRate(FRAME_RATE)
-        clapper.bpm = 60f
-        clapper.start()
+
+        clearFrame()
+
         initFlowField()
         initParticles()
 
         setPerspective()
+
+        clapper.bpm = 132f
+        clapper.start()
     }
 
     override fun draw() {
@@ -61,9 +64,10 @@ class PApplet : processing.core.PApplet() {
         updateClapper()
 
         flowField.update(pApplet = this)
+
         particles.forEach {
             it.update(endX = width.toFloat(), endY = height.toFloat(), flowField = flowField)
-            it.show(pApplet = this)
+            particleDrawer.draw(it, pApplet = this)
         }
 
         if (CLICK_TO_DRAW) {
@@ -144,6 +148,10 @@ class PApplet : processing.core.PApplet() {
     private fun updateClapper() {
         val clapperResult = clapper.update()
 
+        if (clapperResult[BeatInterval.Whole]?.didChange == true) {
+            particleDrawer.update()
+        }
+
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
             random.maybe(probability = 0.2f) {
                 initFlowField()
@@ -151,7 +159,6 @@ class PApplet : processing.core.PApplet() {
             random.maybe(probability = 0.2f) {
                 initParticles()
             }
-
             random.maybe {
                 setRandomBackgroundAlpha()
             }
@@ -161,8 +168,7 @@ class PApplet : processing.core.PApplet() {
             random.maybe {
                 setRandomZRotationVelocity()
             }
-
-            random.maybe(probability = 0.9f) {
+            random.maybe(probability = 0.5f) {
                 clearFrame()
             }
         }
