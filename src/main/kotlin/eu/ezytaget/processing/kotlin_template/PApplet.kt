@@ -63,13 +63,14 @@ class PApplet : processing.core.PApplet() {
         }
 
 //        translate(width / 2f, height / 2f)
-//        updateRotations()
         updateClapper()
 
         translate(width / 2f, height / 2f)
+        updateRotations()
         rotateX(-PConstants.PI / 2f)
         angle += 0.02f
 
+        strokeWeight(1f)
         TesseractProjector.draw(tesseract, angle, pApplet = this)
 
         lights()
@@ -184,7 +185,7 @@ class PApplet : processing.core.PApplet() {
         private const val COLOR_MODE = PConstants.HSB
         private const val MAX_COLOR_VALUE = 1f
         private const val FRAME_RATE = 60f
-        private const val DRAW_BACKGROUND_ON_DRAW = false
+        private const val DRAW_BACKGROUND_ON_DRAW = true
         private const val DRAW_FRAME_RATE = false
         private const val DESIRED_RADIUS_FACTOR = 1f
         private const val RADIUS_FACTOR_TOLERANCE = 0.01f
