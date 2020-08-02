@@ -19,7 +19,7 @@ fun Random.nextFloat(from: Float = 0f, until: Float = 1f): Float {
     }
 }
 
-fun Random.maybe(probability: Float = 0.5f, lambda: (() -> Unit)) = if (nextFloat(1f) < probability) {
+fun Random.maybe(probability: Float = 0.5f, lambda: (() -> Unit)) = if (nextFloat(from = 0f, until = 1f) < probability) {
     lambda()
     true
 } else {

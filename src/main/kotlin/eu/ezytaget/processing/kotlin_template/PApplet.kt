@@ -132,9 +132,10 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
-            random.maybe() {
+            random.maybe(probability = 0.8f) {
                 initTesseract()
             }
+
             random.maybe {
                 clearFrame()
             }
@@ -146,6 +147,9 @@ class PApplet : processing.core.PApplet() {
             }
             random.maybe {
                 setRandomZRotationVelocity()
+            }
+            random.maybe {
+                setRandomBackgroundAlpha()
             }
         }
 
