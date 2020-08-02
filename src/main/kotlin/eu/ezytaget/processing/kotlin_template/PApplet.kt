@@ -25,9 +25,12 @@ class PApplet : processing.core.PApplet() {
     private var zRotation = 1f
     private var xRotationVelocity = 0.021f
     private var zRotationVelocity = 0.002f
-    private lateinit var tesseract: Tesseract
+    private lateinit var tesseracts: List<Tesseract>
     private var tesseractProjector = TesseractProjector()
     private var angle = 0f
+    private var laserClearMode = true
+    private var lastLaserClearMillis = 0L
+    private var calm = true
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -46,7 +49,7 @@ class PApplet : processing.core.PApplet() {
         clapper.bpm = 120f
         clapper.start()
 
-        initTesseract()
+        initTesseracts()
     }
 
     override fun draw() {
@@ -70,7 +73,18 @@ class PApplet : processing.core.PApplet() {
         angle += 0.02f
 
         strokeWeight(1f)
-        tesseractProjector.draw(tesseract, angle, pApplet = this)
+        tesseracts.forEach {
+            tesseractProjector.draw(it, angle, pApplet = this)
+        }
+        tesseractProjector.updateColorValues()
+
+        if (laserClearMode) {
+            val nowMillis = System.currentTimeMillis()
+            if (random.nextBoolean() && (nowMillis - lastLaserClearMillis) > 70L) {
+                clearFrame()
+                lastLaserClearMillis = nowMillis
+            }
+        }
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -88,9 +102,12 @@ class PApplet : processing.core.PApplet() {
     Implementations
      */
 
-    private fun initTesseract() {
-        val scale = random.nextFloat(from = 0.1f, until = 0.3f)
-        tesseract = Tesseract(scale)
+    private fun initTesseracts() {
+        val numberOfTesseracts = random.nextInt(from = 1, until = 10)
+        tesseracts = (0 until numberOfTesseracts).map {
+            val scale = random.nextFloat(from = 0.1f, until = 0.5f)
+            Tesseract(scale)
+        }
     }
 
     private fun setPerspective() {
@@ -135,7 +152,7 @@ class PApplet : processing.core.PApplet() {
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
             random.maybe(probability = 0.8f) {
-                initTesseract()
+                initTesseracts()
             }
 
             random.maybe {
@@ -165,7 +182,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setRandomBackgroundAlpha() {
-        backgroundAlpha = random(MAX_COLOR_VALUE / 2f)
+        backgroundAlpha = random(MAX_COLOR_VALUE / 3f)
     }
 
     private fun setRandomXRotationVelocity() {

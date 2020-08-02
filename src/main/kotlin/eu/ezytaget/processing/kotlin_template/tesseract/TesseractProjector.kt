@@ -12,7 +12,7 @@ class TesseractProjector(maxColorValue: Float = 1f) {
     var maxHue = maxColorValue
     var saturation = 0.7f
     var brightness = 1f
-    var alpha = 0.2f
+    var alpha = 0.9f
 
     fun draw(tesseract: Tesseract, angle: Float, pApplet: PApplet) {
         val projectedVerticesIn3D = tesseract.vertices.map { vertex4D ->
@@ -67,7 +67,7 @@ class TesseractProjector(maxColorValue: Float = 1f) {
 
     fun updateColorValues() {
         hue += hueVelocity
-        if (hueVelocity > maxHue) {
+        if (hue > maxHue) {
             hue = minHue
         }
     }
