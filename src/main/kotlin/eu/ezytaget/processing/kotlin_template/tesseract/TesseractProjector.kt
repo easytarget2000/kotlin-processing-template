@@ -31,7 +31,7 @@ object TesseractProjector {
                     floatArrayOf(0f, 0f, w, 0f)
             )
             val projected = MatrixCalculator.matmul(projection, fullyRotatedVertex)
-            projected.mult(pApplet.width / 8f)
+            projected.mult(pApplet.width * tesseract.scale)
 
             projected
         }

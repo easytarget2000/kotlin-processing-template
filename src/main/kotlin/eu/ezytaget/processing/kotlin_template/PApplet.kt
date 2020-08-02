@@ -25,9 +25,8 @@ class PApplet : processing.core.PApplet() {
     private var zRotation = 1f
     private var xRotationVelocity = 0.021f
     private var zRotationVelocity = 0.002f
-    private var automatonUpdateDelay = 16
 
-    private var tesseract = Tesseract()
+    private lateinit var tesseract: Tesseract
     private var angle = 0f
 
     override fun settings() {
@@ -46,7 +45,7 @@ class PApplet : processing.core.PApplet() {
         clapper.start()
         setPerspective()
 
-
+        initTesseract()
     }
 
     override fun draw() {
@@ -90,6 +89,11 @@ class PApplet : processing.core.PApplet() {
     /*
     Implementations
      */
+
+    private fun initTesseract() {
+        val scale = random.nextFloat()
+        tesseract = Tesseract(scale)
+    }
 
     private fun setPerspective() {
         val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
@@ -137,7 +141,8 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
-            maybe(probability = 0.2f) {
+            maybe() {
+                initTesseract()
             }
             maybe {
                 clearFrame()
@@ -163,9 +168,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setRandomBackgroundAlpha() {
-        if (!maybe { backgroundAlpha = random(MAX_COLOR_VALUE / 64f) }) {
-            backgroundAlpha = 1f
-        }
+        backgroundAlpha = random(MAX_COLOR_VALUE / 2f)
     }
 
     private fun setRandomXRotationVelocity() {
