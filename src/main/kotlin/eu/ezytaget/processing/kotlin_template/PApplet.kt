@@ -25,7 +25,6 @@ class PApplet : processing.core.PApplet() {
     private var zRotation = 1f
     private var xRotationVelocity = 0.021f
     private var zRotationVelocity = 0.002f
-
     private lateinit var tesseract: Tesseract
     private var angle = 0f
 
@@ -42,8 +41,9 @@ class PApplet : processing.core.PApplet() {
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
         frameRate(FRAME_RATE)
+
+        clapper.bpm = 120f
         clapper.start()
-        setPerspective()
 
         initTesseract()
     }
@@ -61,7 +61,6 @@ class PApplet : processing.core.PApplet() {
             drawFrameRate()
         }
 
-//        translate(width / 2f, height / 2f)
         updateClapper()
 
         translate(width / 2f, height / 2f)
@@ -71,9 +70,6 @@ class PApplet : processing.core.PApplet() {
 
         strokeWeight(1f)
         TesseractProjector.draw(tesseract, angle, pApplet = this)
-
-        lights()
-
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
         }
@@ -91,7 +87,7 @@ class PApplet : processing.core.PApplet() {
      */
 
     private fun initTesseract() {
-        val scale = random.nextFloat()
+        val scale = random.nextFloat(from = 0.1f, until = 0.3f)
         tesseract = Tesseract(scale)
     }
 
@@ -129,31 +125,26 @@ class PApplet : processing.core.PApplet() {
     private fun updateClapper() {
         val clapperResult = clapper.update()
 
-        randomSeed(System.currentTimeMillis())
-
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-        }
-
-        if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-            maybe(probability = 0.9f) {
+            random.maybe(probability = 0.9f) {
                 bounce()
             }
         }
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
-            maybe() {
+            random.maybe() {
                 initTesseract()
             }
-            maybe {
+            random.maybe {
                 clearFrame()
             }
-            maybe {
+            random.maybe {
                 setRandomBackgroundAlpha()
             }
-            maybe {
+            random.maybe {
                 setRandomXRotationVelocity()
             }
-            maybe {
+            random.maybe {
                 setRandomZRotationVelocity()
             }
         }
@@ -190,9 +181,6 @@ class PApplet : processing.core.PApplet() {
         private const val FRAME_RATE = 60f
         private const val DRAW_BACKGROUND_ON_DRAW = true
         private const val DRAW_FRAME_RATE = false
-        private const val DESIRED_RADIUS_FACTOR = 1f
-        private const val RADIUS_FACTOR_TOLERANCE = 0.01f
-        private const val RADIUS_FACTOR_PULL = 0.01f
         private const val MAX_ROTATION_VELOCITY = 0.03f
 
         fun runInstance() {
