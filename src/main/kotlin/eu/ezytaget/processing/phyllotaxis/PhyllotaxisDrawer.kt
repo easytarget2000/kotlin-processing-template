@@ -15,18 +15,21 @@ class PhyllotaxisDrawer(maxColorValue: Float = 1f) {
 
     fun draw(phyllotaxis: Phyllotaxis, pApplet: PApplet) {
         pApplet.pushStyle()
-        pApplet.noFill()
+        pApplet.noStroke()
 
-        (0 until phyllotaxis.n).forEach {
+        pApplet.beginShape()
+        (16 until phyllotaxis.n).forEach {
             val a = it * radians(phyllotaxis.phiDegrees)
             val r  = phyllotaxis.c * sqrt(it.toFloat())
             val x = r * cos(a)
             val y: Float = r * sin(a)
             var hu = it / 3f % 360f
-            pApplet.stroke(hu / 255f, saturation, brightness, alpha)
-            pApplet.point(x, y)
-            pApplet.point(x + 1f, y + 1f)
+            pApplet.fill(hu / 255f, saturation, brightness, alpha * 0.5f)
+            pApplet.vertex(x, y, 0f)
+//            pApplet.stroke(hu / 255f, saturation, brightness, alpha)
+//            pApplet.point(x + 1f, y + 1f)
         }
+        pApplet.endShape()
 
         pApplet.popStyle()
     }
