@@ -1,4 +1,4 @@
-package eu.ezytaget.processing.kotlin_template
+package eu.ezytaget.processing.phyllotaxis
 
 import processing.core.PApplet
 import processing.core.PConstants.HALF_PI

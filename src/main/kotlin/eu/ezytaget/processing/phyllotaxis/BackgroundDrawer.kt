@@ -1,6 +1,6 @@
-package eu.ezytaget.processing.kotlin_template
+package eu.ezytaget.processing.phyllotaxis
 
-import eu.ezytaget.processing.kotlin_template.palettes.Palette
+import eu.ezytaget.processing.phyllotaxis.palettes.Palette
 import kotlin.random.Random
 
 class BackgroundDrawer(private val palette: Palette, var alpha: Float = 0.1f) {

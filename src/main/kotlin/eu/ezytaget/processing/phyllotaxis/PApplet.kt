@@ -1,6 +1,6 @@
-package eu.ezytaget.processing.kotlin_template
+package eu.ezytaget.processing.phyllotaxis
 
-import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
+import eu.ezytaget.processing.phyllotaxis.palettes.DuskPalette
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
@@ -18,6 +18,8 @@ class PApplet : processing.core.PApplet() {
     private var zRotation = 1f
     private var xRotationVelocity = 0.021f
     private var zRotationVelocity = 0.002f
+    private var phyllotaxisDrawer = PhyllotaxisDrawer()
+    private lateinit var phyllotaxis: Phyllotaxis
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -35,6 +37,8 @@ class PApplet : processing.core.PApplet() {
         clapper.start()
 
         setPerspective()
+
+        initPhyllotaxis()
     }
 
     override fun draw() {
@@ -54,6 +58,10 @@ class PApplet : processing.core.PApplet() {
         updateRotations()
         updateClapper()
 
+        phyllotaxisDrawer.draw(phyllotaxis, pApplet = this)
+
+        phyllotaxis.update()
+
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
         }
@@ -70,6 +78,9 @@ class PApplet : processing.core.PApplet() {
     Implementations
      */
 
+    private fun initPhyllotaxis() {
+        phyllotaxis = Phyllotaxis()
+    }
 
     private fun setPerspective() {
         val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
@@ -111,9 +122,8 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-            random.maybe(probability = 0.9f) {
-                bounce()
-            }
+            clearFrame()
+
         }
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
@@ -156,7 +166,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     companion object {
-        private const val CLICK_TO_DRAW = false         
+        private const val CLICK_TO_DRAW = false
         private const val FULL_SCREEN = true
         private const val WIDTH = 1400
         private const val HEIGHT = 900
