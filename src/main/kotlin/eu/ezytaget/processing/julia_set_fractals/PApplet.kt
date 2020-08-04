@@ -64,6 +64,17 @@ class PApplet : processing.core.PApplet() {
 //        updateRotations()
         updateClapper()
 
+        loadPixels()
+        pixels.forEachIndexed { index, pixelValue ->
+            if (index + 1 == pixels.size) {
+                return
+            }
+            val neighborValue = pixels[index + 1]
+            pixels[index] = pixelValue - neighborValue
+        }
+
+        updatePixels()
+
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
         }
