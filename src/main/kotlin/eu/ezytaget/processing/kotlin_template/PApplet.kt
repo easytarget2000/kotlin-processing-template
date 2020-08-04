@@ -12,8 +12,8 @@ class PApplet : processing.core.PApplet() {
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
     private var waitingForClickToDraw = false
     private val tracks = mutableListOf<LorenzAttractorTrack>()
-    private var minNumberOfSpheres = 4
-    private var maxNumberOfSpheres = 32
+    private var minNumberOfSpheres = 8
+    private var maxNumberOfSpheres = 24
     private var radiusFactor = DESIRED_RADIUS_FACTOR
     private var drawNoiseSpheres = false
     private var radiusFactorVelocity = 0f
@@ -38,6 +38,7 @@ class PApplet : processing.core.PApplet() {
         noCursor()
         lights()
         initLorenzAttractorTracks()
+        clapper.bpm = 64f
         clapper.start()
 
         setPerspective()
@@ -203,7 +204,7 @@ class PApplet : processing.core.PApplet() {
 
     companion object {
         private const val CLICK_TO_DRAW = false
-        private const val FULL_SCREEN = false
+        private const val FULL_SCREEN = true
         private const val WIDTH = 1400
         private const val HEIGHT = 900
         private const val RENDERER = PConstants.P3D
