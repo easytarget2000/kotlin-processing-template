@@ -73,9 +73,9 @@ class PApplet : processing.core.PApplet() {
         angle += 0.02f
 
         strokeWeight(1f)
-        repeat(6) {
+        repeat(3) {
             pushMatrix()
-            rotateZ((it / 6f) * PConstants.TWO_PI)
+            rotateZ((it / 3f) * PConstants.TWO_PI)
             tesseracts.forEach { tesseract ->
                 tesseractProjector.draw(tesseract, angle, pApplet = this)
             }
@@ -84,13 +84,23 @@ class PApplet : processing.core.PApplet() {
 
         tesseractProjector.updateColorValues()
 
-        if (laserClearMode) {
-            val nowMillis = System.currentTimeMillis()
-            if (random.nextBoolean() && (nowMillis - lastLaserClearMillis) > 70L) {
-                clearFrame()
-                lastLaserClearMillis = nowMillis
+        loadPixels()
+        pixels.forEachIndexed { i, _ ->
+            if (i + 10 < pixels.size) {
+                val neighborValue = pixels[i + 10]
+                pixels[i] = pixels[i] - neighborValue
             }
+
         }
+        updatePixels()
+
+//        if (laserClearMode) {
+//            val nowMillis = System.currentTimeMillis()
+//            if (random.nextBoolean() && (nowMillis - lastLaserClearMillis) > 70L) {
+//                clearFrame()
+//                lastLaserClearMillis = nowMillis
+//            }
+//        }
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
