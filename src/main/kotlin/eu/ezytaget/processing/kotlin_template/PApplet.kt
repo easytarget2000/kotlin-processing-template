@@ -73,9 +73,15 @@ class PApplet : processing.core.PApplet() {
         angle += 0.02f
 
         strokeWeight(1f)
-        tesseracts.forEach {
-            tesseractProjector.draw(it, angle, pApplet = this)
+        repeat(6) {
+            pushMatrix()
+            rotateZ((it / 6f) * PConstants.TWO_PI)
+            tesseracts.forEach { tesseract ->
+                tesseractProjector.draw(tesseract, angle, pApplet = this)
+            }
+            popMatrix()
         }
+
         tesseractProjector.updateColorValues()
 
         if (laserClearMode) {
