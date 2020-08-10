@@ -1,4 +1,4 @@
-package eu.ezytaget.processing.kotlin_template
+package eu.ezytaget.processing.reaction_diffusion
 
 import kotlin.math.nextDown
 import kotlin.random.Random
