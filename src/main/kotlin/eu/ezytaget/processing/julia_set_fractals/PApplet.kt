@@ -96,11 +96,16 @@ class PApplet : processing.core.PApplet() {
      */
 
     private fun initJuliaSet() {
-        val scaleWidth = random.nextFloat(from = 2f, until = 6f)
-        val scaleHeight = (scaleWidth * height.toFloat()) / width.toFloat()
-        val angle = random.nextFloat(from = 0f, until = PConstants.TWO_PI)
-        val angleVelocity = random.nextFloat(from = -0.5f, until = 0.1f)
-        val aAngleFactor = random.nextFloat(from = -2f, until = 2f)
+        //initJuliaSet(): scaleWidth: 5.711875, scaleHeight: 3.569922, angle 4.8934402, angleVelocity: 0.05238408, aAngleFactor: -0.7362766
+        //initJuliaSet(): scaleWidth: 3.7624247, scaleHeight: 2.3515155, angle 2.9225054, angleVelocity: 0.05977559, aAngleFactor: 0.59833264
+        //initJuliaSet(): scaleWidth: 2.4918487, scaleHeight: 1.5574055, angle 5.00991, angleVelocity: -0.31708914, aAngleFactor: -0.54648113
+        // NO: initJuliaSet(): scaleWidth: 4.356219, scaleHeight: 2.7226367, angle 5.680613, angleVelocity: 0.0038700998, aAngleFactor: 0.030716658
+
+        val scaleWidth = random.nextFloat(from = 2.5f, until = 7f) // 5.5, 5.13, 2.23
+        val scaleHeight = (scaleWidth * height.toFloat()) / width.toFloat() // 3.4, 3.21, 1.39
+        val angle = random.nextFloat(from = 3f, until = PConstants.TWO_PI) // 0.5, 6.2, 4.19
+        val angleVelocity = random.nextFloat(from = -0.05f, until = 0.05f) // 0.09, -0.29, -0.28
+        val aAngleFactor = random.nextFloat(from = 1f, until = 2f) // 1.69, 0.8, -1.35
 
         juliaSet = JuliaSet(
                 scaleWidth = scaleWidth,
@@ -108,6 +113,11 @@ class PApplet : processing.core.PApplet() {
                 angle = angle,
                 angleVelocity = angleVelocity,
                 aAngleFactor = aAngleFactor
+        )
+
+        println(
+                "initJuliaSet(): scaleWidth: $scaleWidth, scaleHeight: $scaleHeight, angle $angle, " +
+                        "angleVelocity: $angleVelocity, aAngleFactor: $aAngleFactor"
         )
     }
 
