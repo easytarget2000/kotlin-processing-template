@@ -1,4 +1,4 @@
-package eu.ezytaget.processing.reaction_diffusion
+package eu.ezytaget.processing.barnsley_fern
 
 fun PApplet.maybe(probability: Float = 0.5f, lambda: (() -> Unit)) = if (random(1f) < probability) {
     lambda()

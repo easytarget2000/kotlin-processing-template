@@ -1,4 +1,4 @@
-package eu.ezytaget.processing.reaction_diffusion
+package eu.ezytaget.processing.barnsley_fern
 
 import processing.core.PApplet
 import processing.core.PConstants.HALF_PI

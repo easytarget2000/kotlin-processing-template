@@ -1,4 +1,4 @@
-package eu.ezytaget.processing.reaction_diffusion.palettes
+package eu.ezytaget.processing.barnsley_fern.palettes
 
 import kotlin.random.Random
 

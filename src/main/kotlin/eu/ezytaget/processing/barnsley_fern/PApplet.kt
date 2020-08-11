@@ -1,6 +1,6 @@
-package eu.ezytaget.processing.reaction_diffusion
+package eu.ezytaget.processing.barnsley_fern
 
-import eu.ezytaget.processing.reaction_diffusion.palettes.DuskPalette
+import eu.ezytaget.processing.barnsley_fern.palettes.DuskPalette
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
@@ -19,13 +19,7 @@ class PApplet : processing.core.PApplet() {
     private var xRotationVelocity = 0.021f
     private var zRotationVelocity = 0.002f
 
-    private var dA = 1.0f
-    private var dB = 0.5f
-    private var feed = 0.055f
-    private var k = 0.062f
-
-    private lateinit var grid: Array<Array<Cell>>
-    private lateinit var prev: Array<Array<Cell>>
+    private var fernDrawer = FernDrawer()
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -43,29 +37,6 @@ class PApplet : processing.core.PApplet() {
         clapper.start()
 
         setPerspective()
-
-        initGrid()
-    }
-
-    private fun initGrid() {
-        grid = (0 until width).map {
-            (0 until height).map {
-                Cell(a = 1f, b = 0f)
-            }.toTypedArray()
-        }.toTypedArray()
-
-        repeat((0 until 10).count()) {
-            val startX = random.nextInt(from = 20, until = width - 20)
-            val startY = random.nextInt(from = 20, until = height - 20)
-
-            (startX until startX + 10).forEach {column ->
-                (startY until startY + 10).forEach { row ->
-                    grid[column][row] = Cell(a = 1f, b = 1f)
-                }
-            }
-        }
-
-        prev = grid.copyOf()
     }
 
     override fun draw() {
@@ -85,63 +56,11 @@ class PApplet : processing.core.PApplet() {
 //        updateRotations()
 //        updateClapper()
 
-        for (i in 0..10) {
-            update()
-            swap()
-        }
-
-        loadPixels()
-        for (i in 1 until width - 1) {
-            for (j in 1 until height - 1) {
-                val (a, b) = grid[i][j]
-                val pos = i + j * width
-                pixels[pos] = color((a - b) * 255)
-            }
-        }
-        updatePixels()
+        fernDrawer.drawShape(pApplet = this)
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
         }
-    }
-
-    private fun update() {
-        for (i in 1 until width - 1) {
-            for (j in 1 until height - 1) {
-                val (a, b) = prev.get(i).get(j)
-                val newspot: Cell = grid.get(i).get(j)
-                var laplaceA = 0f
-                laplaceA += a * -1f
-                laplaceA += prev.get(i + 1).get(j).a * 0.2f
-                laplaceA += prev.get(i - 1).get(j).a * 0.2f
-                laplaceA += prev.get(i).get(j + 1).a * 0.2f
-                laplaceA += prev.get(i).get(j - 1).a * 0.2f
-                laplaceA += prev.get(i - 1).get(j - 1).a * 0.05f
-                laplaceA += prev.get(i + 1).get(j - 1).a * 0.05f
-                laplaceA += prev.get(i - 1).get(j + 1).a * 0.05f
-                laplaceA += prev.get(i + 1).get(j + 1).a * 0.05f
-                var laplaceB = 0f
-                laplaceB += b * -1
-                laplaceB += prev.get(i + 1).get(j).b * 0.2f
-                laplaceB += prev.get(i - 1).get(j).b * 0.2f
-                laplaceB += prev.get(i).get(j + 1).b * 0.2f
-                laplaceB += prev.get(i).get(j - 1).b * 0.2f
-                laplaceB += prev.get(i - 1).get(j - 1).b * 0.05f
-                laplaceB += prev.get(i + 1).get(j - 1).b * 0.05f
-                laplaceB += prev.get(i - 1).get(j + 1).b * 0.05f
-                laplaceB += prev.get(i + 1).get(j + 1).b * 0.05f
-                newspot.a = a + (dA * laplaceA - a * b * b + feed * (1 - a)) * 1f
-                newspot.b = b + (dB * laplaceB + a * b * b - (k + feed) * b) * 1f
-                newspot.a = constrain(newspot.a, 0f, 1f)
-                newspot.b = constrain(newspot.b, 0f, 1f)
-            }
-        }
-    }
-
-    fun swap() {
-        val temp: Array<Array<Cell>> = prev
-        prev = grid
-        grid = temp
     }
 
     override fun keyPressed() {
@@ -242,9 +161,9 @@ class PApplet : processing.core.PApplet() {
 
     companion object {
         private const val CLICK_TO_DRAW = false
-        private const val FULL_SCREEN = false
-        private const val WIDTH = 600
-        private const val HEIGHT = 600
+        private const val FULL_SCREEN = true
+        private const val WIDTH = 300
+        private const val HEIGHT = 300
         private const val RENDERER = PConstants.P3D
         private const val COLOR_MODE = PConstants.HSB
         private const val MAX_COLOR_VALUE = 1f

@@ -1,6 +1,6 @@
-package eu.ezytaget.processing.reaction_diffusion
+package eu.ezytaget.processing.barnsley_fern
 
-import eu.ezytaget.processing.reaction_diffusion.palettes.Palette
+import eu.ezytaget.processing.barnsley_fern.palettes.Palette
 import kotlin.random.Random
 
 class BackgroundDrawer(private val palette: Palette, var alpha: Float = 0.1f) {

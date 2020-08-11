@@ -1,4 +1,4 @@
-package eu.ezytaget.processing.reaction_diffusion
+package eu.ezytaget.processing.barnsley_fern
 
 class Main {
 
