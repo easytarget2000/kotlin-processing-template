@@ -52,11 +52,21 @@ class PApplet : processing.core.PApplet() {
             drawFrameRate()
         }
 
-//        translate(width / 2f, height / 2f)
-//        updateRotations()
-//        updateClapper()
+        val centerX = width / 2f
+        val centerY = height / 2f
+        updateClapper()
 
-        fernDrawer.drawShape(pApplet = this)
+        repeat(6) {
+            push()
+            translate(centerX, centerY)
+            rotateZ((it / 6f) * PConstants.TWO_PI)
+            updateRotations()
+            translate( -centerX, -centerY)
+
+            fernDrawer.drawShape(pApplet = this, numberOfSteps = 16 * 1024)
+            pop()
+        }
+
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true

@@ -6,16 +6,18 @@ import kotlin.random.Random
 
 class FernDrawer(
         private var position: PVector = PVector(0f, 0f, 0f),
+        maxColorValue: Float = 1f,
         private val random: Random = Random.Default
 ) {
 
     var pStem = 0.1f
-    var pSmallLeaflets = 0.85f
+    var pSmallLeaflets = 0.5f
     var pLargeLeftHandLeaflet = 0.07f
     var pLargeRightHandLeaflet = 0.07f
+    var alpha = maxColorValue * 0.5f
 
     fun drawShape(pApplet: PApplet, numberOfSteps: Int = 100) {
-        pApplet.stroke(1f)
+        pApplet.stroke(random.nextFloat(), random.nextFloat(), random.nextFloat(), alpha)
         pApplet.strokeWeight(2f)
         repeat(numberOfSteps) {
             drawOnce(pApplet)
