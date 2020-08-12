@@ -72,7 +72,6 @@ class PApplet : processing.core.PApplet() {
             val neighborValue = pixels[index + 1]
             pixels[index] = pixelValue - neighborValue
         }
-
         updatePixels()
 
         if (CLICK_TO_DRAW) {
