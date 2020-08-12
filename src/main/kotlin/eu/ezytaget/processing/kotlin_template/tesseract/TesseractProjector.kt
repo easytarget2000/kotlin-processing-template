@@ -5,7 +5,7 @@ import processing.core.PVector
 
 class TesseractProjector(maxColorValue: Float = 1f) {
 
-    var strokeWeight = 2f
+    var strokeWeight = 4f
     var hue = 0.5f
     var hueVelocity = 0.01f
     var minHue = 0f
