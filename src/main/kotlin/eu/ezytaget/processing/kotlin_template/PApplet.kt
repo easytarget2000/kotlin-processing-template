@@ -4,6 +4,7 @@ import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
+import processing.core.PGraphics
 import processing.core.PVector
 
 class PApplet : processing.core.PApplet() {
@@ -23,6 +24,9 @@ class PApplet : processing.core.PApplet() {
     private var xRotationVelocity = 0.01f
     private var zRotationVelocity = 0.02f
 
+    private val sphereDrawer = SphereDrawer()
+    private lateinit var kaleidoscope: PGraphics
+
     override fun settings() {
         if (FULL_SCREEN) {
             fullScreen(RENDERER)
@@ -34,13 +38,19 @@ class PApplet : processing.core.PApplet() {
     override fun setup() {
         frameRate(FRAME_RATE)
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
-        clearFrame()
         noCursor()
-        lights()
-        initSpheres()
-        clapper.start()
 
-        setPerspective()
+        kaleidoscope = createGraphics(
+                (width * 0.77f).toInt(),
+                (height * 0.77f).toInt(),
+                PConstants.P3D
+        )
+        kaleidoscope.lights()
+        setPerspective(kaleidoscope)
+        clearFrame()
+
+        initSpheres(kaleidoscope)
+        clapper.start()
     }
 
     override fun draw() {
@@ -54,7 +64,27 @@ class PApplet : processing.core.PApplet() {
 
         updateClapper()
         updateRadiusFactor()
-        drawSpheres()
+
+        kaleidoscope.beginDraw()
+//        kaleidoscope.background(0f)
+        kaleidoscope.clear()
+        kaleidoscope.colorMode(COLOR_MODE, MAX_COLOR_VALUE)
+        sphereDrawer.draw(
+                pGraphics = kaleidoscope,
+                spheres = spheres,
+                radiusFactor = radiusFactor,
+                drawNoiseSpheres = drawNoiseSpheres
+        )
+        kaleidoscope.endDraw()
+
+        repeat(6) {
+            push()
+            translate(width / 2f, height / 2f)
+            rotate((it / 6f) * PConstants.TWO_PI)
+            translate(-width / 2f, -height / 2f)
+            image(kaleidoscope, 0f, 0f)
+            pop()
+        }
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -72,16 +102,6 @@ class PApplet : processing.core.PApplet() {
     Implementations
      */
 
-    private fun setPerspective() {
-        val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
-        perspective(
-                PI / 3f,
-                width.toFloat() / height.toFloat(),
-                cameraZ / 10f,
-                cameraZ * 30f
-        )
-    }
-
     private fun clearFrame() {
         backgroundDrawer.draw(
                 pApplet = this,
@@ -93,7 +113,9 @@ class PApplet : processing.core.PApplet() {
         drawNoiseSpheres = !drawNoiseSpheres
     }
 
-    private fun initSpheres() {
+    private fun initSpheres(pGraphics: PGraphics) {
+        val width = pGraphics.width
+
         spheres = mutableListOf()
         val numberOfSpheres = random(minNumberOfSpheres.toFloat(), (maxNumberOfSpheres + 1).toFloat()).toInt()
         val minRadius = width / 16f
@@ -123,45 +145,6 @@ class PApplet : processing.core.PApplet() {
         }
     }
 
-    private fun drawSpheres() {
-        translate(width / 2f, height / 2f)
-        xRotation += xRotationVelocity
-        rotateX(xRotation)
-        zRotation += zRotationVelocity
-        rotateZ(zRotation)
-
-        val baseRotation = ((millis() % 100_000) / 100_000f) * TWO_PI
-
-        noFill()
-
-        sphereDetail(16)
-
-        spheres.forEach {
-            pushMatrix()
-            rotateY(baseRotation * it.rotationSpeed)
-            stroke(it.colorValue1, it.colorValue2, it.colorValue3, it.alpha)
-            val radius = it.radius * radiusFactor
-            if (drawNoiseSpheres) {
-                noiseSphere(radius, randomSeed = it.randomSeed)
-            } else {
-                sphere(radius)
-            }
-            popMatrix()
-        }
-    }
-
-    private fun noiseSphere(radius: Float, randomSeed: Long, numberOfPoints: Int = 4096 * 2) {
-        randomSeed(randomSeed)
-        repeat((0..numberOfPoints).count()) {
-            val randomVector = PVector(
-                    random(-100f, 100f),
-                    random(-100f, 100f),
-                    random(-100f, 100f)
-            ).setMag(radius)
-            point(randomVector.x, randomVector.y, randomVector.z)
-        }
-    }
-
     private fun updateClapper() {
         val clapperResult = clapper.update()
 
@@ -175,7 +158,7 @@ class PApplet : processing.core.PApplet() {
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
             maybe(probability = 0.2f) {
-                initSpheres()
+                initSpheres(kaleidoscope)
             }
             maybe(probability = 0.2f) {
                 toggleDrawStyle()
@@ -226,10 +209,10 @@ class PApplet : processing.core.PApplet() {
 
     companion object {
         private const val CLICK_TO_DRAW = false
-        private const val FULL_SCREEN = false
+        private const val FULL_SCREEN = true
         private const val WIDTH = 1400
         private const val HEIGHT = 900
-        private const val RENDERER = PConstants.P3D
+        private const val RENDERER = PConstants.P2D
         private const val COLOR_MODE = PConstants.HSB
         private const val MAX_COLOR_VALUE = 1f
         private const val FRAME_RATE = 60f
@@ -242,6 +225,18 @@ class PApplet : processing.core.PApplet() {
         fun runInstance() {
             val instance = PApplet()
             instance.runSketch()
+        }
+
+        private fun setPerspective(pGraphics: PGraphics) {
+            val width = pGraphics.width
+            val height = pGraphics.height
+            val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
+            pGraphics.perspective(
+                    PI / 3f,
+                    width.toFloat() / height.toFloat(),
+                    cameraZ / 10f,
+                    cameraZ * 30f
+            )
         }
     }
 }
