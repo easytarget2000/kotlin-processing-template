@@ -37,7 +37,7 @@ class PApplet : processing.core.PApplet() {
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
 
-        kaleidoscope = createGraphics((width * 0.66f).toInt(), (height * 0.66f).toInt(), RENDERER)
+        kaleidoscope = createGraphics(width, height, RENDERER)
         kaleidoscope.beginDraw()
         kaleidoscope.colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         kaleidoscope.endDraw()
@@ -72,27 +72,28 @@ class PApplet : processing.core.PApplet() {
         kaleidoscope.endDraw()
 
         pushStyle()
-        repeat(6) {
+        val numberOfKaleidoscopeEdges = 9
+        repeat(numberOfKaleidoscopeEdges) {
             pushMatrix()
             translate(width / 2f, height / 2f)
-            rotate((it / 6f) * PConstants.TWO_PI)
-            image(kaleidoscope, 0f, 0f)
+            rotate((it / numberOfKaleidoscopeEdges.toFloat()) * PConstants.TWO_PI)
+            image(kaleidoscope, -100f, -kaleidoscope.height / 2f)
             popMatrix()
         }
         popStyle()
 
 //        updateRotations()
-//        updateClapper()
+        updateClapper()
 
-//        loadPixels()
-//        pixels.forEachIndexed { index, pixelValue ->
-//            if (index + 1 == pixels.size) {
-//                return
-//            }
-//            val neighborValue = pixels[index + 1]
-//            pixels[index] = pixelValue - neighborValue
-//        }
-//        updatePixels()
+        loadPixels()
+        pixels.forEachIndexed { index, pixelValue ->
+            if (index + 10 == pixels.size) {
+                return
+            }
+            val neighborValue = pixels[index + 10]
+            pixels[index] = pixelValue - neighborValue
+        }
+        updatePixels()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
