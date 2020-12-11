@@ -26,7 +26,7 @@ class PApplet : processing.core.PApplet() {
 
     override fun settings() {
         if (FULL_SCREEN) {
-            fullScreen(RENDERER)
+            fullScreen(RENDERER, DISPLAY_ID)
         } else {
             size(WIDTH, HEIGHT, RENDERER)
         }
@@ -237,6 +237,7 @@ class PApplet : processing.core.PApplet() {
     companion object {
         private const val CLICK_TO_DRAW = false
         private const val FULL_SCREEN = true
+        private const val DISPLAY_ID = 2
         private const val WIDTH = 800
         private const val HEIGHT = 600
         private const val RENDERER = PConstants.P2D
