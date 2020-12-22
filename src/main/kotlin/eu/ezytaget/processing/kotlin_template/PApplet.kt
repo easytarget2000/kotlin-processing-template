@@ -44,10 +44,9 @@ class PApplet : processing.core.PApplet() {
     }
 
     override fun setup() {
-        frameRate(FRAME_RATE)
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
-        frameRate(FRAME_RATE)
+        frameRate(FRAME_RATE.toFloat())
         clapper.start()
 
         setPerspective()
@@ -107,9 +106,7 @@ class PApplet : processing.core.PApplet() {
         return Boid(
                 position = PVector(random(width), random(height)),
                 velocity = velocity,
-                acceleration = PVector(),
-                maxForce = 1,
-                maxSpeed = 4
+                acceleration = PVector()
         )
     }
 
@@ -143,10 +140,9 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun drawFrameRate() {
-        pushStyle()
-        stroke(1f)
-        text(frameRate.toString(), 100f, 100f)
-        popStyle()
+        if (frameCount.toInt() % (FRAME_RATE * 3) == 0) {
+            kotlin.io.println(frameRate)
+        }
     }
 
     private fun updateRotations() {
@@ -227,9 +223,9 @@ class PApplet : processing.core.PApplet() {
 
         private const val MAX_COLOR_VALUE = 1f
 
-        private const val FRAME_RATE = 60f
+        private const val FRAME_RATE = 60
 
-        private const val DRAW_BACKGROUND_ON_DRAW = true
+        private const val DRAW_BACKGROUND_ON_DRAW = false
 
         private const val DRAW_FRAME_RATE = true
 

@@ -18,27 +18,24 @@ class Boid(
     var position: PVector,
     var velocity: PVector,
     var acceleration: PVector,
-    var maxForce: Int = 1,
-    var maxSpeed: Int = 4
+    var maxForce: Float = 1f,
+    var maxSpeed: Float = 16f,
+    var alignmentWeight: Float = 0.5f,
+    var cohesionWeight: Float = 1f,
+    var separationWeight: Float = 1.2f
 ) {
-
-    var alignmentWeight = 0.5f
-
-    var cohesionWeight = 1f
-
-    var separationWeight = 1f
 
     fun edges(width: Float, height: Float) {
         if (position.x > width) {
-            position.x = 0f
-        } else if (position.x < 0) {
             position.x = width
+        } else if (position.x < 0f) {
+            position.x = 0f
         }
 
         if (position.y > height) {
-            position.y = 0f
-        } else if (position.y < 0) {
             position.y = height
+        } else if (position.y < 0f) {
+            position.y = 0f
         }
     }
 
