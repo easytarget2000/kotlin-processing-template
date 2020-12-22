@@ -1,10 +1,13 @@
 package eu.ezytaget.processing.kotlin_template
 
+import eu.ezytaget.processing.kotlin_template.boids.Boid
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
+import processing.core.PVector
 import kotlin.random.Random
+
 
 class PApplet : processing.core.PApplet() {
 
@@ -28,9 +31,13 @@ class PApplet : processing.core.PApplet() {
 
     private var zRotationVelocity = 0.002f
 
+    private var boids = emptyList<Boid>()
+
+    private val numberOfBoids = 50
+
     override fun settings() {
         if (FULL_SCREEN) {
-            fullScreen(RENDERER, DISPLAY_ID)
+            fullScreen(RENDERER, FULL_SCREEN_DISPLAY_ID)
         } else {
             size(WIDTH, HEIGHT, RENDERER)
         }
@@ -44,6 +51,8 @@ class PApplet : processing.core.PApplet() {
         clapper.start()
 
         setPerspective()
+
+        initBoids();
     }
 
     override fun draw() {
@@ -59,9 +68,13 @@ class PApplet : processing.core.PApplet() {
             drawFrameRate()
         }
 
-        translate(width / 2f, height / 2f)
-        updateRotations()
-        updateClapper()
+        drawBoids()
+
+        stroke(1f)
+
+//        translate(width / 2f, height / 2f)
+//        updateRotations()
+//        updateClapper()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -72,6 +85,8 @@ class PApplet : processing.core.PApplet() {
         when (key) {
             ' ' ->
                 clapper.tapBpm()
+            'x' ->
+                clear()
         }
     }
 
@@ -79,6 +94,36 @@ class PApplet : processing.core.PApplet() {
     Implementations
      */
 
+    private fun initBoids() {
+        val width = width.toFloat()
+        val height = height.toFloat()
+        boids = (0..numberOfBoids).map { initBoid(width, height) }
+    }
+
+    private fun initBoid(width: Float, height: Float): Boid {
+        var velocity = PVector.random2D()
+        velocity.setMag(random(2f, 4f))
+
+        return Boid(
+                position = PVector(random(width), random(height)),
+                velocity = velocity,
+                acceleration = PVector(),
+                maxForce = 1,
+                maxSpeed = 4
+        )
+    }
+
+    private fun drawBoids() {
+        val width = width.toFloat()
+        val height = height.toFloat()
+
+        boids.forEach {
+            it.edges(width, height)
+            it.flock(boids)
+            it.update()
+            it.show(pApplet = this)
+        }
+    }
 
     private fun setPerspective() {
         val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
@@ -168,7 +213,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val CLICK_TO_DRAW = false
 
-        private const val FULL_SCREEN = true
+        private const val FULL_SCREEN = false
 
         private const val WIDTH = 1400
 
@@ -176,7 +221,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val RENDERER = PConstants.P3D
 
-        private const val DISPLAY_ID = 2
+        private const val FULL_SCREEN_DISPLAY_ID = 2
 
         private const val COLOR_MODE = PConstants.HSB
 
@@ -184,7 +229,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val FRAME_RATE = 60f
 
-        private const val DRAW_BACKGROUND_ON_DRAW = false
+        private const val DRAW_BACKGROUND_ON_DRAW = true
 
         private const val DRAW_FRAME_RATE = false
 
