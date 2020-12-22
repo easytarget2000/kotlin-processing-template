@@ -47,8 +47,11 @@ class Boid(
         val steering = PVector()
         var total = 0
         for (other in boids) {
+            if (other == this) {
+                continue
+            }
             val d = dist(position.x, position.y, other.position.x, other.position.y)
-            if (other !== this && d < perceptionRadius) {
+            if (d < perceptionRadius) {
                 steering.add(other.velocity)
                 total++
             }
@@ -67,8 +70,12 @@ class Boid(
         val steering = PVector()
         var total = 0
         for (other in boids) {
-            val d: Float = dist(position.x, position.y, other.position.x, other.position.y)
-            if (other !== this && d < perceptionRadius) {
+            if (other == this) {
+                continue
+            }
+
+            val d= dist(position.x, position.y, other.position.x, other.position.y)
+            if (d < perceptionRadius) {
                 val diff = PVector.sub(position, other.position)
                 diff.div(d * d)
                 steering.add(diff)
@@ -89,8 +96,11 @@ class Boid(
         val steering = PVector()
         var total = 0
         for (other in boids) {
+            if (other == this) {
+                continue
+            }
             val d: Float = dist(position.x, position.y, other.position.x, other.position.y)
-            if (other !== this && d < perceptionRadius) {
+            if (d < perceptionRadius) {
                 steering.add(other.position)
                 total++
             }
@@ -125,8 +135,8 @@ class Boid(
     }
 
     fun show(pApplet: PApplet) {
-        pApplet.strokeWeight(8f)
-        pApplet.stroke(1f)
+        pApplet.strokeWeight(2f)
+        pApplet.stroke(1f, 0.7f)
         pApplet.point(position.x, position.y)
     }
 

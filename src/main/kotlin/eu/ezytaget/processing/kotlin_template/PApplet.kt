@@ -21,7 +21,7 @@ class PApplet : processing.core.PApplet() {
 
     private var radiusFactorVelocity = 0f
 
-    private var backgroundAlpha = 1f
+    private var backgroundAlpha = 0.1f
 
     private var xRotation = 1f
 
@@ -33,7 +33,7 @@ class PApplet : processing.core.PApplet() {
 
     private var boids = emptyList<Boid>()
 
-    private val numberOfBoids = 50
+    private val numberOfBoids = 1000
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -231,7 +231,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val DRAW_BACKGROUND_ON_DRAW = true
 
-        private const val DRAW_FRAME_RATE = false
+        private const val DRAW_FRAME_RATE = true
 
         private const val MAX_ROTATION_VELOCITY = 0.03f
 
