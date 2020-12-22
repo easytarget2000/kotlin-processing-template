@@ -21,7 +21,7 @@ class PApplet : processing.core.PApplet() {
 
     override fun settings() {
         if (FULL_SCREEN) {
-            fullScreen(RENDERER)
+            fullScreen(RENDERER, DISPLAY_ID)
         } else {
             size(WIDTH, HEIGHT, RENDERER)
         }
@@ -161,6 +161,7 @@ class PApplet : processing.core.PApplet() {
         private const val WIDTH = 1400
         private const val HEIGHT = 900
         private const val RENDERER = PConstants.P3D
+        private const val DISPLAY_ID = 2
         private const val COLOR_MODE = PConstants.HSB
         private const val MAX_COLOR_VALUE = 1f
         private const val FRAME_RATE = 60f
