@@ -9,14 +9,23 @@ import kotlin.random.Random
 class PApplet : processing.core.PApplet() {
 
     private val random = Random.Default
+
     private val clapper = Clapper()
+
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
+
     private var waitingForClickToDraw = false
+
     private var radiusFactorVelocity = 0f
+
     private var backgroundAlpha = 1f
+
     private var xRotation = 1f
+
     private var zRotation = 1f
+
     private var xRotationVelocity = 0.021f
+
     private var zRotationVelocity = 0.002f
 
     override fun settings() {
@@ -156,22 +165,35 @@ class PApplet : processing.core.PApplet() {
     }
 
     companion object {
-        private const val CLICK_TO_DRAW = false         
+
+        private const val CLICK_TO_DRAW = false
+
         private const val FULL_SCREEN = true
+
         private const val WIDTH = 1400
+
         private const val HEIGHT = 900
+
         private const val RENDERER = PConstants.P3D
+
         private const val DISPLAY_ID = 2
+
         private const val COLOR_MODE = PConstants.HSB
+
         private const val MAX_COLOR_VALUE = 1f
+
         private const val FRAME_RATE = 60f
+
         private const val DRAW_BACKGROUND_ON_DRAW = false
+
         private const val DRAW_FRAME_RATE = false
+
         private const val MAX_ROTATION_VELOCITY = 0.03f
 
         fun runInstance() {
             val instance = PApplet()
             instance.runSketch()
         }
+
     }
 }
