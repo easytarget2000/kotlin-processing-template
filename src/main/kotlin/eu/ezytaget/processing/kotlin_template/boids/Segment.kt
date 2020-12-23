@@ -23,16 +23,16 @@ internal class Segment {
     var child: Segment? = null
     var sw = 0f
 
-    constructor(x: Float, y: Float, len_: Float, i: Float) {
+    constructor(x: Float, y: Float, len_: Float, i: Int) {
         a = PVector(x, y)
-        sw = map(i, 0f, 20f, 1f, 10f)
+        sw = map(i.toFloat(), 0f, 20f, 1f, 10f)
         len = len_
         calculateB()
     }
 
-    constructor(parent_: Segment?, len_: Float, i: Float) {
+    constructor(parent_: Segment?, len_: Float, i: Int) {
         parent = parent_
-        sw = map(i, 0f, 20f, 1f, 10f)
+        sw = map(i.toFloat(), 0f, 20f, 1f, 10f)
         a = parent!!.b.copy()
         len = len_
         calculateB()

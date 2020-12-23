@@ -22,7 +22,7 @@ class PApplet : processing.core.PApplet() {
 
     private var radiusFactorVelocity = 0f
 
-    private var backgroundAlpha = 0.1f
+    private var backgroundAlpha = 0.01f
 
     private var xRotation = 1f
 
@@ -35,8 +35,6 @@ class PApplet : processing.core.PApplet() {
     private var boids = emptyList<Boid>()
 
     private val numberOfBoids = 100
-
-    private lateinit var rootSegment: Segment
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -100,15 +98,6 @@ class PApplet : processing.core.PApplet() {
         val width = width.toFloat()
         val height = height.toFloat()
         boids = (0..numberOfBoids).map { initBoid(width, height) }
-
-        var current = Segment(300f, 200f, 10f, 0f)
-
-        for (i in 0..19) {
-            val next = Segment(current, 10f, i.toFloat())
-            current.child = next
-            current = next
-        }
-        rootSegment = current
     }
 
     private fun initBoid(width: Float, height: Float): Boid {
@@ -131,18 +120,6 @@ class PApplet : processing.core.PApplet() {
             it.flock(boids)
             it.update()
             it.show(pApplet = this)
-        }
-
-        rootSegment.follow(mouseX.toFloat(), mouseY.toFloat())
-        rootSegment.update()
-        rootSegment.show(pApplet = this)
-
-        var next: Segment? = rootSegment.parent
-        while (next != null) {
-            next.follow()
-            next.update()
-            next.show(pApplet = this)
-            next = next.parent
         }
     }
 

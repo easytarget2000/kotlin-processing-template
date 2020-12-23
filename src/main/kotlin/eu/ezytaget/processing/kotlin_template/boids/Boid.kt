@@ -21,22 +21,38 @@ class Boid(
     var maxSpeed: Float = 16f,
     var alignmentWeight: Float = 0.5f,
     var cohesionWeight: Float = 1f,
-    var separationWeight: Float = 1.2f
+    var separationWeight: Float = 1.2f,
+    numberOfSegments: Int = 19,
+    var segmentLength: Float = 10f
 ) {
 
     var lastDrawnPosition = position
 
+    private var rootSegment: Segment
+
+    init {
+        var current = Segment(position.x, position.y, segmentLength, i = 0)
+
+        for (i in 0..numberOfSegments) {
+            val next = Segment(current, segmentLength, i)
+            current.child = next
+            current = next
+        }
+        rootSegment = current
+    }
+
+    // TODO: Make edges reflective instead of wrapping around.
     fun edges(width: Float, height: Float) {
         if (position.x > width) {
-            position.x = width
-        } else if (position.x < 0f) {
             position.x = 0f
+        } else if (position.x < 0f) {
+            position.x = width
         }
 
         if (position.y > height) {
-            position.y = height
-        } else if (position.y < 0f) {
             position.y = 0f
+        } else if (position.y < 0f) {
+            position.y = height
         }
     }
 
@@ -47,7 +63,6 @@ class Boid(
         val cohesionVector = PVector()
 
         var total = 0
-        // CONTINUE HERE
         for (other in boids) {
             if (other == this) {
                 continue
@@ -105,13 +120,29 @@ class Boid(
         velocity.add(acceleration)
         velocity.limit(maxSpeed)
         acceleration.mult(0f)
+
+        rootSegment.follow(position.x, position.y)
+        rootSegment.update()
+
+        var next: Segment? = rootSegment.parent
+        while (next != null) {
+            next.follow()
+            next.update()
+            next = next.parent
+        }
     }
 
     fun show(pApplet: PApplet) {
-        pApplet.strokeWeight(2f)
-        pApplet.stroke(1f, 0.5f)
-        pApplet.line(lastDrawnPosition.x, lastDrawnPosition.y, position.x, position.y)
-        lastDrawnPosition = position.copy()
+//        pApplet.strokeWeight(2f)
+//        pApplet.stroke(1f, 0.5f)
+//        pApplet.line(lastDrawnPosition.x, lastDrawnPosition.y, position.x, position.y)
+//        lastDrawnPosition = position.copy()
+
+        var next: Segment? = rootSegment.parent
+        while (next != null) {
+            next.show(pApplet)
+            next = next.parent
+        }
     }
 
 }
