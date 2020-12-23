@@ -40,7 +40,7 @@ class Boid(
     }
 
     fun flock(boids: List<Boid>) {
-        val perceptionRadius = 50
+        val perceptionRadius = 10
         val alignmentVector = PVector()
         val separationVector = PVector()
         val cohesionVector = PVector()
@@ -50,6 +50,7 @@ class Boid(
             if (other == this) {
                 continue
             }
+
             val d = dist(position.x, position.y, other.position.x, other.position.y)
             if (d < perceptionRadius) {
                 alignmentVector.add(other.velocity)
@@ -98,7 +99,7 @@ class Boid(
 
     fun show(pApplet: PApplet) {
         pApplet.strokeWeight(2f)
-        pApplet.stroke(1f, 0.7f)
+        pApplet.stroke(1f, 0.5f)
         pApplet.line(lastDrawnPosition.x, lastDrawnPosition.y, position.x, position.y)
         lastDrawnPosition = position.copy()
     }

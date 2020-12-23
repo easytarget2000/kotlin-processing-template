@@ -33,7 +33,7 @@ class PApplet : processing.core.PApplet() {
 
     private var boids = emptyList<Boid>()
 
-    private val numberOfBoids = 1000
+    private val numberOfBoids = 5000
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -140,7 +140,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun drawFrameRate() {
-        if (frameCount.toInt() % (FRAME_RATE * 2) == 0) {
+        if ((millis() % 15) == 0 || frameCount % (FRAME_RATE * 2) == 0) {
             kotlin.io.println(frameRate)
         }
     }
