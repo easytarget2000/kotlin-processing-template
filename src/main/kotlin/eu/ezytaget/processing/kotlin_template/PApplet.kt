@@ -140,7 +140,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun drawFrameRate() {
-        if (frameCount.toInt() % (FRAME_RATE * 3) == 0) {
+        if (frameCount.toInt() % (FRAME_RATE * 2) == 0) {
             kotlin.io.println(frameRate)
         }
     }
@@ -225,7 +225,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val FRAME_RATE = 60
 
-        private const val DRAW_BACKGROUND_ON_DRAW = false
+        private const val DRAW_BACKGROUND_ON_DRAW = true
 
         private const val DRAW_FRAME_RATE = true
 

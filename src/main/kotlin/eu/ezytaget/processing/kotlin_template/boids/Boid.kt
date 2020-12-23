@@ -11,8 +11,6 @@ import processing.core.PApplet
 import processing.core.PApplet.dist
 import processing.core.PVector
 
-import javax.swing.Spring.height
-
 
 class Boid(
     var position: PVector,
@@ -39,9 +37,12 @@ class Boid(
         }
     }
 
-    fun align(boids: List<Boid>): PVector {
+    fun flock(boids: List<Boid>) {
         val perceptionRadius = 50
-        val steering = PVector()
+        val alignmentVector = PVector()
+        val separationVector = PVector()
+        val cohesionVector = PVector()
+
         var total = 0
         for (other in boids) {
             if (other == this) {
@@ -49,85 +50,47 @@ class Boid(
             }
             val d = dist(position.x, position.y, other.position.x, other.position.y)
             if (d < perceptionRadius) {
-                steering.add(other.velocity)
+                alignmentVector.add(other.velocity)
                 total++
-            }
-        }
-        if (total > 0) {
-            steering.div(total.toFloat())
-            steering.setMag(maxSpeed.toFloat())
-            steering.sub(velocity)
-            steering.limit(maxForce.toFloat())
-        }
-        return steering
-    }
 
-    fun separation(boids: List<Boid>): PVector {
-        val perceptionRadius = 50
-        val steering = PVector()
-        var total = 0
-        for (other in boids) {
-            if (other == this) {
-                continue
-            }
-
-            val d= dist(position.x, position.y, other.position.x, other.position.y)
-            if (d < perceptionRadius) {
                 val diff = PVector.sub(position, other.position)
                 diff.div(d * d)
-                steering.add(diff)
-                total++
+                separationVector.add(diff)
+
+                cohesionVector.add(other.position)
             }
         }
         if (total > 0) {
-            steering.div(total.toFloat())
-            steering.setMag(maxSpeed.toFloat())
-            steering.sub(velocity)
-            steering.limit(maxForce.toFloat())
-        }
-        return steering
-    }
+            val sumDivisor = total.toFloat()
+            alignmentVector.div(sumDivisor)
+            alignmentVector.setMag(maxSpeed)
+            alignmentVector.sub(velocity)
+            alignmentVector.limit(maxForce)
 
-    fun cohesion(boids: List<Boid>): PVector {
-        val perceptionRadius = 100
-        val steering = PVector()
-        var total = 0
-        for (other in boids) {
-            if (other == this) {
-                continue
-            }
-            val d: Float = dist(position.x, position.y, other.position.x, other.position.y)
-            if (d < perceptionRadius) {
-                steering.add(other.position)
-                total++
-            }
-        }
-        if (total > 0) {
-            steering.div(total.toFloat())
-            steering.sub(position)
-            steering.setMag(maxSpeed.toFloat())
-            steering.sub(velocity)
-            steering.limit(maxForce.toFloat())
-        }
-        return steering
-    }
+            separationVector.div(sumDivisor)
+            separationVector.setMag(maxSpeed)
+            separationVector.sub(velocity)
+            separationVector.limit(maxForce)
 
-    fun flock(boids: List<Boid>) {
-        val alignment = align(boids)
-        val cohesion = cohesion(boids)
-        val separation = separation(boids)
-        alignment.mult(alignmentWeight)
-        cohesion.mult(cohesionWeight)
-        separation.mult(separationWeight)
-        acceleration.add(alignment)
-        acceleration.add(cohesion)
-        acceleration.add(separation)
+            cohesionVector.div(sumDivisor)
+            cohesionVector.sub(position)
+            cohesionVector.setMag(maxSpeed)
+            cohesionVector.sub(velocity)
+            cohesionVector.limit(maxForce)
+        }
+
+        alignmentVector.mult(alignmentWeight)
+        cohesionVector.mult(cohesionWeight)
+        separationVector.mult(separationWeight)
+        acceleration.add(alignmentVector)
+        acceleration.add(cohesionVector)
+        acceleration.add(separationVector)
     }
 
     fun update() {
         position.add(velocity)
         velocity.add(acceleration)
-        velocity.limit(maxSpeed.toFloat())
+        velocity.limit(maxSpeed)
         acceleration.mult(0f)
     }
 
