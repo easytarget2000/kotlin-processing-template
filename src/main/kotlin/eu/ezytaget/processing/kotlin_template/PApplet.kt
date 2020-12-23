@@ -215,7 +215,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val HEIGHT = 900
 
-        private const val RENDERER = PConstants.P3D
+        private const val RENDERER = PConstants.P2D
 
         private const val FULL_SCREEN_DISPLAY_ID = 2
 

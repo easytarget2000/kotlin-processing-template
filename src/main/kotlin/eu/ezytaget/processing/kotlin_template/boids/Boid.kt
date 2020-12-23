@@ -23,6 +23,8 @@ class Boid(
     var separationWeight: Float = 1.2f
 ) {
 
+    var lastDrawnPosition = position
+
     fun edges(width: Float, height: Float) {
         if (position.x > width) {
             position.x = width
@@ -97,7 +99,8 @@ class Boid(
     fun show(pApplet: PApplet) {
         pApplet.strokeWeight(2f)
         pApplet.stroke(1f, 0.7f)
-        pApplet.point(position.x, position.y)
+        pApplet.line(lastDrawnPosition.x, lastDrawnPosition.y, position.x, position.y)
+        lastDrawnPosition = position.copy()
     }
 
 }
