@@ -1,6 +1,7 @@
 package eu.ezytaget.processing.kotlin_template
 
 import eu.ezytaget.processing.kotlin_template.boids.Boid
+import eu.ezytaget.processing.kotlin_template.boids.Segment
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
@@ -33,7 +34,9 @@ class PApplet : processing.core.PApplet() {
 
     private var boids = emptyList<Boid>()
 
-    private val numberOfBoids = 5000
+    private val numberOfBoids = 100
+
+    private lateinit var rootSegment: Segment
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -97,6 +100,15 @@ class PApplet : processing.core.PApplet() {
         val width = width.toFloat()
         val height = height.toFloat()
         boids = (0..numberOfBoids).map { initBoid(width, height) }
+
+        var current = Segment(300f, 200f, 10f, 0f)
+
+        for (i in 0..19) {
+            val next = Segment(current, 10f, i.toFloat())
+            current.child = next
+            current = next
+        }
+        rootSegment = current
     }
 
     private fun initBoid(width: Float, height: Float): Boid {
@@ -119,6 +131,18 @@ class PApplet : processing.core.PApplet() {
             it.flock(boids)
             it.update()
             it.show(pApplet = this)
+        }
+
+        rootSegment.follow(mouseX.toFloat(), mouseY.toFloat())
+        rootSegment.update()
+        rootSegment.show(pApplet = this)
+
+        var next: Segment? = rootSegment.parent
+        while (next != null) {
+            next.follow()
+            next.update()
+            next.show(pApplet = this)
+            next = next.parent
         }
     }
 
