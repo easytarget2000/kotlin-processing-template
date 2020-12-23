@@ -14,7 +14,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
-internal class Segment {
+class Segment {
     var a: PVector
     var angle = 0f
     var len: Float
@@ -22,19 +22,23 @@ internal class Segment {
     var parent: Segment? = null
     var child: Segment? = null
     var sw = 0f
+    var hue: Float = 1f
 
-    constructor(x: Float, y: Float, len_: Float, i: Int) {
+
+    constructor(x: Float, y: Float, len_: Float, i: Int, hue: Float) {
         a = PVector(x, y)
         sw = map(i.toFloat(), 0f, 20f, 1f, 10f)
         len = len_
+        this.hue = hue
         calculateB()
     }
 
-    constructor(parent_: Segment?, len_: Float, i: Int) {
+    constructor(parent_: Segment?, len_: Float, i: Int, hue: Float) {
         parent = parent_
         sw = map(i.toFloat(), 0f, 20f, 1f, 10f)
         a = parent!!.b.copy()
         len = len_
+        this.hue = hue
         calculateB()
     }
 
@@ -64,7 +68,7 @@ internal class Segment {
     }
 
     fun show(pApplet: PApplet) {
-        pApplet.stroke(1f, 0.5f)
+        pApplet.stroke(hue, 1f, 1f, 0.5f)
         pApplet.strokeWeight(1f)
         pApplet.line(a.x, a.y, b.x - 1, b.y - 1)
     }

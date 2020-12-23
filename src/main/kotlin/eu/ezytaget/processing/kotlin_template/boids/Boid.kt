@@ -22,8 +22,9 @@ class Boid(
     var alignmentWeight: Float = 0.5f,
     var cohesionWeight: Float = 1f,
     var separationWeight: Float = 1.2f,
-    numberOfSegments: Int = 19,
-    var segmentLength: Float = 10f
+    numberOfSegments: Int = 20,
+    segmentLength: Float = 10f,
+    var hue: Float = 0f
 ) {
 
     var lastDrawnPosition = position
@@ -31,10 +32,10 @@ class Boid(
     private var rootSegment: Segment
 
     init {
-        var current = Segment(position.x, position.y, segmentLength, i = 0)
+        var current = Segment(position.x, position.y, segmentLength, i = 0, hue = hue)
 
         for (i in 0..numberOfSegments) {
-            val next = Segment(current, segmentLength, i)
+            val next = Segment(current, segmentLength, i, hue = hue)
             current.child = next
             current = next
         }
@@ -42,18 +43,21 @@ class Boid(
     }
 
     // TODO: Make edges reflective instead of wrapping around.
-    fun edges(width: Float, height: Float) {
-        if (position.x > width) {
-            position.x = 0f
-        } else if (position.x < 0f) {
-            position.x = width
+    fun edges(width: Float, height: Float, newPosition: PVector) {
+        if (position.x < 0f || position.x > width || position.y < 0f || position.y > height) {
+            position = newPosition.copy()
         }
-
-        if (position.y > height) {
-            position.y = 0f
-        } else if (position.y < 0f) {
-            position.y = height
-        }
+//        if (position.x > width) {
+//            position.x = 0f
+//        } else if (position.x < 0f) {
+//            position.x = width
+//        }
+//
+//        if (position.y > height) {
+//            position.y = 0f
+//        } else if (position.y < 0f) {
+//            position.y = height
+//        }
     }
 
     fun flock(boids: List<Boid>) {

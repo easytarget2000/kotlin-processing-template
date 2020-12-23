@@ -34,7 +34,9 @@ class PApplet : processing.core.PApplet() {
 
     private var boids = emptyList<Boid>()
 
-    private val numberOfBoids = 100
+    private val numberOfBoids = 1000
+
+    private lateinit var boidResetPosition: PVector
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -97,17 +99,23 @@ class PApplet : processing.core.PApplet() {
     private fun initBoids() {
         val width = width.toFloat()
         val height = height.toFloat()
-        boids = (0..numberOfBoids).map { initBoid(width, height) }
+        boids = (0..numberOfBoids).map {
+            val hue = (it % numberOfBoids) / numberOfBoids.toFloat()
+            initBoid(width, height, hue)
+        }
+
+        boidResetPosition = PVector(0f, height / 2f)
     }
 
-    private fun initBoid(width: Float, height: Float): Boid {
+    private fun initBoid(width: Float, height: Float, hue: Float): Boid {
         var velocity = PVector.random2D()
         velocity.setMag(random(2f, 4f))
 
         return Boid(
                 position = PVector(random(width), random(height)),
                 velocity = velocity,
-                acceleration = PVector()
+                acceleration = PVector(),
+                hue = hue
         )
     }
 
@@ -116,7 +124,11 @@ class PApplet : processing.core.PApplet() {
         val height = height.toFloat()
 
         boids.forEach {
-            it.edges(width, height)
+            it.edges(width, height, boidResetPosition)
+            boidResetPosition.add(1f, 0f)
+            if (boidResetPosition.x > width) {
+                boidResetPosition = PVector(0f, height / 2f)
+            }
             it.flock(boids)
             it.update()
             it.show(pApplet = this)
