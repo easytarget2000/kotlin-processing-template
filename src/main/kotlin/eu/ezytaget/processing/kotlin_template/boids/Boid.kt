@@ -10,6 +10,7 @@ package eu.ezytaget.processing.kotlin_template.boids
 import processing.core.PApplet
 import processing.core.PApplet.dist
 import processing.core.PVector
+import kotlin.math.abs
 
 
 class Boid(
@@ -46,8 +47,17 @@ class Boid(
         val cohesionVector = PVector()
 
         var total = 0
+        // CONTINUE HERE
         for (other in boids) {
             if (other == this) {
+                continue
+            }
+
+            if (abs(position.x - other.position.x) > perceptionRadius) {
+                continue
+            }
+
+            if (abs(position.y - other.position.y) > perceptionRadius) {
                 continue
             }
 
