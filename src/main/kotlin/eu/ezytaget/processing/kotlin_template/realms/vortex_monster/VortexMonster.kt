@@ -26,20 +26,17 @@ class VortexMonster {
         val height = pApplet.height.toFloat()
         val frameCount = pApplet.frameCount.toFloat()
 
-        pApplet.fill(0.7f, 0.9f, 0.9f, 0.1f)
-        pApplet.noStroke()
-        pApplet.rect(0f, 0f, width, height)
         t = (frameCount - 1f) / numFrames.toFloat()
         if (pApplet.noise(frameCount) > 0.8f) {
-            numberOfLines = pApplet.random(MIN_NUMBER_OF_LINES.toFloat(), MAX_NUMBER_OF_LINES.toFloat()) as Int
+            numberOfLines = 2//pApplet.random(MIN_NUMBER_OF_LINES, MAX_NUMBER_OF_LINES) as Int
         }
+
         if (pApplet.noise(frameCount * pApplet.frameRate) > 0.8f) {
-            pApplet.background(1f, 1f, 1f)
+//            pApplet.background(1f, 1f, 1f)
             return
         }
 
         pApplet.stroke(1f, 0.33f)
-        pApplet.push()
         pApplet.translate(width / 2f, height / 2f)
         for (i in 0 until numberOfLines) {
             pApplet.push()
@@ -47,7 +44,6 @@ class VortexMonster {
             drawThing(pApplet, j = i, width = width)
             pApplet.pop()
         }
-        pApplet.pop()
 
         pApplet.pop()
     }

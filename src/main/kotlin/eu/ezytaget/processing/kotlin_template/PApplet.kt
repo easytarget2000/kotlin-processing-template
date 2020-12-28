@@ -1,6 +1,7 @@
 package eu.ezytaget.processing.kotlin_template
 
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
+import eu.ezytaget.processing.kotlin_template.realms.stripes.StripesRealm
 import eu.ezytaget.processing.kotlin_template.realms.vortex_monster.VortexMonster
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
@@ -29,7 +30,7 @@ class PApplet : processing.core.PApplet() {
 
     private var zRotationVelocity = 0.002f
 
-    private var vortexMonster = VortexMonster()
+    private var stripesRealm = StripesRealm()
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -74,13 +75,13 @@ class PApplet : processing.core.PApplet() {
             drawFrameRate()
         }
 
-        vortexMonster.drawIn(pApplet = this)
+        stripesRealm.draw(pApplet = this)
 
         translate(width / 2f, height / 2f)
         updateRotations()
         updateClapper()
 
-        drawSample()
+//        drawSample()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -195,11 +196,11 @@ class PApplet : processing.core.PApplet() {
 
         private const val CLICK_TO_DRAW = false
 
-        private const val FULL_SCREEN = true
+        private const val FULL_SCREEN = false
 
-        private const val WIDTH = 1400
+        private const val WIDTH = 600
 
-        private const val HEIGHT = 900
+        private const val HEIGHT = 600
 
         private const val RENDERER = PConstants.P3D
 
