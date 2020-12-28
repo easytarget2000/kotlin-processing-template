@@ -1,6 +1,7 @@
 package eu.ezytaget.processing.kotlin_template
 
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
+import eu.ezytaget.processing.kotlin_template.realms.vortex_monster.VortexMonster
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
@@ -27,6 +28,8 @@ class PApplet : processing.core.PApplet() {
     private var xRotationVelocity = 0.0021f
 
     private var zRotationVelocity = 0.002f
+
+    private var vortexMonster = VortexMonster()
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -70,6 +73,8 @@ class PApplet : processing.core.PApplet() {
         if (DRAW_FRAME_RATE) {
             drawFrameRate()
         }
+
+        vortexMonster.drawIn(pApplet = this)
 
         translate(width / 2f, height / 2f)
         updateRotations()
