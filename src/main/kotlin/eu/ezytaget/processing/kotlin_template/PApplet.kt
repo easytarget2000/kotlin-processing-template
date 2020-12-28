@@ -24,7 +24,7 @@ class PApplet : processing.core.PApplet() {
 
     private var zRotation = 1f
 
-    private var xRotationVelocity = 0.021f
+    private var xRotationVelocity = 0.0021f
 
     private var zRotationVelocity = 0.002f
 
@@ -44,9 +44,21 @@ class PApplet : processing.core.PApplet() {
         clapper.start()
 
         setPerspective()
+
+        randomSeed(System.currentTimeMillis())
     }
 
+    private var numberOfIterationsPerFrame = 10
+
     override fun draw() {
+        (0 .. numberOfIterationsPerFrame).forEach { _ ->
+            push()
+            iterateDraw()
+            pop()
+        }
+    }
+
+    private fun iterateDraw() {
         if (CLICK_TO_DRAW && waitingForClickToDraw) {
             return
         }
@@ -63,6 +75,8 @@ class PApplet : processing.core.PApplet() {
         updateRotations()
         updateClapper()
 
+        drawSample()
+
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
         }
@@ -72,6 +86,8 @@ class PApplet : processing.core.PApplet() {
         when (key) {
             ' ' ->
                 clapper.tapBpm()
+            'x' ->
+                clearFrame()
         }
     }
 
@@ -79,6 +95,17 @@ class PApplet : processing.core.PApplet() {
     Implementations
      */
 
+    private fun drawSample() {
+        noFill()
+        val hue = (frameCount % 1000) / 1000f
+        val saturation = (frameCount % 3000) / 3000f
+        val brightness = MAX_COLOR_VALUE * 1f //((frameCount % 6000) / 6000f)
+        val alpha = 0.1f * MAX_COLOR_VALUE
+        stroke(hue, saturation, brightness, alpha)
+
+        val boxSize = min(width, height) * 0.5f
+        box(boxSize)
+    }
 
     private fun setPerspective() {
         val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
@@ -114,20 +141,15 @@ class PApplet : processing.core.PApplet() {
     private fun updateClapper() {
         val clapperResult = clapper.update()
 
-        randomSeed(System.currentTimeMillis())
+//        if (clapperResult[BeatInterval.Whole]?.didChange == true) {
+//            random.maybe(probability = 0.9f) {
+//                bounce()
+//            }
+//        }
 
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-        }
-
-        if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-            random.maybe(probability = 0.9f) {
-                bounce()
-            }
-        }
-
-        if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
-            random.maybe(probability = 0.2f) {}
-            random.maybe {
+//            random.maybe(probability = 0.2f) {}
+            random.maybe(probability = 0.5f) {
                 clearFrame()
             }
             random.maybe {
@@ -182,7 +204,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val MAX_COLOR_VALUE = 1f
 
-        private const val FRAME_RATE = 60f
+        private const val FRAME_RATE = 120f
 
         private const val DRAW_BACKGROUND_ON_DRAW = false
 
