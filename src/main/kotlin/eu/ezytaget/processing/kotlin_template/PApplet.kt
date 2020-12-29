@@ -6,6 +6,7 @@ import eu.ezytaget.processing.kotlin_template.realms.vortex_monster.VortexMonste
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
+import processing.video.Capture
 import kotlin.random.Random
 
 class PApplet : processing.core.PApplet() {
