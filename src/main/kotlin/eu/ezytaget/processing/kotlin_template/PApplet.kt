@@ -1,6 +1,7 @@
 package eu.ezytaget.processing.kotlin_template
 
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
+import eu.ezytaget.processing.kotlin_template.realms.camera.CameraRealm
 import eu.ezytaget.processing.kotlin_template.realms.stripes.StripesRealm
 import eu.ezytaget.processing.kotlin_template.realms.vortex_monster.VortexMonster
 import eu.ezytarget.clapper.BeatInterval
@@ -31,6 +32,8 @@ class PApplet : processing.core.PApplet() {
 
     private var zRotationVelocity = 0.002f
 
+    private var cameraRealm: CameraRealm? = CameraRealm()
+
     private var stripesRealm = StripesRealm()
 
     override fun settings() {
@@ -49,6 +52,9 @@ class PApplet : processing.core.PApplet() {
         clapper.start()
 
         setPerspective()
+
+        // CONTINUE HERE
+        cameraRealm?.setCaptureAndStart(pApplet = this)
 
         randomSeed(System.currentTimeMillis())
     }
@@ -76,6 +82,7 @@ class PApplet : processing.core.PApplet() {
             drawFrameRate()
         }
 
+        cameraRealm?.drawIn(pApplet = this)
         stripesRealm.draw(pApplet = this)
 
         translate(width / 2f, height / 2f)

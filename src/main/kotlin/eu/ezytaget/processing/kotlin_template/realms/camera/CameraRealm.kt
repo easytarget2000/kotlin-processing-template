@@ -6,6 +6,7 @@ import processing.video.Capture
 class CameraRealm {
 
     var capture: Capture? = null
+        private set
 
     fun setCaptureAndStart(pApplet: PApplet, preferredCameraName: String = "FaceTime") {
         capture?.stop()
@@ -22,5 +23,16 @@ class CameraRealm {
         }
     }
 
-    
+    fun read(): Capture? {
+        if (capture?.available() == false) {
+            return null
+        }
+
+        capture?.read()
+        return capture
+    }
+
+    fun drawIn(pApplet: PApplet) {
+        pApplet.image(read() ?: return, 0f, 0f)
+    }
 }
