@@ -21,7 +21,9 @@ internal class PolygonDriver (
     fun update() {
         shape.translate(velocity.x, velocity.y)
         velocity.add(nextJitter, nextJitter, 0f)
-        shape.rotate(angularVelocity)
+
+        // The last 3 values are a workaround for Shape#rotate() on PMatrix3D.
+        shape.rotate(angularVelocity, 0f, 0f, 1f)
     }
 
     fun drawIn(pApplet: PApplet) {

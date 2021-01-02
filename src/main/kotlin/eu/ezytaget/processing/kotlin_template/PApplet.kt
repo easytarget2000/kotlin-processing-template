@@ -3,10 +3,12 @@ package eu.ezytaget.processing.kotlin_template
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytaget.processing.kotlin_template.realms.camera.CameraRealm
 import eu.ezytaget.processing.kotlin_template.realms.stripes.StripesRealm
+import eu.ezytaget.processing.kotlin_template.realms.triangle_floor.TriangleFloor
 import eu.ezytaget.processing.kotlin_template.realms.vortex_monster.VortexMonster
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
+import processing.event.MouseEvent
 import processing.video.Capture
 import kotlin.random.Random
 
@@ -36,6 +38,8 @@ class PApplet : processing.core.PApplet() {
 
     private var stripesRealm = StripesRealm()
 
+    private var triangleFloor = TriangleFloor()
+
     override fun settings() {
         if (FULL_SCREEN) {
             fullScreen(RENDERER, DISPLAY_ID)
@@ -55,6 +59,7 @@ class PApplet : processing.core.PApplet() {
         setPerspective()
 
         cameraRealm?.setCaptureAndStart(pApplet = this)
+        triangleFloor.start(pApplet = this)
 
         randomSeed(System.currentTimeMillis())
     }
@@ -83,13 +88,12 @@ class PApplet : processing.core.PApplet() {
         }
 
         cameraRealm?.drawIn(pApplet = this)
-        stripesRealm.draw(pApplet = this)
+//        stripesRealm.draw(pApplet = this)
+        triangleFloor.updateAndDrawIn(pApplet = this)
 
         translate(width / 2f, height / 2f)
         updateRotations()
         updateClapper()
-
-//        drawSample()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -103,6 +107,16 @@ class PApplet : processing.core.PApplet() {
             'x' ->
                 clearFrame()
         }
+    }
+
+
+    override fun mouseClicked(event: MouseEvent?) {
+        super.mouseClicked(event)
+        if (event == null) {
+            return
+        }
+
+        triangleFloor.handleMouseClick(event.button, event.x, event.y, pApplet = this)
     }
 
     /*

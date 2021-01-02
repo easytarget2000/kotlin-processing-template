@@ -1,21 +1,13 @@
 package eu.ezytaget.processing.kotlin_template.realms.triangle_floor
 
 import eu.ezytaget.processing.kotlin_template.nextFloat
-import jogamp.graph.font.typecast.TypecastRenderer
-import jogamp.graph.font.typecast.TypecastRenderer.buildShape
 import processing.core.PApplet
-import processing.core.PConstants
 import processing.core.PConstants.CENTER
-
+import processing.core.PConstants.TRIANGLE
+import processing.core.PShape
 import processing.core.PVector
 import kotlin.math.PI
 import kotlin.random.Random
-import processing.core.PConstants.TRIANGLE
-
-import processing.opengl.PShapeOpenGL.createShape
-
-import processing.core.PShape
-import processing.opengl.PShapeOpenGL
 
 
 class TriangleFloor {
@@ -24,28 +16,60 @@ class TriangleFloor {
 
     var random = Random.Default
 
+    var numberOfStartItems = 64
+
     private val drivers = mutableListOf<PolygonDriver>()
 
-    fun addItem(position: PVector) {
+    fun start(pApplet: PApplet) {
+        val width = pApplet.width.toFloat()
+        val height = pApplet.height.toFloat()
+
+        (0 until numberOfStartItems).forEach { _ ->
+            addItem(pApplet, random.nextFloat(width), random.nextFloat(height))
+        }
+    }
+
+    fun handleMouseClick(pMouseButton: Int, mouseX: Int, mouseY: Int, pApplet: PApplet) {
+        addItem(pApplet, mouseX.toFloat(), mouseY.toFloat())
+    }
+
+    fun addItem(pApplet: PApplet, x: Float, y: Float) {
+        addItem(pApplet, PVector(x, y))
+    }
+
+    fun addItem(pApplet: PApplet, position: PVector) {
         val velocity = PVector(
             maxVelocity / 2f - random.nextFloat(maxVelocity),
             maxVelocity / 2f - random.nextFloat(maxVelocity),
             0f
         )
-        val angularVelocity: Float = PI * random(0.001f)
+        val angularVelocity = PI.toFloat() * random.nextFloat(0.001f)
         val maxJitter = maxVelocity / 16f
         val polygonDriver = PolygonDriver(
-            buildShape(position),
+            buildShape(pApplet = pApplet, position = position),
             velocity,
             angularVelocity,
             maxJitter,
             random
         )
 
-        drivers.plus(polygonDriver)
+        drivers.add(polygonDriver)
     }
 
-    private fun buildShape(pApplet: PApplet, position: PVector): PShape? {
+    fun updateAndDrawIn(pApplet: PApplet) {
+        pApplet.push()
+
+        pApplet.strokeWeight(8f)
+
+        drivers.forEach {
+            it.update()
+            it.drawIn(pApplet)
+        }
+
+        pApplet.pop()
+    }
+
+    private fun buildShape(pApplet: PApplet, position: PVector): PShape {
         pApplet.shapeMode(CENTER)
 
         val shapeX1 = 0f
@@ -54,6 +78,7 @@ class TriangleFloor {
         val shapeY2 = 64f
         val shapeX3 = 320f
         val shapeY3 = 512f
+
         val shape: PShape = pApplet.createShape(
             TRIANGLE,
             shapeX1,
@@ -66,7 +91,8 @@ class TriangleFloor {
         shape.translate(position.x, position.y)
         shape.setFill(-0x1)
         shape.setStroke(-0x1000000)
-        shape.rotate(random.nextFloat() * TWO_PI)
+        // The last 3 values are a workaround for Shape#rotate() on PMatrix3D.
+        shape.rotate(random.nextFloat() * TWO_PI, 0f, 0f, 1f)
 
         return shape
     }
