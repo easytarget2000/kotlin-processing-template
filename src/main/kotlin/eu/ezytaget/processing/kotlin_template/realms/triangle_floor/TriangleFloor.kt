@@ -16,7 +16,7 @@ class TriangleFloor {
 
     var random = Random.Default
 
-    var numberOfStartItems = 64
+    var numberOfStartItems = 3
 
     private val drivers = mutableListOf<PolygonDriver>()
 
@@ -25,7 +25,7 @@ class TriangleFloor {
         val height = pApplet.height.toFloat()
 
         (0 until numberOfStartItems).forEach { _ ->
-            addItem(pApplet, random.nextFloat(width), random.nextFloat(height))
+            addItem(pApplet, width / 2f, height / 2f)//random.nextFloat(width), random.nextFloat(height))
         }
     }
 
@@ -47,6 +47,7 @@ class TriangleFloor {
         val maxJitter = maxVelocity / 16f
         val polygonDriver = PolygonDriver(
             buildShape(pApplet = pApplet, position = position),
+            position,
             velocity,
             angularVelocity,
             maxJitter,
@@ -59,7 +60,7 @@ class TriangleFloor {
     fun updateAndDrawIn(pApplet: PApplet) {
         pApplet.push()
 
-        pApplet.strokeWeight(8f)
+        pApplet.strokeWeight(32f)
 
         drivers.forEach {
             it.update()
@@ -70,8 +71,6 @@ class TriangleFloor {
     }
 
     private fun buildShape(pApplet: PApplet, position: PVector): PShape {
-        pApplet.shapeMode(CENTER)
-
         val shapeX1 = 0f
         val shapeY1 = 0f
         val shapeX2 = 400f
@@ -88,9 +87,9 @@ class TriangleFloor {
             shapeX3,
             shapeY3
         )
-        shape.translate(position.x, position.y)
-        shape.setFill(-0x1)
-        shape.setStroke(-0x1000000)
+//        shape.translate(position.x, position.y)
+
+        shape.stroke(0.5f)
         // The last 3 values are a workaround for Shape#rotate() on PMatrix3D.
         shape.rotate(random.nextFloat() * TWO_PI, 0f, 0f, 1f)
 

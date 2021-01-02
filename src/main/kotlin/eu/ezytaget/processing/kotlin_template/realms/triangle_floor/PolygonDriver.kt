@@ -9,6 +9,7 @@ import kotlin.random.Random
 
 internal class PolygonDriver (
     private val shape: PShape,
+    private val position: PVector,
     private val velocity: PVector,
     private val angularVelocity: Float,
     private val maxJitter: Float,
@@ -19,15 +20,22 @@ internal class PolygonDriver (
         get() = maxJitter / 2f - (random.nextFloat() * maxJitter)
 
     fun update() {
-        shape.translate(velocity.x, velocity.y)
+
+//        shape.translate(velocity.x, velocity.y)
+        position.add(velocity)
         velocity.add(nextJitter, nextJitter, 0f)
 
         // The last 3 values are a workaround for Shape#rotate() on PMatrix3D.
-        shape.rotate(angularVelocity, 0f, 0f, 1f)
+//        shape.rotate(angularVelocity, 0f, 0f, 1f)
     }
 
     fun drawIn(pApplet: PApplet) {
+        pApplet.push()
+
+        pApplet.translate(position.x, position.y)
         pApplet.shape(shape)
+
+        pApplet.pop()
     }
 
 }

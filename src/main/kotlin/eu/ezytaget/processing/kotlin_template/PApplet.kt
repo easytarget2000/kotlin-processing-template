@@ -69,9 +69,12 @@ class PApplet : processing.core.PApplet() {
     override fun draw() {
         (0 .. numberOfIterationsPerFrame).forEach { _ ->
             push()
-            iterateDraw()
+//            iterateDraw()
             pop()
         }
+
+        background(0)
+        triangleFloor.updateAndDrawIn(pApplet = this)
     }
 
     private fun iterateDraw() {
@@ -113,10 +116,17 @@ class PApplet : processing.core.PApplet() {
     override fun mouseClicked(event: MouseEvent?) {
         super.mouseClicked(event)
         if (event == null) {
+            println("mouseClicked(): event: null")
+
             return
         }
 
-        triangleFloor.handleMouseClick(event.button, event.x, event.y, pApplet = this)
+        val button = event.button
+        val x = event.x
+        val y = event.y
+        println("mouseClicked(): event: $button, $x, $y")
+
+        triangleFloor.handleMouseClick(button, x, y, pApplet = this)
     }
 
     /*
@@ -218,7 +228,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val CLICK_TO_DRAW = false
 
-        private const val FULL_SCREEN = false
+        private const val FULL_SCREEN = true
 
         private const val WIDTH = 600
 
@@ -234,7 +244,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val FRAME_RATE = 120f
 
-        private const val DRAW_BACKGROUND_ON_DRAW = false
+        private const val DRAW_BACKGROUND_ON_DRAW = true
 
         private const val DRAW_FRAME_RATE = false
 
