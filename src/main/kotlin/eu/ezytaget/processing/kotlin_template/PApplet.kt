@@ -48,12 +48,10 @@ class PApplet : processing.core.PApplet() {
         frameRate(FRAME_RATE)
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         clearFrame()
-        frameRate(FRAME_RATE)
         clapper.start()
 
         setPerspective()
 
-        // CONTINUE HERE
         cameraRealm?.setCaptureAndStart(pApplet = this)
 
         randomSeed(System.currentTimeMillis())
