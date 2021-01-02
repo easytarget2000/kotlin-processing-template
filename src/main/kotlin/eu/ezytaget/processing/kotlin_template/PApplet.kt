@@ -47,6 +47,8 @@ class PApplet : processing.core.PApplet() {
     override fun setup() {
         frameRate(FRAME_RATE)
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
+        smooth()
+
         clearFrame()
         clapper.start()
 
