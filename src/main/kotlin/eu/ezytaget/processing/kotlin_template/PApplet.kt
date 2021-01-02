@@ -32,7 +32,7 @@ class PApplet : processing.core.PApplet() {
 
     private var zRotationVelocity = 0.002f
 
-    private var cameraRealm: CameraRealm? = CameraRealm()
+    private var cameraRealm: CameraRealm? = null
 
     private var stripesRealm = StripesRealm()
 
