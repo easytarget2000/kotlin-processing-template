@@ -1,15 +1,9 @@
 package eu.ezytaget.processing.kotlin_template
 
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
-import eu.ezytaget.processing.kotlin_template.realms.camera.CameraRealm
-import eu.ezytaget.processing.kotlin_template.realms.stripes.StripesRealm
-import eu.ezytaget.processing.kotlin_template.realms.triangle_floor.TriangleFloor
-import eu.ezytaget.processing.kotlin_template.realms.vortex_monster.VortexMonster
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
-import processing.event.MouseEvent
-import processing.video.Capture
 import kotlin.random.Random
 
 class PApplet : processing.core.PApplet() {
@@ -34,12 +28,6 @@ class PApplet : processing.core.PApplet() {
 
     private var zRotationVelocity = 0.002f
 
-    private var cameraRealm: CameraRealm? = null
-
-    private var stripesRealm = StripesRealm()
-
-    private var triangleFloor = TriangleFloor()
-
     override fun settings() {
         if (FULL_SCREEN) {
             fullScreen(RENDERER, DISPLAY_ID)
@@ -56,51 +44,13 @@ class PApplet : processing.core.PApplet() {
         clearFrame()
         clapper.start()
 
-        setPerspective()
-
-        cameraRealm?.setCaptureAndStart(pApplet = this)
-        triangleFloor.start(pApplet = this)
-
         randomSeed(System.currentTimeMillis())
     }
 
     private var numberOfIterationsPerFrame = 10
 
     override fun draw() {
-        (0 .. numberOfIterationsPerFrame).forEach { _ ->
-            push()
-//            iterateDraw()
-            pop()
-        }
-
         background(0)
-        triangleFloor.updateAndDrawIn(pApplet = this)
-    }
-
-    private fun iterateDraw() {
-        if (CLICK_TO_DRAW && waitingForClickToDraw) {
-            return
-        }
-
-        if (DRAW_BACKGROUND_ON_DRAW) {
-            backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
-        }
-
-        if (DRAW_FRAME_RATE) {
-            drawFrameRate()
-        }
-
-        cameraRealm?.drawIn(pApplet = this)
-//        stripesRealm.draw(pApplet = this)
-        triangleFloor.updateAndDrawIn(pApplet = this)
-
-        translate(width / 2f, height / 2f)
-        updateRotations()
-        updateClapper()
-
-        if (CLICK_TO_DRAW) {
-            waitingForClickToDraw = true
-        }
     }
 
     override fun keyPressed() {
@@ -112,48 +62,9 @@ class PApplet : processing.core.PApplet() {
         }
     }
 
-
-    override fun mouseClicked(event: MouseEvent?) {
-        super.mouseClicked(event)
-        if (event == null) {
-            println("mouseClicked(): event: null")
-
-            return
-        }
-
-        val button = event.button
-        val x = event.x
-        val y = event.y
-        println("mouseClicked(): event: $button, $x, $y")
-
-        triangleFloor.handleMouseClick(button, x, y, pApplet = this)
-    }
-
     /*
     Implementations
      */
-
-    private fun drawSample() {
-        noFill()
-        val hue = (frameCount % 1000) / 1000f
-        val saturation = (frameCount % 3000) / 3000f
-        val brightness = MAX_COLOR_VALUE * 1f //((frameCount % 6000) / 6000f)
-        val alpha = 0.1f * MAX_COLOR_VALUE
-        stroke(hue, saturation, brightness, alpha)
-
-        val boxSize = min(width, height) * 0.5f
-        box(boxSize)
-    }
-
-    private fun setPerspective() {
-        val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
-//        perspective(
-//                PI / 3f,
-//                width.toFloat() / height.toFloat(),
-//                cameraZ / 10f,
-//                cameraZ * 30f
-//        )
-    }
 
     private fun clearFrame() {
         backgroundDrawer.draw(
@@ -228,7 +139,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val CLICK_TO_DRAW = false
 
-        private const val FULL_SCREEN = true
+        private const val FULL_SCREEN = false
 
         private const val WIDTH = 600
 
