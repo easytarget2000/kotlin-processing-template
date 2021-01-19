@@ -1,9 +1,11 @@
 package eu.ezytaget.processing.kotlin_template
 
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
+import eu.ezytaget.processing.kotlin_template.realms.camera.CameraRealm
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
+import processing.core.PImage
 import kotlin.random.Random
 
 class PApplet : processing.core.PApplet() {
@@ -13,6 +15,12 @@ class PApplet : processing.core.PApplet() {
     private val clapper = Clapper()
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
+
+    private val raster = Raster()
+
+    private val cameraRealm = CameraRealm()
+
+    private lateinit var pImage: PImage
 
     private var waitingForClickToDraw = false
 
@@ -41,16 +49,23 @@ class PApplet : processing.core.PApplet() {
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         smooth()
 
+        raster.setup(pApplet = this)
+//        cameraRealm.setCaptureAndStart(pApplet = this)
+        pImage = loadImage("input.jpg")
+
         clearFrame()
         clapper.start()
 
-        randomSeed(System.currentTimeMillis())
+        val randomSeed = System.currentTimeMillis()
+        randomSeed(randomSeed)
+        println("DEBUG: PApplet: setup(): random seed: $randomSeed")
     }
 
     private var numberOfIterationsPerFrame = 10
 
     override fun draw() {
         background(0)
+        raster.drawIn(pApplet = this, pImage = pImage)
     }
 
     override fun keyPressed() {
@@ -139,7 +154,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val CLICK_TO_DRAW = false
 
-        private const val FULL_SCREEN = false
+        private const val FULL_SCREEN = true
 
         private const val WIDTH = 600
 
