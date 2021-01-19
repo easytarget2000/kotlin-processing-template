@@ -1,5 +1,6 @@
 package eu.ezytaget.processing.kotlin_template
 
+import processing.core.PApplet.map
 import processing.core.PConstants.*
 
 import java.awt.SystemColor.text
@@ -30,9 +31,14 @@ class Raster() {
     private val individualEffectLayers = mutableListOf<PImage>()
     private val individualMaskedLayers= mutableListOf<PImage>()
 
+    var numberOfColumns = 256
+    var numberOfRows = 128
+
     fun setup(pApplet: PApplet) {
         monoFont = pApplet.createFont("andalemo.ttf", 32f)
     }
+
+    var bypass = false
 
     fun drawIn(pApplet: PApplet, pImage: PImage) {
         pApplet.push()
@@ -42,9 +48,35 @@ class Raster() {
         val width = pApplet.width
         val height = pApplet.height
 
-        pImage.resize(width, height)
-        pApplet.image(pImage, 0f, 0f)
+        val floatWidth = width.toFloat()
+        val floatHeight = height.toFloat()
 
+        pImage.resize(width, height)
+
+        if (bypass) {
+            pApplet.image(pImage, 0f, 0f)
+            return
+        }
+
+        pImage.loadPixels()
+        pApplet.loadPixels()
+
+        val floatNumberOfColumns = numberOfColumns.toFloat()
+        val floatNumberOfRows = numberOfRows.toFloat()
+
+        (0 until numberOfColumns).forEach { columnIndex ->
+            val floatColumnIndex = columnIndex.toFloat()
+            (0 until numberOfRows).forEach { rowIndex ->
+
+                val inputPixelX = map(floatColumnIndex, 0f, floatNumberOfColumns, 0f, floatWidth).toInt()
+                val inputPixelY = map(rowIndex.toFloat(), 0f, floatNumberOfRows, 0f, floatHeight).toInt()
+
+                val continuousPixelIndex = ((inputPixelY * width) + inputPixelX)
+                pApplet.pixels[continuousPixelIndex] = pImage.pixels[continuousPixelIndex]
+            }
+        }
+
+        pApplet.updatePixels()
 //
 //
 //        val numberOfCharRows = NUMBERS_OF_CHAR_ROWS[glitchSetting]
@@ -97,6 +129,8 @@ class Raster() {
 
         pApplet.pop()
     }
+
+
 
     val numberOfSamples = 30
     val numberOfSamplesHalf = numberOfSamples / 2

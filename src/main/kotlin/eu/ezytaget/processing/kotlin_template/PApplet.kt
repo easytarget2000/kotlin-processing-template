@@ -26,7 +26,7 @@ class PApplet : processing.core.PApplet() {
 
     private var radiusFactorVelocity = 0f
 
-    private var backgroundAlpha = 1f
+    private var backgroundAlpha = 0.1f
 
     private var xRotation = 1f
 
@@ -64,7 +64,13 @@ class PApplet : processing.core.PApplet() {
     private var numberOfIterationsPerFrame = 10
 
     override fun draw() {
-        background(0)
+        backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
+
+        val width = width.toFloat()
+        raster.numberOfColumns = map(mouseX.toFloat(), 0f, width, 0f, width).toInt()
+        val height = height.toFloat()
+        raster.numberOfRows = map(mouseY.toFloat(), 0f, height, 0f, height).toInt()
+
         raster.drawIn(pApplet = this, pImage = pImage)
     }
 
