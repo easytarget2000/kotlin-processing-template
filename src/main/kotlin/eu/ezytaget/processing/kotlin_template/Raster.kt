@@ -12,6 +12,10 @@ import processing.core.PFont
 
 class Raster() {
 
+    enum class Style {
+        pixelField, ascii
+    }
+
     private val DEBUG_RASTER = false
     private val DEBUG_GLITCH_SETTING = 0
     private val SEED_SALT = 15
@@ -34,11 +38,12 @@ class Raster() {
     var numberOfColumns = 256
     var numberOfRows = 128
 
+    var bypass = false
+    var style = Style.ascii
+
     fun setup(pApplet: PApplet) {
         monoFont = pApplet.createFont("andalemo.ttf", 32f)
     }
-
-    var bypass = false
 
     fun drawIn(pApplet: PApplet, pImage: PImage) {
         pApplet.push()
@@ -67,12 +72,18 @@ class Raster() {
         (0 until numberOfColumns).forEach { columnIndex ->
             val floatColumnIndex = columnIndex.toFloat()
             (0 until numberOfRows).forEach { rowIndex ->
-
                 val inputPixelX = map(floatColumnIndex, 0f, floatNumberOfColumns, 0f, floatWidth).toInt()
                 val inputPixelY = map(rowIndex.toFloat(), 0f, floatNumberOfRows, 0f, floatHeight).toInt()
 
-                val continuousPixelIndex = ((inputPixelY * width) + inputPixelX)
-                pApplet.pixels[continuousPixelIndex] = pImage.pixels[continuousPixelIndex]
+                when (style) {
+                    Style.pixelField -> {
+                        val continuousPixelIndex = ((inputPixelY * width) + inputPixelX)
+                        pApplet.pixels[continuousPixelIndex] = pImage.pixels[continuousPixelIndex]
+                    }
+                    Style.ascii -> {
+
+                    }
+                }
             }
         }
 
