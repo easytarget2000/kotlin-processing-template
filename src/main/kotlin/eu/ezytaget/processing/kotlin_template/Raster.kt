@@ -57,6 +57,13 @@ class Raster() {
 
     var textLeadingRatio = 1.1f
 
+    var shades = listOf(
+        ' ' to 0.3,
+        'T' to 0.6,
+        'H' to 0.9,
+        'M' to 1.0
+    )
+
     private var numberOfSamplesHalf = numberOfSamples / 2
 
     fun setup(pApplet: PApplet, baseFontSize: Float = 24f) {
@@ -116,12 +123,8 @@ class Raster() {
                     Style.ascii -> {
                         val brightness =
                             accumulatedBrightness(pApplet, pImage.pixels, pImage.width, inputPixelX, inputPixelY)
-                        rasterString += when {
-                            (brightness > 0.75) -> '▓'
-                            (brightness > 0.5) -> '▒'
-                            (brightness > 0.25) -> '░'
-                            else -> ' '
-                        }
+                        val shade = shades.firstOrNull { it.second > brightness } ?: shades.last()
+                        rasterString += shade.first
                     }
                 }
             }
