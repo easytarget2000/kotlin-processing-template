@@ -5,6 +5,7 @@ import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
 import processing.core.PImage
+import processing.event.MouseEvent
 import kotlin.random.Random
 
 class PApplet : processing.core.PApplet() {
@@ -63,17 +64,21 @@ class PApplet : processing.core.PApplet() {
     override fun draw() {
         backgroundDrawer.draw(pApplet = this, alpha = 1f)
 
-        val width = width.toFloat()
-        raster.numberOfColumns = map(mouseX.toFloat(), 0f, width, 0f, 128f  ).toInt()
-//        raster.textSize = map(mouseX.toFloat(), 0f, width, 1f, 100f)
-        val height = height.toFloat()
-//        raster.numberOfRows = map(mouseY.toFloat(), 0f, height, 0f, height).toInt()
-
-
-
         raster.drawIn(pApplet = this, pImage = pImage)
 
+        val textSize = map(mouseX.toFloat(), 0f, width.toFloat(), 8f, 128f)
+        raster.setTextSize(pApplet = this, textSize = textSize)
+
 //        println(frameRate)
+    }
+
+    override fun mouseClicked(event: MouseEvent?) {
+        super.mouseClicked(event)
+        if (event == null) {
+            return
+        }
+
+
     }
 
     override fun keyPressed() {

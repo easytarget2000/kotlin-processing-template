@@ -41,11 +41,30 @@ class Raster() {
     var bypass = false
     var style = Style.ascii
 
-    var textSize = 32f
+    private var textSize = 32f
+
+    var rasterSizeFinderChar = "▓"
+
     var textColor = 1f
 
+    var minNumberOfColumns = 16
+
     fun setup(pApplet: PApplet, baseFontSize: Float = 24f) {
-        monoFont = pApplet.createFont("andalemo.ttf", baseFontSize)
+        setTextSize(pApplet, baseFontSize)
+    }
+
+    fun setTextSize(pApplet: PApplet, textSize: Float) {
+        pApplet.push()
+        monoFont = pApplet.createFont("andalemo.ttf", textSize)
+        pApplet.textFont(monoFont)
+//        pApplet.textSize(textSize)
+//        pApplet.textLeading(1.1f)
+
+        findRasterSizeByTextSize(pApplet)
+
+        pApplet.pop()
+
+        this.textSize = textSize
     }
 
     fun drawIn(pApplet: PApplet, pImage: PImage) {
@@ -73,7 +92,6 @@ class Raster() {
         val floatNumberOfRows = numberOfRows.toFloat()
 
         var rasterString = ""
-        var rasterLineString = ""
 
         (0 until numberOfRows).forEach { rowIndex ->
             val floatRowIndex = rowIndex.toFloat()
@@ -88,9 +106,6 @@ class Raster() {
                     }
                     Style.ascii -> {
                         rasterString += '▒'
-                        if (rowIndex == 0) {
-                            rasterLineString += '.'
-                        }
                     }
                 }
             }
@@ -103,17 +118,9 @@ class Raster() {
                 pApplet.updatePixels()
             }
             Style.ascii -> {
-                textSize = 1f
-                pApplet.textSize(textSize)
-                while((pApplet.textWidth(rasterString) < floatWidth) && (textSize < MAX_TEXT_SIZE)) {
-                    textSize += 1f
-                    pApplet.textSize(textSize)
-                }
-
-                textSize -= 1f
-                pApplet.textSize(textSize)
-
+//                pApplet.textSize(textSize)
                 pApplet.textLeading(textSize * 1.1f)
+
                 pApplet.fill(textColor)
                 pApplet.text(rasterString, 0f, 0f, floatWidth, floatHeight)
             }
@@ -186,6 +193,32 @@ class Raster() {
         pApplet.pop()
     }
 
+    fun findRasterSizeByTextSize(pApplet: PApplet) {
+        val width = pApplet.width
+        val maxNumberOfColumns = width / 6
+        val floatWidth = width.toFloat()
+
+//        numberOfColumns = 0
+//        var testString = ""
+//        do {
+//            testString += rasterSizeFinderChar
+//            ++numberOfColumns
+//        } while (pApplet.textWidth(testString) < floatWidth && numberOfColumns < maxNumberOfColumns)
+
+        numberOfColumns = (minNumberOfColumns .. maxNumberOfColumns).firstOrNull {
+            val testString = (0 .. it).joinToString(separator = "") { rasterSizeFinderChar }
+            pApplet.textWidth(testString) >= floatWidth
+        } ?: maxNumberOfColumns
+
+        val height = pApplet.height
+        val maxNumberOfRows = height / 2
+        val floatHeight = height.toFloat()
+
+        numberOfRows = numberOfColumns / 3
+
+        println("DEBUG: Raster: findRasterSizeByTextSize(): width: $width, numberOfColumns: $numberOfColumns," +
+                "maxNumberOfColumns: $maxNumberOfColumns, numberOfRows: $numberOfRows")
+    }
 
     val numberOfSamples = 30
     val numberOfSamplesHalf = numberOfSamples / 2
