@@ -33,13 +33,16 @@ class Raster() {
 
     private lateinit var monoFont: PFont
     private val individualEffectLayers = mutableListOf<PImage>()
-    private val individualMaskedLayers= mutableListOf<PImage>()
+    private val individualMaskedLayers = mutableListOf<PImage>()
 
     var numberOfColumns = 256
     var numberOfRows = 128
 
     var bypass = false
     var style = Style.ascii
+
+    var textSize = 32f
+    var textColor = 1f
 
     fun setup(pApplet: PApplet) {
         monoFont = pApplet.createFont("andalemo.ttf", 32f)
@@ -69,6 +72,8 @@ class Raster() {
         val floatNumberOfColumns = numberOfColumns.toFloat()
         val floatNumberOfRows = numberOfRows.toFloat()
 
+        var rasterString = ""
+
         (0 until numberOfColumns).forEach { columnIndex ->
             val floatColumnIndex = columnIndex.toFloat()
             (0 until numberOfRows).forEach { rowIndex ->
@@ -81,13 +86,40 @@ class Raster() {
                         pApplet.pixels[continuousPixelIndex] = pImage.pixels[continuousPixelIndex]
                     }
                     Style.ascii -> {
-
+                        rasterString += '~'
                     }
                 }
             }
+
+            rasterString += "\n"
         }
 
-        pApplet.updatePixels()
+        when (style) {
+            Style.pixelField -> {
+                pApplet.updatePixels()
+            }
+            Style.ascii -> {
+                pApplet.textSize(textSize)
+                pApplet.textLeading(textSize * 1.1f)
+                pApplet.fill(textColor)
+                pApplet.text(rasterString, 0f, 0f, floatWidth, floatHeight)
+            }
+        }
+
+//        pApplet.textLeading(textSize * 1.1f)
+//        pApplet.stroke(1f)
+//        val widthOverscan: Float = width * 0.05f
+//        val widthOverscanHalf = widthOverscan / 2f
+//        val verticalUnderscan: Float = height * 0.008f //height * 0.02f;
+//        val verticalUnderscanHalf = verticalUnderscan / 2f
+//        text(
+//            rasterChars,
+//            -widthOverscanHalf,
+//            +verticalUnderscanHalf,
+//            width + widthOverscanHalf,
+//            height - verticalUnderscanHalf
+//        )
+
 //
 //
 //        val numberOfCharRows = NUMBERS_OF_CHAR_ROWS[glitchSetting]
@@ -140,7 +172,6 @@ class Raster() {
 
         pApplet.pop()
     }
-
 
 
     val numberOfSamples = 30

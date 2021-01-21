@@ -1,7 +1,6 @@
 package eu.ezytaget.processing.kotlin_template
 
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
-import eu.ezytaget.processing.kotlin_template.realms.camera.CameraRealm
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
@@ -17,8 +16,6 @@ class PApplet : processing.core.PApplet() {
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
     private val raster = Raster()
-
-    private val cameraRealm = CameraRealm()
 
     private lateinit var pImage: PImage
 
@@ -64,14 +61,16 @@ class PApplet : processing.core.PApplet() {
     private var numberOfIterationsPerFrame = 10
 
     override fun draw() {
-        backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
+        backgroundDrawer.draw(pApplet = this, alpha = 1f)
 
-        val width = width.toFloat()
-        raster.numberOfColumns = map(mouseX.toFloat(), 0f, width, 0f, width).toInt()
-        val height = height.toFloat()
-        raster.numberOfRows = map(mouseY.toFloat(), 0f, height, 0f, height).toInt()
+//        val width = width.toFloat()
+//        raster.numberOfColumns = map(mouseX.toFloat(), 0f, width, 0f, width).toInt()
+//        val height = height.toFloat()
+//        raster.numberOfRows = map(mouseY.toFloat(), 0f, height, 0f, height).toInt()
 
         raster.drawIn(pApplet = this, pImage = pImage)
+
+//        println(frameRate)
     }
 
     override fun keyPressed() {
