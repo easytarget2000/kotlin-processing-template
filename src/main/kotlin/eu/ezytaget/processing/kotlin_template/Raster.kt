@@ -44,8 +44,8 @@ class Raster() {
     var textSize = 32f
     var textColor = 1f
 
-    fun setup(pApplet: PApplet) {
-        monoFont = pApplet.createFont("andalemo.ttf", 32f)
+    fun setup(pApplet: PApplet, baseFontSize: Float = 24f) {
+        monoFont = pApplet.createFont("andalemo.ttf", baseFontSize)
     }
 
     fun drawIn(pApplet: PApplet, pImage: PImage) {
@@ -73,12 +73,13 @@ class Raster() {
         val floatNumberOfRows = numberOfRows.toFloat()
 
         var rasterString = ""
+        var rasterLineString = ""
 
-        (0 until numberOfColumns).forEach { columnIndex ->
-            val floatColumnIndex = columnIndex.toFloat()
-            (0 until numberOfRows).forEach { rowIndex ->
-                val inputPixelX = map(floatColumnIndex, 0f, floatNumberOfColumns, 0f, floatWidth).toInt()
-                val inputPixelY = map(rowIndex.toFloat(), 0f, floatNumberOfRows, 0f, floatHeight).toInt()
+        (0 until numberOfRows).forEach { rowIndex ->
+            val floatRowIndex = rowIndex.toFloat()
+            (0 until numberOfColumns).forEach { columnIndex ->
+                val inputPixelX = map(columnIndex.toFloat(), 0f, floatNumberOfColumns, 0f, floatWidth).toInt()
+                val inputPixelY = map(floatRowIndex, 0f, floatNumberOfRows, 0f, floatHeight).toInt()
 
                 when (style) {
                     Style.pixelField -> {
@@ -86,7 +87,10 @@ class Raster() {
                         pApplet.pixels[continuousPixelIndex] = pImage.pixels[continuousPixelIndex]
                     }
                     Style.ascii -> {
-                        rasterString += '~'
+                        rasterString += '▒'
+                        if (rowIndex == 0) {
+                            rasterLineString += '.'
+                        }
                     }
                 }
             }
@@ -99,7 +103,16 @@ class Raster() {
                 pApplet.updatePixels()
             }
             Style.ascii -> {
+                textSize = 1f
                 pApplet.textSize(textSize)
+                while((pApplet.textWidth(rasterString) < floatWidth) && (textSize < MAX_TEXT_SIZE)) {
+                    textSize += 1f
+                    pApplet.textSize(textSize)
+                }
+
+                textSize -= 1f
+                pApplet.textSize(textSize)
+
                 pApplet.textLeading(textSize * 1.1f)
                 pApplet.fill(textColor)
                 pApplet.text(rasterString, 0f, 0f, floatWidth, floatHeight)
@@ -195,4 +208,8 @@ class Raster() {
 //        return brightness(imagePixel) / 255f
 //    }
 
+    companion object {
+
+        private const val MAX_TEXT_SIZE = 512f
+    }
 }

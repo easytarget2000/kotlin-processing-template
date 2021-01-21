@@ -63,10 +63,13 @@ class PApplet : processing.core.PApplet() {
     override fun draw() {
         backgroundDrawer.draw(pApplet = this, alpha = 1f)
 
-//        val width = width.toFloat()
-//        raster.numberOfColumns = map(mouseX.toFloat(), 0f, width, 0f, width).toInt()
-//        val height = height.toFloat()
+        val width = width.toFloat()
+        raster.numberOfColumns = map(mouseX.toFloat(), 0f, width, 0f, 128f  ).toInt()
+//        raster.textSize = map(mouseX.toFloat(), 0f, width, 1f, 100f)
+        val height = height.toFloat()
 //        raster.numberOfRows = map(mouseY.toFloat(), 0f, height, 0f, height).toInt()
+
+
 
         raster.drawIn(pApplet = this, pImage = pImage)
 
