@@ -34,6 +34,8 @@ class PApplet : processing.core.PApplet() {
 
     private var zRotationVelocity = 0.002f
 
+    private var clearFrameOnTextSizeFinding = false
+
     override fun settings() {
         if (FULL_SCREEN) {
             fullScreen(RENDERER, DISPLAY_ID)
@@ -63,11 +65,7 @@ class PApplet : processing.core.PApplet() {
 
     override fun draw() {
         backgroundDrawer.draw(pApplet = this, alpha = 1f)
-
         raster.drawIn(pApplet = this, pImage = pImage)
-
-        val textSize = map(mouseX.toFloat(), 0f, width.toFloat(), 8f, 128f)
-        raster.setTextSize(pApplet = this, textSize = textSize)
 
 //        println(frameRate)
     }
@@ -78,7 +76,7 @@ class PApplet : processing.core.PApplet() {
             return
         }
 
-
+        setTextSize(relativeTextSizeValue = event.x.toFloat(), relativeRatioValue = event.y.toFloat())
     }
 
     override fun keyPressed() {
@@ -99,6 +97,17 @@ class PApplet : processing.core.PApplet() {
                 pApplet = this,
                 alpha = 1f
         )
+    }
+
+    private fun setTextSize(relativeTextSizeValue: Float, relativeRatioValue: Float) {
+        if (clearFrameOnTextSizeFinding) {
+            background(0.1f, 1f, 1f, 1f)
+        }
+
+        val textSize = map(relativeTextSizeValue, 0f, width.toFloat(), 4f, 32f)
+        val columnToRowRatio = map(relativeRatioValue, 0f, height.toFloat(), 0.25f, 0.66f)
+
+        raster.setTextSize(pApplet = this, textSize = textSize, columnToRowRatio = columnToRowRatio)
     }
 
     private fun drawFrameRate() {

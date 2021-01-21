@@ -47,20 +47,31 @@ class Raster() {
 
     var textColor = 1f
 
+    var colorRange = 1f
+
     var minNumberOfColumns = 16
+
+    var numberOfSamples = 30
+        set(value) {
+            field = value
+            numberOfSamplesHalf = value / 2
+        }
+
+    var textLeadingRatio = 1.1f
+
+    private var numberOfSamplesHalf = numberOfSamples / 2
 
     fun setup(pApplet: PApplet, baseFontSize: Float = 24f) {
         setTextSize(pApplet, baseFontSize)
     }
 
-    fun setTextSize(pApplet: PApplet, textSize: Float) {
+    fun setTextSize(pApplet: PApplet, textSize: Float, columnToRowRatio: Float = 0.33f) {
         pApplet.push()
         monoFont = pApplet.createFont("andalemo.ttf", textSize)
         pApplet.textFont(monoFont)
-//        pApplet.textSize(textSize)
-//        pApplet.textLeading(1.1f)
+        pApplet.textLeading(textLeadingRatio)
 
-        findRasterSizeByTextSize(pApplet)
+        findRasterSizeByTextSize(pApplet, columnToRowRatio)
 
         pApplet.pop()
 
@@ -105,7 +116,14 @@ class Raster() {
                         pApplet.pixels[continuousPixelIndex] = pImage.pixels[continuousPixelIndex]
                     }
                     Style.ascii -> {
-                        rasterString += '▒'
+                        val brightness =
+                            accumulatedBrightness(pApplet, pImage.pixels, pImage.width, inputPixelX, inputPixelY)
+                        rasterString += when {
+                            (brightness > 0.75) -> '▓'
+                            (brightness > 0.5) -> '▒'
+                            (brightness > 0.25) -> '░'
+                            else -> ' '
+                        }
                     }
                 }
             }
@@ -119,127 +137,58 @@ class Raster() {
             }
             Style.ascii -> {
 //                pApplet.textSize(textSize)
-                pApplet.textLeading(textSize * 1.1f)
+                pApplet.textLeading(textSize * textLeadingRatio)
 
                 pApplet.fill(textColor)
                 pApplet.text(rasterString, 0f, 0f, floatWidth, floatHeight)
             }
         }
 
-//        pApplet.textLeading(textSize * 1.1f)
-//        pApplet.stroke(1f)
-//        val widthOverscan: Float = width * 0.05f
-//        val widthOverscanHalf = widthOverscan / 2f
-//        val verticalUnderscan: Float = height * 0.008f //height * 0.02f;
-//        val verticalUnderscanHalf = verticalUnderscan / 2f
-//        text(
-//            rasterChars,
-//            -widthOverscanHalf,
-//            +verticalUnderscanHalf,
-//            width + widthOverscanHalf,
-//            height - verticalUnderscanHalf
-//        )
-
-//
-//
-//        val numberOfCharRows = NUMBERS_OF_CHAR_ROWS[glitchSetting]
-//        for (row in 0 until numberOfCharRows) {
-//            for (column in 0 until numberOfCharColumns) {
-//                val layer2PixelX = map(column, 0f, numberOfCharColumns, 0f, rasterSource.width - 1f) as Int
-//                val layer2PixelY = pApplet.map(row, 0f, numberOfCharRows, 0f, rasterSource.height - 1f) as Int
-//                val imagePixelBrightness = accumulatedBrightness(
-//                    rasterSource!!.pixels,
-//                    rasterSource.width,
-//                    layer2PixelX,
-//                    layer2PixelY
-//                )
-//                val rasterChar = when {
-//                    DEBUG_RASTER -> {
-//                        '▓'
-//                    }
-//                    imagePixelBrightness > 0.15f -> {
-//                        '▓'
-//                    }
-//                    imagePixelBrightness > 0.1f -> {
-//                        '▒'
-//                    }
-//                    imagePixelBrightness > 0.05f -> {
-//                        '░'
-//                    }
-//                    else -> {
-//                        ' '
-//                    }
-//                }
-//                rasterBuffer.append(rasterChar)
-//            }
-//            rasterBuffer.append('\n')
-//        }
-//        val rasterChars = rasterBuffer.toString()
-//        pApplet.textSize(textSize)
-//        pApplet.textLeading(textSize * 1.1f)
-//        pApplet.stroke(1f)
-//        val widthOverscan: Float = width * 0.05f
-//        val widthOverscanHalf = widthOverscan / 2f
-//        val verticalUnderscan: Float = height * 0.008f //height * 0.02f;
-//        val verticalUnderscanHalf = verticalUnderscan / 2f
-//        text(
-//            rasterChars,
-//            -widthOverscanHalf,
-//            +verticalUnderscanHalf,
-//            width + widthOverscanHalf,
-//            height - verticalUnderscanHalf
-//        )
-
         pApplet.pop()
     }
 
-    fun findRasterSizeByTextSize(pApplet: PApplet) {
+    fun findRasterSizeByTextSize(pApplet: PApplet, columnToRowRatio: Float) {
         val width = pApplet.width
-        val maxNumberOfColumns = width / 6
+        val maxNumberOfColumns = width / 4
         val floatWidth = width.toFloat()
 
-//        numberOfColumns = 0
-//        var testString = ""
-//        do {
-//            testString += rasterSizeFinderChar
-//            ++numberOfColumns
-//        } while (pApplet.textWidth(testString) < floatWidth && numberOfColumns < maxNumberOfColumns)
-
-        numberOfColumns = (minNumberOfColumns .. maxNumberOfColumns).firstOrNull {
-            val testString = (0 .. it).joinToString(separator = "") { rasterSizeFinderChar }
+        numberOfColumns = (minNumberOfColumns..maxNumberOfColumns).firstOrNull {
+            val testString = (0..it).joinToString(separator = "") { rasterSizeFinderChar }
             pApplet.textWidth(testString) >= floatWidth
         } ?: maxNumberOfColumns
 
         val height = pApplet.height
-        val maxNumberOfRows = height / 2
-        val floatHeight = height.toFloat()
+        val rowHeight = pApplet.textAscent() * textLeadingRatio
 
-        numberOfRows = numberOfColumns / 3
+        numberOfRows = (height.toFloat() / rowHeight).toInt()
 
-        println("DEBUG: Raster: findRasterSizeByTextSize(): width: $width, numberOfColumns: $numberOfColumns," +
-                "maxNumberOfColumns: $maxNumberOfColumns, numberOfRows: $numberOfRows")
+//        println("DEBUG: Raster: findRasterSizeByTextSize(): width: $width, numberOfColumns: $numberOfColumns," +
+//                "maxNumberOfColumns: $maxNumberOfColumns, numberOfRows: $numberOfRows")
     }
 
-    val numberOfSamples = 30
-    val numberOfSamplesHalf = numberOfSamples / 2
+    private fun accumulatedBrightness(
+        pApplet: PApplet,
+        sourcePixels: IntArray,
+        sourceWidth: Int,
+        x: Int,
+        y: Int
+    ): Float {
+        var brightnessSum = 0f
+        for (xOffset in -numberOfSamplesHalf until numberOfSamplesHalf) {
+            val offsetX = xOffset + x
+            if (offsetX < 0 || offsetX > sourceWidth) {
+                continue
+            }
+            brightnessSum += brightness(pApplet, sourcePixels, sourceWidth, offsetX, y)
+        }
+        return brightnessSum / numberOfSamples.toFloat()
+    }
 
-//    private fun accumulatedBrightness(sourcePixels: IntArray, sourceWidth: Int, x: Int, y: Int): Float {
-//        var brightnessSum = 0f
-//        for (xOffset in -numberOfSamplesHalf until numberOfSamplesHalf) {
-//            val offsetX = xOffset + x
-//            if (offsetX < 0 || offsetX > sourceWidth) {
-//                continue
-//            }
-//            brightnessSum += brightness(sourcePixels, sourceWidth, offsetX, y)
-//        }
-//        return brightnessSum / numberOfSamples.toFloat()
-//    }
-//
-//    private fun brightness(sourcePixels: Int, sourceWidth: Int, x: Int, y: Int): Float {
-//        val imagePixelIndex = y * sourceWidth + x
-//        val imagePixel = sourcePixels[imagePixelIndex]
-//        return brightness(imagePixel) / 255f
-//    }
+    private fun brightness(pApplet: PApplet, sourcePixels: IntArray, sourceWidth: Int, x: Int, y: Int): Float {
+        val imagePixelIndex = y * sourceWidth + x
+        val imagePixel = sourcePixels[imagePixelIndex]
+        return pApplet.brightness(imagePixel) / colorRange
+    }
 
     companion object {
 
