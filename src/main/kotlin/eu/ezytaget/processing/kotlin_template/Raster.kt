@@ -3,8 +3,6 @@ package eu.ezytaget.processing.kotlin_template
 import processing.core.PApplet.map
 import processing.core.PConstants.*
 
-import java.awt.SystemColor.text
-
 import processing.core.PImage
 
 import processing.core.PFont
@@ -65,13 +63,13 @@ class Raster() {
         setTextSize(pApplet, baseFontSize)
     }
 
-    fun setTextSize(pApplet: PApplet, textSize: Float, columnToRowRatio: Float = 0.33f) {
+    fun setTextSize(pApplet: PApplet, textSize: Float) {
         pApplet.push()
         monoFont = pApplet.createFont("andalemo.ttf", textSize)
         pApplet.textFont(monoFont)
         pApplet.textLeading(textLeadingRatio)
 
-        findRasterSizeByTextSize(pApplet, columnToRowRatio)
+        findRasterSizeByTextSize(pApplet)
 
         pApplet.pop()
 
@@ -147,7 +145,7 @@ class Raster() {
         pApplet.pop()
     }
 
-    fun findRasterSizeByTextSize(pApplet: PApplet, columnToRowRatio: Float) {
+    fun findRasterSizeByTextSize(pApplet: PApplet) {
         val width = pApplet.width
         val maxNumberOfColumns = width / 4
         val floatWidth = width.toFloat()
