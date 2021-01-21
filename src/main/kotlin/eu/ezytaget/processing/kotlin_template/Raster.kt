@@ -45,8 +45,6 @@ class Raster() {
 
     var textColor = 1f
 
-    var colorRange = 1f
-
     var minNumberOfColumns = 16
 
     var numberOfSamples = 30
@@ -188,13 +186,18 @@ class Raster() {
 
     companion object {
 
-        private val blockShades = listOf(
-            ' ' to 0.25,
-            '░' to 0.5,
-            '▒' to 0.75,
-            '▓' to 1.0
-        )
-        
+        var colorRange = 1f
+
+        private val blockShades = charsToEquallyDistributedShades(' ', '░', '▒', '▓')
+
+//        private val manyShades = charsToEquallyDistributedShades(' ', '.', ',', '')
+
+        private fun charsToEquallyDistributedShades(vararg chars: Char): List<Pair<Char, Double>> {
+            val stepSize = colorRange / chars.size
+            return chars.mapIndexed { index, char ->
+                char to ((index + 1) * stepSize).toDouble()
+            }
+        }
     }
 
 }
