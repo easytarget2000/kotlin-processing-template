@@ -55,7 +55,7 @@ class Raster() {
 
     var textLeadingRatio = 1.1f
 
-    var shades = blockShades
+    var shades = manyShades
 
     private var numberOfSamplesHalf = numberOfSamples / 2
 
@@ -143,7 +143,7 @@ class Raster() {
 
     fun findRasterSizeByTextSize(pApplet: PApplet) {
         val width = pApplet.width
-        val maxNumberOfColumns = width / 4
+        val maxNumberOfColumns = width / 2
         val floatWidth = width.toFloat()
 
         numberOfColumns = (minNumberOfColumns..maxNumberOfColumns).firstOrNull {
@@ -188,9 +188,11 @@ class Raster() {
 
         var colorRange = 1f
 
-        private val blockShades = charsToEquallyDistributedShades(' ', '░', '▒', '▓')
+        val blockShades = charsToEquallyDistributedShades(' ', '░', '▒', '▓')
 
-//        private val manyShades = charsToEquallyDistributedShades(' ', '.', ',', '')
+        val manyShades = charsToEquallyDistributedShades(
+            ' ', '.', ',', ';', '~', '|', '\\', '=', '&', '%', '@'
+        )
 
         private fun charsToEquallyDistributedShades(vararg chars: Char): List<Pair<Char, Double>> {
             val stepSize = colorRange / chars.size
