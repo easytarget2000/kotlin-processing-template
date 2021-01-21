@@ -57,12 +57,7 @@ class Raster() {
 
     var textLeadingRatio = 1.1f
 
-    var shades = listOf(
-        ' ' to 0.3,
-        'T' to 0.6,
-        'H' to 0.9,
-        'M' to 1.0
-    )
+    var shades = blockShades
 
     private var numberOfSamplesHalf = numberOfSamples / 2
 
@@ -193,6 +188,13 @@ class Raster() {
 
     companion object {
 
-        private const val MAX_TEXT_SIZE = 512f
+        private val blockShades = listOf(
+            ' ' to 0.25,
+            '░' to 0.5,
+            '▒' to 0.75,
+            '▓' to 1.0
+        )
+        
     }
+
 }
