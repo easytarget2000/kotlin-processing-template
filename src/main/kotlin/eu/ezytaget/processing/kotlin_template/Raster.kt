@@ -57,6 +57,12 @@ class Raster() {
 
     var shades = manyShades
 
+    var glitchThreshold = 0.7f
+
+    var noiseXOffset = 0f
+
+    var noiseYOffset = 0f
+
     private var numberOfSamplesHalf = numberOfSamples / 2
 
     fun setup(pApplet: PApplet, baseFontSize: Float = 24f) {
@@ -167,6 +173,11 @@ class Raster() {
         x: Int,
         y: Int
     ): Float {
+        val noise = pApplet.noise(x.toFloat() + noiseXOffset, y.toFloat() + noiseYOffset)
+        if (noise > glitchThreshold) {
+            return map(noise, glitchThreshold, 1f, 0f, 1f)
+        }
+
         var brightnessSum = 0f
         for (xOffset in -numberOfSamplesHalf until numberOfSamplesHalf) {
             val offsetX = xOffset + x

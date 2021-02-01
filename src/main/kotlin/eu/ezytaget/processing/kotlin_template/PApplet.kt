@@ -51,7 +51,7 @@ class PApplet : processing.core.PApplet() {
 
         raster.setup(pApplet = this)
 //        cameraRealm.setCaptureAndStart(pApplet = this)
-        pImage = loadImage("input.jpg")
+        pImage = loadImage("image.jpg")
 
         clearFrame()
         clapper.start()
