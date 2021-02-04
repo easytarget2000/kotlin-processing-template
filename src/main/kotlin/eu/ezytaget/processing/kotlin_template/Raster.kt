@@ -57,11 +57,15 @@ class Raster() {
 
     var shades = manyShades
 
-    var glitchThreshold = 0.7f
+    var minGlitchThreshold = 1f
+
+    var maxGlitchTreshold = 0.3f
 
     var noiseXOffset = 0f
 
     var noiseYOffset = 0f
+
+    var noiseScale = 1e-2f
 
     private var numberOfSamplesHalf = numberOfSamples / 2
 
@@ -110,6 +114,13 @@ class Raster() {
 
         (0 until numberOfRows).forEach { rowIndex ->
             val floatRowIndex = rowIndex.toFloat()
+            val glitchThreshold = map(
+                floatRowIndex,
+                0f,
+                floatNumberOfRows,
+                1f,
+                0.6f
+            )
             (0 until numberOfColumns).forEach { columnIndex ->
                 val inputPixelX = map(columnIndex.toFloat(), 0f, floatNumberOfColumns, 0f, floatWidth).toInt()
                 val inputPixelY = map(floatRowIndex, 0f, floatNumberOfRows, 0f, floatHeight).toInt()
@@ -120,8 +131,14 @@ class Raster() {
                         pApplet.pixels[continuousPixelIndex] = pImage.pixels[continuousPixelIndex]
                     }
                     Style.ascii -> {
-                        val brightness =
-                            accumulatedBrightness(pApplet, pImage.pixels, pImage.width, inputPixelX, inputPixelY)
+                        val brightness = accumulatedBrightness(
+                            pApplet,
+                            pImage.pixels,
+                            pImage.width,
+                            inputPixelX,
+                            inputPixelY,
+                            glitchThreshold
+                        )
                         val shade = shades.firstOrNull { it.second > brightness } ?: shades.last()
                         rasterString += shade.first
                     }
@@ -171,11 +188,16 @@ class Raster() {
         sourcePixels: IntArray,
         sourceWidth: Int,
         x: Int,
-        y: Int
+        y: Int,
+        glitchThreshold: Float
     ): Float {
-        val noise = pApplet.noise(x.toFloat() + noiseXOffset, y.toFloat() + noiseYOffset)
+        val noise = pApplet.random(1f)
+//        val noise = pApplet.noise(
+//            (x.toFloat() + noiseXOffset) * noiseScale,
+//            (y.toFloat() + noiseYOffset) * noiseScale
+//        )
         if (noise > glitchThreshold) {
-            return map(noise, glitchThreshold, 1f, 0f, 1f)
+            return pApplet.random(1f) //map(noise, glitchThreshold, 1f, 0f, 1f)
         }
 
         var brightnessSum = 0f
