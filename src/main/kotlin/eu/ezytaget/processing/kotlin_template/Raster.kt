@@ -14,29 +14,14 @@ class Raster() {
         pixelField, ascii
     }
 
-    private val DEBUG_RASTER = false
-    private val DEBUG_GLITCH_SETTING = 0
-    private val SEED_SALT = 15
-    private val FILE_PREFIX = "l15_"
-    private val PART_ID = 1
-    private val NUM_OF_GLITCH_VARIANTS = 2
-
-    private val TEXT_SIZES = floatArrayOf(7f, 5f, 2f)
-    private val NUMBERS_OF_CHAR_COLUMNS = intArrayOf(262, 349, 1045)
-    private val NUMBERS_OF_CHAR_ROWS = intArrayOf(129, 180, 450)
-
-    private val TOGGLE_SHOW_GLITCH_PROBABILITY = 0.2f //0.3f;
-
-    private val USE_INDIVIDUAL_LAYERS = true
-
     private lateinit var monoFont: PFont
-    private val individualEffectLayers = mutableListOf<PImage>()
-    private val individualMaskedLayers = mutableListOf<PImage>()
 
     var numberOfColumns = 256
+
     var numberOfRows = 128
 
     var bypass = false
+
     var style = Style.ascii
 
     private var textSize = 32f
@@ -68,6 +53,10 @@ class Raster() {
     var noiseYOffset = 0f
 
     var noiseScale = 1e-2f
+
+    var debugRaster = false
+
+    var debugChar = blockShades.last().first
 
     private var numberOfSamplesHalf = numberOfSamples / 2
 
@@ -148,7 +137,11 @@ class Raster() {
                                 glitchThreshold
                         )
                         val shade = shades.firstOrNull { it.second > brightness } ?: shades.last()
-                        rasterString += shade.first
+                        rasterString += if (debugRaster) {
+                            debugChar
+                        } else {
+                            shade.first
+                        }
                     }
                 }
             }

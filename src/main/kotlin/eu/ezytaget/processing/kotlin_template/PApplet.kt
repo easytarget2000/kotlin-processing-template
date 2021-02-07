@@ -53,7 +53,6 @@ class PApplet : processing.core.PApplet() {
         raster.setup(pApplet = this)
 //        cameraRealm.setCaptureAndStart(pApplet = this)
         pImage = loadImage("image.jpg")
-        pGraphics = createGraphics(WIDTH, HEIGHT, RENDERER)
 
         clearFrame()
         clapper.start()
@@ -65,27 +64,16 @@ class PApplet : processing.core.PApplet() {
 
     private var numberOfIterationsPerFrame = 10
 
-    private lateinit var pGraphics: PGraphics
-
     override fun draw() {
         backgroundDrawer.draw(pApplet = this, alpha = 1f)
 
-//        pGraphics.beginDraw()
-//        pGraphics.stroke(MAX_COLOR_VALUE)
-//        pGraphics.strokeWeight(18f)
-//        pGraphics.noFill()
-//        pGraphics.ellipse(width / 2f, height / 2f, width * 0.33f, width * 0.33f)
-//        pGraphics.endDraw()
+        (0 until numberOfIterationsPerFrame).forEach {
+            drawIteration()
+        }
 
-        stroke(0f, 1f, MAX_COLOR_VALUE, 1f)
-        strokeWeight(9f)
-        noFill()
-        ellipse(width / 2f, height / 2f, width * 0.33f, width * 0.33f)
-
-//        image(pGraphics, 0f, 0f, width.toFloat(), height.toFloat())
         raster.drawIn(pApplet = this)
 
-        println(frameRate)
+//        println(frameRate)
     }
 
     override fun mouseClicked(event: MouseEvent?) {
@@ -109,6 +97,21 @@ class PApplet : processing.core.PApplet() {
     /*
     Implementations
      */
+
+    private fun drawIteration() {
+        push()
+        stroke(0f, 1f, MAX_COLOR_VALUE, 1f)
+        strokeWeight(9f)
+        noFill()
+
+        translate(width / 2f, height / 2f)
+        rotateX(sin(millis() * 0.0001f))
+        rotateZ(cos(millis() * 0.0003f))
+        box(width * 0.33f)
+//        ellipse(width / 2f, height / 2f, width * 0.33f, width * 0.33f)
+
+        pop()
+    }
 
     private fun clearFrame() {
         backgroundDrawer.draw(
@@ -199,7 +202,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val HEIGHT = 600
 
-        private const val RENDERER = PConstants.P2D
+        private const val RENDERER = PConstants.P3D
 
         private const val DISPLAY_ID = 2
 
