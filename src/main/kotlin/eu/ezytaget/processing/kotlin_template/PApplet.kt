@@ -4,6 +4,7 @@ import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
+import processing.core.PGraphics
 import processing.core.PImage
 import processing.event.MouseEvent
 import kotlin.random.Random
@@ -52,6 +53,7 @@ class PApplet : processing.core.PApplet() {
         raster.setup(pApplet = this)
 //        cameraRealm.setCaptureAndStart(pApplet = this)
         pImage = loadImage("image.jpg")
+        pGraphics = createGraphics(WIDTH, HEIGHT, RENDERER)
 
         clearFrame()
         clapper.start()
@@ -63,11 +65,27 @@ class PApplet : processing.core.PApplet() {
 
     private var numberOfIterationsPerFrame = 10
 
+    private lateinit var pGraphics: PGraphics
+
     override fun draw() {
         backgroundDrawer.draw(pApplet = this, alpha = 1f)
-        raster.drawIn(pApplet = this, pImage = pImage)
 
-//        println(frameRate)
+//        pGraphics.beginDraw()
+//        pGraphics.stroke(MAX_COLOR_VALUE)
+//        pGraphics.strokeWeight(18f)
+//        pGraphics.noFill()
+//        pGraphics.ellipse(width / 2f, height / 2f, width * 0.33f, width * 0.33f)
+//        pGraphics.endDraw()
+
+        stroke(0f, 1f, MAX_COLOR_VALUE, 1f)
+        strokeWeight(9f)
+        noFill()
+        ellipse(width / 2f, height / 2f, width * 0.33f, width * 0.33f)
+
+//        image(pGraphics, 0f, 0f, width.toFloat(), height.toFloat())
+        raster.drawIn(pApplet = this)
+
+        println(frameRate)
     }
 
     override fun mouseClicked(event: MouseEvent?) {
@@ -181,7 +199,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val HEIGHT = 600
 
-        private const val RENDERER = PConstants.P3D
+        private const val RENDERER = PConstants.P2D
 
         private const val DISPLAY_ID = 2
 

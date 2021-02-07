@@ -57,6 +57,8 @@ class Raster() {
 
     var shades = manyShades
 
+    var glitch = false
+
     var minGlitchThreshold = 1f
 
     var maxGlitchTreshold = 0.3f
@@ -86,7 +88,7 @@ class Raster() {
         this.textSize = textSize
     }
 
-    fun drawIn(pApplet: PApplet, pImage: PImage) {
+    fun drawIn(pApplet: PApplet, pImage: PImage? = null) {
         pApplet.push()
         pApplet.textAlign(LEFT, TOP)
         pApplet.textFont(monoFont)
@@ -97,29 +99,35 @@ class Raster() {
         val floatWidth = width.toFloat()
         val floatHeight = height.toFloat()
 
-        pImage.resize(width, height)
+        pImage?.resize(width, height)
 
         if (bypass) {
-            pApplet.image(pImage, 0f, 0f)
+            pImage?.let { pApplet.image(it, 0f, 0f) }
             return
         }
 
-        pImage.loadPixels()
+        pImage?.loadPixels()
         pApplet.loadPixels()
 
         val floatNumberOfColumns = numberOfColumns.toFloat()
         val floatNumberOfRows = numberOfRows.toFloat()
+
+        val pixels = if (pImage == null) {
+            pApplet.pixels
+        } else {
+            pImage.pixels
+        }
 
         var rasterString = ""
 
         (0 until numberOfRows).forEach { rowIndex ->
             val floatRowIndex = rowIndex.toFloat()
             val glitchThreshold = map(
-                floatRowIndex,
-                0f,
-                floatNumberOfRows,
-                1f,
-                0.6f
+                    floatRowIndex,
+                    0f,
+                    floatNumberOfRows,
+                    minGlitchThreshold,
+                    maxGlitchTreshold
             )
             (0 until numberOfColumns).forEach { columnIndex ->
                 val inputPixelX = map(columnIndex.toFloat(), 0f, floatNumberOfColumns, 0f, floatWidth).toInt()
@@ -128,16 +136,16 @@ class Raster() {
                 when (style) {
                     Style.pixelField -> {
                         val continuousPixelIndex = ((inputPixelY * width) + inputPixelX)
-                        pApplet.pixels[continuousPixelIndex] = pImage.pixels[continuousPixelIndex]
+                        pApplet.pixels[continuousPixelIndex] = pixels[continuousPixelIndex]
                     }
                     Style.ascii -> {
                         val brightness = accumulatedBrightness(
-                            pApplet,
-                            pImage.pixels,
-                            pImage.width,
-                            inputPixelX,
-                            inputPixelY,
-                            glitchThreshold
+                                pApplet,
+                                pixels,
+                                width,
+                                inputPixelX,
+                                inputPixelY,
+                                glitchThreshold
                         )
                         val shade = shades.firstOrNull { it.second > brightness } ?: shades.last()
                         rasterString += shade.first
@@ -153,7 +161,7 @@ class Raster() {
                 pApplet.updatePixels()
             }
             Style.ascii -> {
-//                pApplet.textSize(textSize)
+                pApplet.background(0)
                 pApplet.textLeading(textSize * textLeadingRatio)
 
                 pApplet.fill(textColor)
@@ -184,20 +192,22 @@ class Raster() {
     }
 
     private fun accumulatedBrightness(
-        pApplet: PApplet,
-        sourcePixels: IntArray,
-        sourceWidth: Int,
-        x: Int,
-        y: Int,
-        glitchThreshold: Float
+            pApplet: PApplet,
+            sourcePixels: IntArray,
+            sourceWidth: Int,
+            x: Int,
+            y: Int,
+            glitchThreshold: Float
     ): Float {
-        val noise = pApplet.random(1f)
+        if (glitch) {
+            val noise = pApplet.random(1f)
 //        val noise = pApplet.noise(
 //            (x.toFloat() + noiseXOffset) * noiseScale,
 //            (y.toFloat() + noiseYOffset) * noiseScale
 //        )
-        if (noise > glitchThreshold) {
-            return pApplet.random(1f) //map(noise, glitchThreshold, 1f, 0f, 1f)
+            if (noise > glitchThreshold) {
+                return pApplet.random(1f) //map(noise, glitchThreshold, 1f, 0f, 1f)
+            }
         }
 
         var brightnessSum = 0f
@@ -224,7 +234,7 @@ class Raster() {
         val blockShades = charsToEquallyDistributedShades(' ', '░', '▒', '▓')
 
         val manyShades = charsToEquallyDistributedShades(
-            ' ', '.', ',', ';', '~', '|', '\\', '=', '&', '%', '@'
+                ' ', '.', ',', ';', '~', '|', '\\', '=', '&', '%', '@'
         )
 
         private fun charsToEquallyDistributedShades(vararg chars: Char): List<Pair<Char, Double>> {
