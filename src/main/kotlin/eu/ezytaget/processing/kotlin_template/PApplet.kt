@@ -40,6 +40,10 @@ class PApplet : processing.core.PApplet() {
 
     private var triangleFloor = TriangleFloor()
 
+    private var raster = Raster()
+
+    private var clearFrameOnTextSizeFinding = false
+
     override fun settings() {
         if (FULL_SCREEN) {
             fullScreen(RENDERER, DISPLAY_ID)
@@ -58,6 +62,8 @@ class PApplet : processing.core.PApplet() {
 
         setPerspective()
 
+        raster.setup(pApplet = this)
+
         cameraRealm?.setCaptureAndStart(pApplet = this)
         triangleFloor.start(pApplet = this)
 
@@ -72,6 +78,8 @@ class PApplet : processing.core.PApplet() {
             iterateDraw()
             pop()
         }
+
+        raster.drawIn(pApplet = this)
     }
 
     private fun iterateDraw() {
@@ -117,6 +125,7 @@ class PApplet : processing.core.PApplet() {
         }
 
         triangleFloor.handleMouseClick(event.button, event.x, event.y, pApplet = this)
+        setTextSize(relativeTextSizeValue = event.x.toFloat())
     }
 
     /*
@@ -212,6 +221,16 @@ class PApplet : processing.core.PApplet() {
 
     private fun setRandomZRotationVelocity() {
         zRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
+    }
+
+    private fun setTextSize(relativeTextSizeValue: Float) {
+        if (clearFrameOnTextSizeFinding) {
+            background(0.1f, 1f, 1f, 1f)
+        }
+
+        val textSize = map(relativeTextSizeValue, 0f, width.toFloat(), 4f, 32f)
+
+        raster.setTextSize(pApplet = this, textSize = textSize)
     }
 
     companion object {
