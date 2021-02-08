@@ -40,7 +40,7 @@ class PApplet : processing.core.PApplet() {
 
     private var triangleFloor = TriangleFloor()
 
-    private var raster = Raster()
+    private var raster: Raster? = Raster()
 
     private var clearFrameOnTextSizeFinding = false
 
@@ -62,7 +62,7 @@ class PApplet : processing.core.PApplet() {
 
         setPerspective()
 
-        raster.setup(pApplet = this)
+        raster?.setup(pApplet = this)
 
         cameraRealm?.setCaptureAndStart(pApplet = this)
         triangleFloor.start(pApplet = this)
@@ -79,7 +79,7 @@ class PApplet : processing.core.PApplet() {
             pop()
         }
 
-        raster.drawIn(pApplet = this)
+        raster?.drawIn(pApplet = this)
     }
 
     private fun iterateDraw() {
@@ -224,6 +224,10 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setTextSize(relativeTextSizeValue: Float) {
+        if (raster == null) {
+            return
+        }
+        
         if (clearFrameOnTextSizeFinding) {
             background(0.1f, 1f, 1f, 1f)
         }
