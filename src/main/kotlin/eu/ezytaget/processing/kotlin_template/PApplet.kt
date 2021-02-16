@@ -4,6 +4,7 @@ import eu.ezytaget.processing.julia_set_fractals.palettes.DuskPalette
 import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
 import eu.ezytaget.processing.kotlin_template.maybe
 import eu.ezytaget.processing.kotlin_template.nextFloat
+import eu.ezytaget.processing.kotlin_template.realms.Realm
 import eu.ezytaget.processing.kotlin_template.realms.camera.CameraRealm
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSet
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetDrawer
@@ -37,17 +38,13 @@ class PApplet : processing.core.PApplet() {
 
     private var zRotationVelocity = 0.002f
 
-    private var cameraRealm: CameraRealm? = null
-
-    private var stripesRealm = StripesRealm()
-
-    private var triangleFloor = TriangleFloor()
-
     private var raster: CharRaster? = CharRaster()
 
     private var clearFrameOnTextSizeFinding = false
 
     private var automatonUpdateDelay = 16
+
+    private var realms = emptyList<Realm>()
 
     private lateinit var juliaSet: JuliaSet
     
@@ -78,8 +75,9 @@ class PApplet : processing.core.PApplet() {
 
         raster?.setup(pApplet = this)
 
-        cameraRealm?.setCaptureAndStart(pApplet = this)
-        triangleFloor.start(pApplet = this)
+        realms.forEach {
+            it.setup(pApplet = this)
+        }
 
         randomSeed(System.currentTimeMillis())
     }
@@ -148,7 +146,10 @@ class PApplet : processing.core.PApplet() {
             return
         }
 
-        triangleFloor.handleMouseClick(event.button, event.x, event.y, pApplet = this)
+        realms.forEach{
+            it.handleMouseClick(event.button, event.x, event.y, pApplet = this)
+        }
+
         setTextSize(relativeTextSizeValue = event.x.toFloat())
     }
 
