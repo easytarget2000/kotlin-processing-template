@@ -32,14 +32,20 @@ class PApplet : processing.core.PApplet() {
 
     private var zRotation = 1f
 
-    private var xRotationVelocity = 0.0021f
+    private var xRotationVelocity = 0.021f
 
     private var zRotationVelocity = 0.002f
+
     private lateinit var tesseracts: List<Tesseract>
+
     private var tesseractProjector = TesseractProjector()
+
     private var angle = 0f
+
     private var laserClearMode = true
+
     private var lastLaserClearMillis = 0L
+
     private var calm = true
 
     private var raster: CharRaster? = null// = CharRaster()
@@ -343,7 +349,7 @@ Implementations
 
         private const val HEIGHT = 600
 
-        private const val RENDERER = PConstants.P2D
+        private const val RENDERER = PConstants.P3D
 
         private const val DISPLAY_ID = 1
 
