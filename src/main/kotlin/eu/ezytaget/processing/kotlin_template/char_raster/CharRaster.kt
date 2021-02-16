@@ -1,4 +1,4 @@
-package eu.ezytaget.processing.kotlin_template
+package eu.ezytaget.processing.kotlin_template.char_raster
 
 import processing.core.PApplet
 import processing.core.PApplet.map
@@ -9,7 +9,7 @@ import processing.core.PImage
 import processing.core.PFont
 
 
-class Raster() {
+class CharRaster {
 
     enum class Style {
         pixelField, ascii

@@ -1,7 +1,7 @@
 package eu.ezytaget.processing.julia_set_fractals
 
 import eu.ezytaget.processing.julia_set_fractals.palettes.DuskPalette
-import eu.ezytaget.processing.kotlin_template.Raster
+import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
 import eu.ezytaget.processing.kotlin_template.maybe
 import eu.ezytaget.processing.kotlin_template.nextFloat
 import eu.ezytaget.processing.kotlin_template.realms.camera.CameraRealm
@@ -41,7 +41,7 @@ class PApplet : processing.core.PApplet() {
 
     private var triangleFloor = TriangleFloor()
 
-    private var raster: Raster? = Raster()
+    private var raster: CharRaster? = CharRaster()
 
     private var clearFrameOnTextSizeFinding = false
 
