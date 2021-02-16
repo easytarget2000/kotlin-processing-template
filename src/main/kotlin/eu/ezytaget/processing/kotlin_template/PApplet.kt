@@ -79,7 +79,7 @@ class PApplet : processing.core.PApplet() {
             pop()
         }
 
-        raster?.drawIn(pApplet = this)
+//        raster?.drawIn(pApplet = this)
     }
 
     private fun iterateDraw() {
@@ -96,8 +96,8 @@ class PApplet : processing.core.PApplet() {
         }
 
         cameraRealm?.drawIn(pApplet = this)
-//        stripesRealm.draw(pApplet = this)
-        triangleFloor.updateAndDrawIn(pApplet = this)
+        stripesRealm.draw(pApplet = this)
+//        triangleFloor.updateAndDrawIn(pApplet = this)
 
         translate(width / 2f, height / 2f)
         updateRotations()
@@ -224,10 +224,8 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setTextSize(relativeTextSizeValue: Float) {
-        if (raster == null) {
-            return
-        }
-        
+        val raster = raster ?: return
+
         if (clearFrameOnTextSizeFinding) {
             background(0.1f, 1f, 1f, 1f)
         }
