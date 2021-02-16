@@ -42,21 +42,21 @@ class PApplet : processing.core.PApplet() {
 
     private var angle = 0f
 
-    private var laserClearMode = true
-
     private var lastLaserClearMillis = 0L
 
     private var calm = true
 
-    private var raster: CharRaster? = null// = CharRaster()
+    private var raster: CharRaster = CharRaster()
 
     private var clearFrameOnTextSizeFinding = false
 
-    private var automatonUpdateDelay = 16
-
     private val realms = mutableListOf<Realm>()
 
+    private var applyCharRaster = false
+
     private var smearPixels = true
+
+    private var laserClearMode = true
 
     private lateinit var kaleidoscope: PGraphics
 
@@ -100,25 +100,16 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (smearPixels) {
-            loadPixels()
-            pixels.forEachIndexed { i, _ ->
-                if (i + 10 < pixels.size) {
-                    val neighborValue = pixels[i + 10]
-                    pixels[i] = pixels[i] - neighborValue
-                }
-
-            }
-//            pixels.forEachIndexed { index, pixelValue ->
-//                if (index + 10 == pixels.size) {
-//                    return
-//                }
-//                val neighborValue = pixels[index + 10]
-//                pixels[index] = pixelValue - neighborValue
-//            }
-            updatePixels()
+            smearPixels()
         }
 
-        raster?.drawIn(pApplet = this)
+        if (laserClearMode) {
+            laserClear()
+        }
+
+        if (applyCharRaster) {
+            raster.drawIn(pApplet = this)
+        }
     }
 
     private fun iterateDraw() {
@@ -179,14 +170,6 @@ class PApplet : processing.core.PApplet() {
         tesseractProjector.updateColorValues()
 
         pop()
-
-//        if (laserClearMode) {
-//            val nowMillis = System.currentTimeMillis()
-//            if (random.nextBoolean() && (nowMillis - lastLaserClearMillis) > 70L) {
-//                clearFrame()
-//                lastLaserClearMillis = nowMillis
-//            }
-//        }
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -254,6 +237,33 @@ Implementations
                 pApplet = this,
                 alpha = 1f
         )
+    }
+
+    private fun smearPixels() {
+        loadPixels()
+        pixels.forEachIndexed { i, _ ->
+            if (i + 10 < pixels.size) {
+                val neighborValue = pixels[i + 10]
+                pixels[i] = pixels[i] - neighborValue
+            }
+
+        }
+//            pixels.forEachIndexed { index, pixelValue ->
+//                if (index + 10 == pixels.size) {
+//                    return
+//                }
+//                val neighborValue = pixels[index + 10]
+//                pixels[index] = pixelValue - neighborValue
+//            }
+        updatePixels()
+    }
+
+    private fun laserClear() {
+        val nowMillis = System.currentTimeMillis()
+        if (random.nextBoolean() && (nowMillis - lastLaserClearMillis) > 70L) {
+            clearFrame()
+            lastLaserClearMillis = nowMillis
+        }
     }
 
     private fun drawFrameRate() {
