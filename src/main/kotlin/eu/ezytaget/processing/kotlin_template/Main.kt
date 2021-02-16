@@ -1,4 +1,4 @@
-package eu.ezytaget.processing.julia_set_fractals
+package eu.ezytaget.processing.kotlin_template
 
 class Main {
 

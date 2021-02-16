@@ -1,6 +1,6 @@
-package eu.ezytaget.processing.julia_set_fractals
+package eu.ezytaget.processing.kotlin_template
 
-import eu.ezytaget.processing.julia_set_fractals.palettes.Palette
+import eu.ezytaget.processing.kotlin_template.palettes.Palette
 import kotlin.random.Random
 
 class BackgroundDrawer(private val palette: Palette, var alpha: Float = 0.1f) {

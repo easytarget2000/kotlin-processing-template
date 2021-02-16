@@ -1,17 +1,18 @@
-package eu.ezytaget.processing.julia_set_fractals
+package eu.ezytaget.processing.kotlin_template
 
-import eu.ezytaget.processing.julia_set_fractals.palettes.DuskPalette
 import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
-import eu.ezytaget.processing.kotlin_template.maybe
+import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytaget.processing.kotlin_template.realms.Realm
-import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSet
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
 import processing.event.MouseEvent
 import processing.core.PGraphics
+import eu.ezytaget.processing.kotlin_template.realms.tesseract.Tesseract
+import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractProjector
 import kotlin.random.Random
+
 
 class PApplet : processing.core.PApplet() {
 
@@ -34,6 +35,12 @@ class PApplet : processing.core.PApplet() {
     private var xRotationVelocity = 0.0021f
 
     private var zRotationVelocity = 0.002f
+    private lateinit var tesseracts: List<Tesseract>
+    private var tesseractProjector = TesseractProjector()
+    private var angle = 0f
+    private var laserClearMode = true
+    private var lastLaserClearMillis = 0L
+    private var calm = true
 
     private var raster: CharRaster? = null// = CharRaster()
 
@@ -126,6 +133,36 @@ class PApplet : processing.core.PApplet() {
 
         updateClapper()
 
+        // Tesseract:
+        push()
+
+        translate(width / 2f, height / 2f)
+        updateRotations()
+        rotateX(-PConstants.PI / 2f)
+        angle += 0.02f
+
+        strokeWeight(1f)
+        repeat(3) {
+            pushMatrix()
+            rotateZ((it / 3f) * PConstants.TWO_PI)
+            tesseracts.forEach { tesseract ->
+                tesseractProjector.draw(tesseract, angle, pApplet = this)
+            }
+            popMatrix()
+        }
+
+        tesseractProjector.updateColorValues()
+
+        pop()
+
+//        if (laserClearMode) {
+//            val nowMillis = System.currentTimeMillis()
+//            if (random.nextBoolean() && (nowMillis - lastLaserClearMillis) > 70L) {
+//                clearFrame()
+//                lastLaserClearMillis = nowMillis
+//            }
+//        }
+
         if (smearPixels) {
             loadPixels()
             pixels.forEachIndexed { index, pixelValue ->
@@ -175,7 +212,13 @@ Implementations
         juliaSetRealm.brightness = 1f
         juliaSetRealm.alpha = 1f
 
-        realms.add(juliaSetRealm)
+//        realms.add(juliaSetRealm)
+
+        val numberOfTesseracts = random.nextInt(from = 1, until = 10)
+        tesseracts = (0 until numberOfTesseracts).map {
+            val scale = random.nextFloat(from = 0.1f, until = 0.5f)
+            Tesseract(scale)
+        }
     }
 
     private fun setPerspective() {
@@ -217,11 +260,6 @@ Implementations
     private fun updateClapper() {
         val clapperResult = clapper.update()
 
-        randomSeed(System.currentTimeMillis())
-
-        if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-        }
-
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
             random.maybe(probability = 0.9f) {
                 bounce()
@@ -232,6 +270,10 @@ Implementations
             random.maybe(probability = 0.2f) {
                 initRealms(pGraphics = kaleidoscope)
             }
+//            random.maybe(probability = 0.8f) {
+//                initTesseracts()
+//            }
+
             random.maybe {
                 clearFrame()
             }
@@ -243,6 +285,9 @@ Implementations
             }
             random.maybe {
                 setRandomZRotationVelocity()
+            }
+            random.maybe {
+                setRandomBackgroundAlpha()
             }
         }
 
@@ -299,7 +344,7 @@ Implementations
 
         private const val MAX_COLOR_VALUE = 1f
 
-        private const val FRAME_RATE = 120f
+        private const val FRAME_RATE = 60f
 
         private const val DRAW_BACKGROUND_ON_DRAW = false
 
