@@ -87,7 +87,7 @@ class PApplet : processing.core.PApplet() {
         randomSeed(System.currentTimeMillis())
     }
 
-    private var numberOfIterationsPerFrame = 10
+    private var numberOfIterationsPerFrame = 1
 
     override fun draw() {
         (0 .. numberOfIterationsPerFrame).forEach { _ ->
@@ -111,7 +111,6 @@ class PApplet : processing.core.PApplet() {
         if (DRAW_FRAME_RATE) {
             drawFrameRate()
         }
-
 
         juliaSet.update()
 
