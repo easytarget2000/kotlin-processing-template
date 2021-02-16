@@ -5,6 +5,8 @@ import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
 import eu.ezytaget.processing.kotlin_template.maybe
 import eu.ezytaget.processing.kotlin_template.nextFloat
 import eu.ezytaget.processing.kotlin_template.realms.camera.CameraRealm
+import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSet
+import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetDrawer
 import eu.ezytaget.processing.kotlin_template.realms.stripes.StripesRealm
 import eu.ezytaget.processing.kotlin_template.realms.triangle_floor.TriangleFloor
 import eu.ezytarget.clapper.BeatInterval

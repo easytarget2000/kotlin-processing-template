@@ -4,7 +4,9 @@
 // https://youtu.be/fAsaSkmbF5s
 // https://editor.p5js.org/codingtrain/sketches/G6qbMmaI
 
-package eu.ezytaget.processing.julia_set_fractals
+package eu.ezytaget.processing.kotlin_template.realms.julia_set
+
+import eu.ezytaget.processing.julia_set_fractals.PApplet
 
 class JuliaSetDrawer(var maxColorValue: Float = 1f) {
 
