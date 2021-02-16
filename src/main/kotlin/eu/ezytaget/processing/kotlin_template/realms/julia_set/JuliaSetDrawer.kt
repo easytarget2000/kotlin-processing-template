@@ -6,8 +6,6 @@
 
 package eu.ezytaget.processing.kotlin_template.realms.julia_set
 
-import eu.ezytaget.processing.julia_set_fractals.PApplet
-
 import processing.core.PGraphics
 
 class JuliaSetDrawer(var maxColorValue: Float = 1f) {

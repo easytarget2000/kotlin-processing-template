@@ -41,7 +41,7 @@ class CharRaster {
 
     var textLeadingRatio = 1.1f
 
-    var shades = manyShades
+    var shades = saucy
 
     var glitch = false
 
@@ -229,6 +229,10 @@ class CharRaster {
 
         val manyShades = charsToEquallyDistributedShades(
                 ' ', '.', ',', ';', '~', '|', '\\', '=', '&', '%', '@'
+        )
+
+        val saucy = charsToEquallyDistributedShades(
+                '.', 'C', 'Y', 'A', 'S', 'U', '&'
         )
 
         private fun charsToEquallyDistributedShades(vararg chars: Char): List<Pair<Char, Double>> {

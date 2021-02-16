@@ -5,11 +5,8 @@ import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
 import eu.ezytaget.processing.kotlin_template.maybe
 import eu.ezytaget.processing.kotlin_template.nextFloat
 import eu.ezytaget.processing.kotlin_template.realms.Realm
-import eu.ezytaget.processing.kotlin_template.realms.camera.CameraRealm
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSet
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetDrawer
-import eu.ezytaget.processing.kotlin_template.realms.stripes.StripesRealm
-import eu.ezytaget.processing.kotlin_template.realms.triangle_floor.TriangleFloor
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
@@ -46,6 +43,8 @@ class PApplet : processing.core.PApplet() {
     private var automatonUpdateDelay = 16
 
     private var realms = emptyList<Realm>()
+
+    private var smearPixels = false
 
     private lateinit var juliaSet: JuliaSet
     
@@ -96,7 +95,7 @@ class PApplet : processing.core.PApplet() {
             pop()
         }
 
-//        raster?.drawIn(pApplet = this)
+        raster?.drawIn(pApplet = this)
     }
 
     private fun iterateDraw() {
@@ -132,15 +131,17 @@ class PApplet : processing.core.PApplet() {
 
         updateClapper()
 
-        loadPixels()
-        pixels.forEachIndexed { index, pixelValue ->
-            if (index + 10 == pixels.size) {
-                return
+        if (smearPixels) {
+            loadPixels()
+            pixels.forEachIndexed { index, pixelValue ->
+                if (index + 10 == pixels.size) {
+                    return
+                }
+                val neighborValue = pixels[index + 10]
+                pixels[index] = pixelValue - neighborValue
             }
-            val neighborValue = pixels[index + 10]
-            pixels[index] = pixelValue - neighborValue
+            updatePixels()
         }
-        updatePixels()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -194,6 +195,9 @@ class PApplet : processing.core.PApplet() {
                 angleVelocity = angleVelocity,
                 aAngleFactor = aAngleFactor
         )
+
+        juliaSetDrawer.brightness = 1f
+        juliaSetDrawer.alpha = 1f
 
         println(
                 "initJuliaSet(): scaleWidth: $scaleWidth, scaleHeight: $scaleHeight, angle $angle, " +
@@ -314,9 +318,9 @@ class PApplet : processing.core.PApplet() {
 
         private const val HEIGHT = 600
 
-        private const val RENDERER = PConstants.P3D
+        private const val RENDERER = PConstants.P2D
 
-        private const val DISPLAY_ID = 2
+        private const val DISPLAY_ID = 1
 
         private const val COLOR_MODE = PConstants.HSB
 
