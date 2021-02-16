@@ -50,7 +50,7 @@ class PApplet : processing.core.PApplet() {
 
     private val realms = mutableListOf<Realm>()
 
-    private var smearPixels = false
+    private var smearPixels = true
 
     private lateinit var kaleidoscope: PGraphics
 
@@ -91,6 +91,25 @@ class PApplet : processing.core.PApplet() {
             push()
             iterateDraw()
             pop()
+        }
+
+        if (smearPixels) {
+            loadPixels()
+            pixels.forEachIndexed { i, _ ->
+                if (i + 10 < pixels.size) {
+                    val neighborValue = pixels[i + 10]
+                    pixels[i] = pixels[i] - neighborValue
+                }
+
+            }
+//            pixels.forEachIndexed { index, pixelValue ->
+//                if (index + 10 == pixels.size) {
+//                    return
+//                }
+//                val neighborValue = pixels[index + 10]
+//                pixels[index] = pixelValue - neighborValue
+//            }
+            updatePixels()
         }
 
         raster?.drawIn(pApplet = this)
@@ -162,18 +181,6 @@ class PApplet : processing.core.PApplet() {
 //                lastLaserClearMillis = nowMillis
 //            }
 //        }
-
-        if (smearPixels) {
-            loadPixels()
-            pixels.forEachIndexed { index, pixelValue ->
-                if (index + 10 == pixels.size) {
-                    return
-                }
-                val neighborValue = pixels[index + 10]
-                pixels[index] = pixelValue - neighborValue
-            }
-            updatePixels()
-        }
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
