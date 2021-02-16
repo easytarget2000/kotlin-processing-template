@@ -14,6 +14,7 @@ import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
 import processing.event.MouseEvent
+import processing.core.PGraphics
 import kotlin.random.Random
 
 class PApplet : processing.core.PApplet() {
@@ -49,6 +50,7 @@ class PApplet : processing.core.PApplet() {
     private lateinit var juliaSet: JuliaSet
     
     private val juliaSetDrawer = JuliaSetDrawer()
+    private lateinit var kaleidoscope: PGraphics
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -66,10 +68,13 @@ class PApplet : processing.core.PApplet() {
         clearFrame()
         clapper.start()
         frameRate(FRAME_RATE)
-        clapper.bpm = 130f
-        clapper.start()
 
-        initJuliaSet()
+        kaleidoscope = createGraphics(width, height, RENDERER)
+        kaleidoscope.beginDraw()
+        kaleidoscope.colorMode(COLOR_MODE, MAX_COLOR_VALUE)
+        kaleidoscope.endDraw()
+
+        initJuliaSet(pGraphics = kaleidoscope)
 
         setPerspective()
 
@@ -107,21 +112,33 @@ class PApplet : processing.core.PApplet() {
             drawFrameRate()
         }
 
-        translate(width / 2f, height / 2f)
-        updateRotations()
-        updateClapper()
 
         juliaSet.update()
-        juliaSetDrawer.draw(juliaSet, pApplet = this)
+
+        kaleidoscope.beginDraw()
+        kaleidoscope.clear()
+        juliaSetDrawer.draw(juliaSet, pGraphics = kaleidoscope)
+        kaleidoscope.endDraw()
+
+        pushStyle()
+        val numberOfKaleidoscopeEdges = 9
+        repeat(numberOfKaleidoscopeEdges) {
+            pushMatrix()
+            translate(width / 2f, height / 2f)
+            rotate((it / numberOfKaleidoscopeEdges.toFloat()) * PConstants.TWO_PI)
+            image(kaleidoscope, -100f, -kaleidoscope.height / 2f)
+            popMatrix()
+        }
+        popStyle()
 
         updateClapper()
 
         loadPixels()
         pixels.forEachIndexed { index, pixelValue ->
-            if (index + 1 == pixels.size) {
+            if (index + 10 == pixels.size) {
                 return
             }
-            val neighborValue = pixels[index + 1]
+            val neighborValue = pixels[index + 10]
             pixels[index] = pixelValue - neighborValue
         }
         updatePixels()
@@ -157,12 +174,19 @@ class PApplet : processing.core.PApplet() {
     Implementations
      */
 
-    private fun initJuliaSet() {
-        val scaleWidth = random.nextFloat(from = 2f, until = 6f)
-        val scaleHeight = (scaleWidth * height.toFloat()) / width.toFloat()
-        val angle = random.nextFloat(from = 0f, until = PConstants.TWO_PI)
-        val angleVelocity = random.nextFloat(from = -0.5f, until = 0.1f)
-        val aAngleFactor = random.nextFloat(from = -2f, until = 2f)
+    private fun initJuliaSet(pGraphics: PGraphics) {
+        //initJuliaSet(): scaleWidth: 5.711875, scaleHeight: 3.569922, angle 4.8934402, angleVelocity: 0.05238408, aAngleFactor: -0.7362766
+        //initJuliaSet(): scaleWidth: 3.7624247, scaleHeight: 2.3515155, angle 2.9225054, angleVelocity: 0.05977559, aAngleFactor: 0.59833264
+        //initJuliaSet(): scaleWidth: 2.4918487, scaleHeight: 1.5574055, angle 5.00991, angleVelocity: -0.31708914, aAngleFactor: -0.54648113
+        // NO: initJuliaSet(): scaleWidth: 4.356219, scaleHeight: 2.7226367, angle 5.680613, angleVelocity: 0.0038700998, aAngleFactor: 0.030716658
+        val width = pGraphics.width
+        val height = pGraphics.height
+
+        val scaleWidth = random.nextFloat(from = 2.5f, until = 7f) // 5.5, 5.13, 2.23
+        val scaleHeight = (scaleWidth * height.toFloat()) / width.toFloat() // 3.4, 3.21, 1.39
+        val angle = random.nextFloat(from = 3f, until = PConstants.TWO_PI) // 0.5, 6.2, 4.19
+        val angleVelocity = random.nextFloat(from = -0.05f, until = 0.05f) // 0.09, -0.29, -0.28
+        val aAngleFactor = random.nextFloat(from = 1f, until = 2f) // 1.69, 0.8, -1.35
 
         juliaSet = JuliaSet(
                 scaleWidth = scaleWidth,
@@ -170,6 +194,11 @@ class PApplet : processing.core.PApplet() {
                 angle = angle,
                 angleVelocity = angleVelocity,
                 aAngleFactor = aAngleFactor
+        )
+
+        println(
+                "initJuliaSet(): scaleWidth: $scaleWidth, scaleHeight: $scaleHeight, angle $angle, " +
+                        "angleVelocity: $angleVelocity, aAngleFactor: $aAngleFactor"
         )
     }
 
@@ -184,7 +213,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun clearAll() {
-        initJuliaSet()
+        initJuliaSet(pGraphics = kaleidoscope)
         clearFrame()
     }
 
@@ -225,7 +254,7 @@ class PApplet : processing.core.PApplet() {
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
             random.maybe(probability = 0.2f) {
-                initJuliaSet()
+                initJuliaSet(pGraphics = kaleidoscope)
             }
             random.maybe {
                 clearFrame()

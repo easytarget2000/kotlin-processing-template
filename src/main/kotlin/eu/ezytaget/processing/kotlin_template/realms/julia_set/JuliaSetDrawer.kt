@@ -8,6 +8,8 @@ package eu.ezytaget.processing.kotlin_template.realms.julia_set
 
 import eu.ezytaget.processing.julia_set_fractals.PApplet
 
+import processing.core.PGraphics
+
 class JuliaSetDrawer(var maxColorValue: Float = 1f) {
 
     var maxIterationsPerPoint = 16
@@ -22,7 +24,7 @@ class JuliaSetDrawer(var maxColorValue: Float = 1f) {
     var brightness = maxColorValue * 0.7f
     var alpha = maxColorValue * 0.8f
 
-    fun draw(juliaSet: JuliaSet, pApplet: PApplet, pixelStepSize: Int = 1) {
+    fun draw(juliaSet: JuliaSet, pGraphics: PGraphics, pixelStepSize: Int = 1) {
         // Establish a range of values on the complex plane
         // A different range will allow us to "zoom" in or out on the fractal
 
@@ -35,7 +37,7 @@ class JuliaSetDrawer(var maxColorValue: Float = 1f) {
 
         // Make sure we can write to the pixels[] array.
         // Only need to do this once since we don't do any other drawing.
-        pApplet.loadPixels()
+        pGraphics.loadPixels()
 
         // x goes from xmin to xmax
         val maxX = startX + scaleWidth
@@ -43,8 +45,8 @@ class JuliaSetDrawer(var maxColorValue: Float = 1f) {
         val maxY = startY + scaleHeight
 
         // Calculate amount we increment x,y for each pixel
-        val width = pApplet.width
-        val height = pApplet.height
+        val width = pGraphics.width
+        val height = pGraphics.height
         val scaleXDelta = (maxX - startX) / width
         val scaleYDelta = (maxY - startY) / height
 
@@ -76,11 +78,11 @@ class JuliaSetDrawer(var maxColorValue: Float = 1f) {
                 if (n in minIterationsPerPointToDraw..maxIterationsPerPointToDraw) {
 //                    val hue = sqrt(n.toFloat() / maxIterationsPerPoint)
                     setPixel(
-                            pApplet,
+                            pGraphics,
                             width,
                             pixelX,
                             pixelY,
-                            pApplet.color(hue, saturation, brightness, alpha)
+                            pGraphics.color(hue, saturation, brightness, alpha)
                     )
                 }
 
@@ -89,7 +91,8 @@ class JuliaSetDrawer(var maxColorValue: Float = 1f) {
 
             y += scaleYDelta
         }
-        pApplet.updatePixels()
+
+        pGraphics.updatePixels()
 
         hue += hueVelocity
         if (hue > maxHue) {
@@ -98,8 +101,8 @@ class JuliaSetDrawer(var maxColorValue: Float = 1f) {
     }
 
     companion object {
-        private fun setPixel(pApplet: PApplet, width: Int, x: Int, y: Int, color: Int) {
-            pApplet.pixels[x + (y * width)] = color
+        private fun setPixel(pGraphics: PGraphics, width: Int, x: Int, y: Int, color: Int) {
+            pGraphics.pixels[x + (y * width)] = color
         }
     }
 }
