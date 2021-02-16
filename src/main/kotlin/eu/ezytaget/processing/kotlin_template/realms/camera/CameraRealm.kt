@@ -1,6 +1,6 @@
 package eu.ezytaget.processing.kotlin_template.realms.camera
 
-import eu.ezytaget.processing.kotlin_template.PApplet
+import processing.core.PApplet
 import processing.video.Capture
 
 class CameraRealm {

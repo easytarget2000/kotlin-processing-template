@@ -1,6 +1,6 @@
 package eu.ezytaget.processing.kotlin_template.realms.stripes
 
-import eu.ezytaget.processing.kotlin_template.PApplet
+import processing.core.PApplet
 import processing.core.PApplet.*
 import kotlin.math.PI
 

@@ -1,5 +1,6 @@
 package eu.ezytaget.processing.kotlin_template
 
+import processing.core.PApplet
 import processing.core.PApplet.map
 import processing.core.PConstants.*
 

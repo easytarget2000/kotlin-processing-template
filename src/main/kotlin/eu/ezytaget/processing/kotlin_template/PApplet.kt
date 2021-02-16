@@ -1,15 +1,16 @@
-package eu.ezytaget.processing.kotlin_template
+package eu.ezytaget.processing.julia_set_fractals
 
-import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
+import eu.ezytaget.processing.julia_set_fractals.palettes.DuskPalette
+import eu.ezytaget.processing.kotlin_template.Raster
+import eu.ezytaget.processing.kotlin_template.maybe
+import eu.ezytaget.processing.kotlin_template.nextFloat
 import eu.ezytaget.processing.kotlin_template.realms.camera.CameraRealm
 import eu.ezytaget.processing.kotlin_template.realms.stripes.StripesRealm
 import eu.ezytaget.processing.kotlin_template.realms.triangle_floor.TriangleFloor
-import eu.ezytaget.processing.kotlin_template.realms.vortex_monster.VortexMonster
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
 import processing.event.MouseEvent
-import processing.video.Capture
 import kotlin.random.Random
 
 class PApplet : processing.core.PApplet() {
@@ -44,6 +45,12 @@ class PApplet : processing.core.PApplet() {
 
     private var clearFrameOnTextSizeFinding = false
 
+    private var automatonUpdateDelay = 16
+
+    private lateinit var juliaSet: JuliaSet
+    
+    private val juliaSetDrawer = JuliaSetDrawer()
+
     override fun settings() {
         if (FULL_SCREEN) {
             fullScreen(RENDERER, DISPLAY_ID)
@@ -59,6 +66,11 @@ class PApplet : processing.core.PApplet() {
 
         clearFrame()
         clapper.start()
+        frameRate(FRAME_RATE)
+        clapper.bpm = 130f
+        clapper.start()
+
+        initJuliaSet()
 
         setPerspective()
 
@@ -95,13 +107,24 @@ class PApplet : processing.core.PApplet() {
             drawFrameRate()
         }
 
-        cameraRealm?.drawIn(pApplet = this)
-        stripesRealm.draw(pApplet = this)
-//        triangleFloor.updateAndDrawIn(pApplet = this)
-
         translate(width / 2f, height / 2f)
         updateRotations()
         updateClapper()
+
+        juliaSet.update()
+        juliaSetDrawer.draw(juliaSet, pApplet = this)
+
+        updateClapper()
+
+        loadPixels()
+        pixels.forEachIndexed { index, pixelValue ->
+            if (index + 1 == pixels.size) {
+                return
+            }
+            val neighborValue = pixels[index + 1]
+            pixels[index] = pixelValue - neighborValue
+        }
+        updatePixels()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -117,7 +140,6 @@ class PApplet : processing.core.PApplet() {
         }
     }
 
-
     override fun mouseClicked(event: MouseEvent?) {
         super.mouseClicked(event)
         if (event == null) {
@@ -132,16 +154,20 @@ class PApplet : processing.core.PApplet() {
     Implementations
      */
 
-    private fun drawSample() {
-        noFill()
-        val hue = (frameCount % 1000) / 1000f
-        val saturation = (frameCount % 3000) / 3000f
-        val brightness = MAX_COLOR_VALUE * 1f //((frameCount % 6000) / 6000f)
-        val alpha = 0.1f * MAX_COLOR_VALUE
-        stroke(hue, saturation, brightness, alpha)
+    private fun initJuliaSet() {
+        val scaleWidth = random.nextFloat(from = 2f, until = 6f)
+        val scaleHeight = (scaleWidth * height.toFloat()) / width.toFloat()
+        val angle = random.nextFloat(from = 0f, until = PConstants.TWO_PI)
+        val angleVelocity = random.nextFloat(from = -0.5f, until = 0.1f)
+        val aAngleFactor = random.nextFloat(from = -2f, until = 2f)
 
-        val boxSize = min(width, height) * 0.5f
-        box(boxSize)
+        juliaSet = JuliaSet(
+                scaleWidth = scaleWidth,
+                scaleHeight = scaleHeight,
+                angle = angle,
+                angleVelocity = angleVelocity,
+                aAngleFactor = aAngleFactor
+        )
     }
 
     private fun setPerspective() {
@@ -152,6 +178,11 @@ class PApplet : processing.core.PApplet() {
 //                cameraZ / 10f,
 //                cameraZ * 30f
 //        )
+    }
+
+    private fun clearAll() {
+        initJuliaSet()
+        clearFrame()
     }
 
     private fun clearFrame() {
@@ -178,15 +209,22 @@ class PApplet : processing.core.PApplet() {
     private fun updateClapper() {
         val clapperResult = clapper.update()
 
-//        if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-//            random.maybe(probability = 0.9f) {
-//                bounce()
-//            }
-//        }
+        randomSeed(System.currentTimeMillis())
 
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-//            random.maybe(probability = 0.2f) {}
-            random.maybe(probability = 0.5f) {
+        }
+
+        if (clapperResult[BeatInterval.Whole]?.didChange == true) {
+            random.maybe(probability = 0.9f) {
+                bounce()
+            }
+        }
+
+        if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
+            random.maybe(probability = 0.2f) {
+                initJuliaSet()
+            }
+            random.maybe {
                 clearFrame()
             }
             random.maybe {
@@ -200,8 +238,8 @@ class PApplet : processing.core.PApplet() {
             }
         }
 
-        if (clapperResult[BeatInterval.SixteenWhole]?.didChange == true) {
-            background(0)
+        if (clapperResult[BeatInterval.EightWhole]?.didChange == true) {
+            clearAll()
         }
     }
 
@@ -210,7 +248,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setRandomBackgroundAlpha() {
-        if (!maybe { backgroundAlpha = random(MAX_COLOR_VALUE / 64f) }) {
+        if (!random.maybe { backgroundAlpha = random(MAX_COLOR_VALUE / 64f) }) {
             backgroundAlpha = 1f
         }
     }
@@ -239,9 +277,9 @@ class PApplet : processing.core.PApplet() {
 
         private const val CLICK_TO_DRAW = false
 
-        private const val FULL_SCREEN = false
+        private const val FULL_SCREEN = true
 
-        private const val WIDTH = 600
+        private const val WIDTH = 800
 
         private const val HEIGHT = 600
 
@@ -258,7 +296,7 @@ class PApplet : processing.core.PApplet() {
         private const val DRAW_BACKGROUND_ON_DRAW = false
 
         private const val DRAW_FRAME_RATE = false
-
+        
         private const val MAX_ROTATION_VELOCITY = 0.03f
 
         fun runInstance() {
