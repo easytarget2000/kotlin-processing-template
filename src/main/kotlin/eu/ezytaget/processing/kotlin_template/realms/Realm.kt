@@ -1,14 +1,16 @@
 package eu.ezytaget.processing.kotlin_template.realms
 
 import processing.core.PApplet
+import processing.core.PGraphics
 
 interface Realm {
 
-    fun setup(pApplet: PApplet)
+    fun setup(pGraphics: PGraphics)
 
-    fun drawIn(pApplet: PApplet)
+    fun update(pApplet: PApplet)
+
+    fun drawIn(pGraphics: PGraphics)
 
     fun handleMouseClick(button: Int, mouseX: Int, mouseY: Int, pApplet: PApplet)
-
 
 }
