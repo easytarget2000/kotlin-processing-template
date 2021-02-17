@@ -13,7 +13,7 @@ import processing.core.PConstants
 import processing.core.PGraphics
 import kotlin.random.Random
 
-class JuliaSetRealm(maxColorValue: Float = 1f, private val random: Random = Random.Default): Realm {
+class JuliaSetRealm(maxColorValue: Float = 1f, random: Random = Random.Default): Realm(random) {
 
     var maxIterationsPerPoint = 16
     var minIterationsPerPointToDraw = maxIterationsPerPoint / 2

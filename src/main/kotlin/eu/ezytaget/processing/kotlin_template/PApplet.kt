@@ -4,13 +4,13 @@ import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytaget.processing.kotlin_template.realms.Realm
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
+import eu.ezytaget.processing.kotlin_template.realms.tesseract.Tesseract
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
 import processing.event.MouseEvent
 import processing.core.PGraphics
-import eu.ezytaget.processing.kotlin_template.realms.tesseract.Tesseract
-import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractProjector
+import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractRealm
 import kotlin.random.Random
 
 
@@ -36,15 +36,9 @@ class PApplet : processing.core.PApplet() {
 
     private var zRotationVelocity = 0.002f
 
-    private lateinit var tesseracts: List<Tesseract>
-
-    private var tesseractProjector = TesseractProjector()
-
-    private var angle = 0f
+    private var tesseractProjector = TesseractRealm()
 
     private var lastLaserClearMillis = 0L
-
-    private var calm = true
 
     private var raster: CharRaster = CharRaster()
 
@@ -85,7 +79,7 @@ class PApplet : processing.core.PApplet() {
 
         setPerspective()
 
-        raster?.setup(pApplet = this)
+        raster.setup(pApplet = this)
 
         randomSeed(System.currentTimeMillis())
     }
@@ -110,6 +104,7 @@ class PApplet : processing.core.PApplet() {
         if (applyCharRaster) {
             raster.drawIn(pApplet = this)
         }
+
     }
 
     private fun iterateDraw() {
@@ -149,27 +144,9 @@ class PApplet : processing.core.PApplet() {
 
         updateClapper()
 
-        // Tesseract:
-        push()
+        tesseractProjector.update(pApplet = this)
+        tesseractProjector.drawIn(pApplet = this)
 
-        translate(width / 2f, height / 2f)
-        updateRotations()
-        rotateX(-PConstants.PI / 2f)
-        angle += 0.02f
-
-        strokeWeight(1f)
-        repeat(3) {
-            pushMatrix()
-            rotateZ((it / 3f) * PConstants.TWO_PI)
-            tesseracts.forEach { tesseract ->
-                tesseractProjector.draw(tesseract, angle, pGraphics)
-            }
-            popMatrix()
-        }
-
-        tesseractProjector.updateColorValues()
-
-        pop()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -210,11 +187,7 @@ class PApplet : processing.core.PApplet() {
 
 //        realms.add(juliaSetRealm)
 
-        val numberOfTesseracts = random.nextInt(from = 1, until = 10)
-        tesseracts = (0 until numberOfTesseracts).map {
-            val scale = random.nextFloat(from = 0.1f, until = 0.5f)
-            Tesseract(scale)
-        }
+        tesseractProjector.setup(pApplet = this)
     }
 
     private fun setPerspective() {
