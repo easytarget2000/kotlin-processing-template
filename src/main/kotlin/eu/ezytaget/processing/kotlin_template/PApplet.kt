@@ -162,7 +162,7 @@ class PApplet : processing.core.PApplet() {
             pushMatrix()
             rotateZ((it / 3f) * PConstants.TWO_PI)
             tesseracts.forEach { tesseract ->
-                tesseractProjector.draw(tesseract, angle, pApplet = this)
+                tesseractProjector.draw(tesseract, angle, pGraphics)
             }
             popMatrix()
         }
