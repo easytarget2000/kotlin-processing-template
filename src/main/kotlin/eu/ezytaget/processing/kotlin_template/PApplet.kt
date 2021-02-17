@@ -144,10 +144,12 @@ class PApplet : processing.core.PApplet() {
 
     override fun keyPressed() {
         when (key) {
-            ' ' ->
+            CLAPPER_TAP_BPM_KEY ->
                 clapper.tapBpm()
-            'x' ->
+            CLEAR_FRAME_KEY ->
                 clearFrame()
+            TOGGLE_SMEAR_PIXELS_KEY ->
+                toggleSmearPixels()
         }
     }
 
@@ -250,9 +252,9 @@ class PApplet : processing.core.PApplet() {
             random.maybe(probability = 0.2f) {
                 initRealms(pGraphics = kaleidoscope)
             }
-//            random.maybe(probability = 0.8f) {
-//                initTesseracts()
-//            }
+            random.maybe(probability = 0.8f) {
+                toggleSmearPixels()
+            }
 
             random.maybe {
                 clearFrame()
@@ -294,6 +296,10 @@ class PApplet : processing.core.PApplet() {
         tesseractRealm?.zRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
     }
 
+    private fun toggleSmearPixels() {
+        smearPixels = !smearPixels
+    }
+
     private fun setTextSize(relativeTextSizeValue: Float) {
         val raster = raster ?: return
 
@@ -331,6 +337,12 @@ class PApplet : processing.core.PApplet() {
         private const val DRAW_FRAME_RATE = false
 
         private const val MAX_ROTATION_VELOCITY = 0.03f
+
+        private const val CLAPPER_TAP_BPM_KEY = ' '
+
+        private const val CLEAR_FRAME_KEY = 'x'
+
+        private const val TOGGLE_SMEAR_PIXELS_KEY = 's'
 
         fun runInstance() {
             val instance = PApplet()
