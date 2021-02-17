@@ -9,7 +9,7 @@ import processing.core.PVector
 
 class TesseractRealm(
         private val minNumberOfShapes: Int = 1,
-        private val maxNumberOfShapes: Int = 5,
+        private val maxNumberOfShapes: Int = 3,
         maxColorValue: Float = 1f
 ): Realm() {
 

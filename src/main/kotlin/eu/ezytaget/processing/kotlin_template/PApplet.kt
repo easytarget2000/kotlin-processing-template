@@ -27,8 +27,6 @@ class PApplet : processing.core.PApplet() {
 
     private var backgroundAlpha = 1f
 
-    private var tesseractRealm = TesseractRealm()
-
     private var lastLaserClearMillis = 0L
 
     private var raster: CharRaster = CharRaster()
@@ -44,6 +42,9 @@ class PApplet : processing.core.PApplet() {
     private var laserClearMode = false
 
     private lateinit var kaleidoscope: PGraphics
+
+    private val tesseractRealm: TesseractRealm?
+    get() = realms.firstOrNull { it is TesseractRealm } as? TesseractRealm
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -115,14 +116,12 @@ class PApplet : processing.core.PApplet() {
         realms.forEach {
             it.update(pApplet = this)
         }
-        tesseractRealm.update(pApplet = this)
 
         kaleidoscope.beginDraw()
         kaleidoscope.clear()
         realms.forEach {
             it.drawIn(pGraphics = kaleidoscope)
         }
-        tesseractRealm.drawIn(kaleidoscope)
         kaleidoscope.endDraw()
 
         push()
@@ -177,7 +176,9 @@ class PApplet : processing.core.PApplet() {
 
 //        realms.add(juliaSetRealm)
 
+        val tesseractRealm = TesseractRealm()
         tesseractRealm.setup(pApplet = this)
+        realms.add(tesseractRealm)
     }
 
     private fun setPerspective() {
@@ -286,11 +287,11 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setRandomXRotationVelocity() {
-        tesseractRealm.xRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
+        tesseractRealm?.xRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
     }
 
     private fun setRandomZRotationVelocity() {
-        tesseractRealm.zRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
+        tesseractRealm?.zRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
     }
 
     private fun setTextSize(relativeTextSizeValue: Float) {
