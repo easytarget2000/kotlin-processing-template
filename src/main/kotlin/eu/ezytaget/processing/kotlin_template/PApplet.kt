@@ -198,9 +198,9 @@ class PApplet : processing.core.PApplet() {
         setTextSize(relativeTextSizeValue = event.x.toFloat())
     }
 
-/*
-Implementations
- */
+    /*
+    Implementations
+     */
 
     private fun initRealms(pGraphics: PGraphics) {
         val juliaSetRealm = JuliaSetRealm()
