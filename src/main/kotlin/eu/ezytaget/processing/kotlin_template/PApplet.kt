@@ -115,12 +115,14 @@ class PApplet : processing.core.PApplet() {
         realms.forEach {
             it.update(pApplet = this)
         }
+        tesseractRealm.update(pApplet = this)
 
         kaleidoscope.beginDraw()
         kaleidoscope.clear()
         realms.forEach {
             it.drawIn(pGraphics = kaleidoscope)
         }
+        tesseractRealm.drawIn(kaleidoscope)
         kaleidoscope.endDraw()
 
         push()
@@ -134,8 +136,7 @@ class PApplet : processing.core.PApplet() {
         }
         pop()
 
-        tesseractRealm.update(pApplet = this)
-        tesseractRealm.drawIn(pApplet = this)
+
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
