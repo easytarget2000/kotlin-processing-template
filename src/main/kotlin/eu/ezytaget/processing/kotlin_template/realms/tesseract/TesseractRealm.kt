@@ -9,15 +9,15 @@ import processing.core.PVector
 
 class TesseractRealm(
         private val minNumberOfShapes: Int = 1,
-        private val maxNumberOfShapes: Int = 1,
+        private val maxNumberOfShapes: Int = 10,
         maxColorValue: Float = 1f
 ): Realm() {
 
-    var strokeWeightGrowthVelocity = 0.1f
+    var strokeWeightGrowthVelocity = 0.01f
 
     var minStrokeWeight = 2f
 
-    var maxStrokeWeight = 16f
+    var maxStrokeWeight = 4f
 
     var strokeWeight = minStrokeWeight
 
@@ -39,7 +39,7 @@ class TesseractRealm(
 
     var zRotation = 1f
 
-    var xRotationVelocity = 0.021f
+    var xRotationVelocity = 0.0021f
 
     var zRotationVelocity = 0.002f
 
@@ -65,7 +65,7 @@ class TesseractRealm(
         super.update(pApplet)
         updateColorValues()
         updateStrokeWeight()
-        angle += 0.02f
+        angle += 0.002f
     }
 
     override fun drawIn(pGraphics: PGraphics) {
@@ -75,7 +75,7 @@ class TesseractRealm(
         pGraphics.push()
 
         pGraphics.translate(pGraphics.width / 2f, pGraphics.height / 2f)
-        updateRotations(pGraphics)
+//        updateRotations(pGraphics)
         pGraphics.rotateX(-PConstants.PI / 2f)
 
         pGraphics.strokeWeight(strokeWeight)

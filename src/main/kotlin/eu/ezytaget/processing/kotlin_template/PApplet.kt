@@ -37,11 +37,11 @@ class PApplet : processing.core.PApplet() {
 
     private var applyCharRaster = false
 
-    private var smearPixels = true
+    private var smearPixels = false
 
     private var laserClearMode = false
 
-    private var numberOfKaleidoscopeEdges = 4
+    private var numberOfKaleidoscopeEdges = 1
 
     private lateinit var kaleidoscope: PGraphics
 
@@ -126,17 +126,19 @@ class PApplet : processing.core.PApplet() {
         }
         kaleidoscope.endDraw()
 
-        push()
-        repeat(numberOfKaleidoscopeEdges) {
-            pushMatrix()
-            translate(width / 2f, height / 2f)
-            rotate((it / numberOfKaleidoscopeEdges.toFloat()) * PConstants.TWO_PI)
-            image(kaleidoscope, -100f, -kaleidoscope.height / 2f)
-            popMatrix()
+        if (numberOfKaleidoscopeEdges <= 1) {
+            image(kaleidoscope, 0f, 0f)
+        } else {
+            push()
+            repeat(numberOfKaleidoscopeEdges) {
+                pushMatrix()
+                translate(width / 2f, height / 2f)
+                rotate((it / numberOfKaleidoscopeEdges.toFloat()) * PConstants.TWO_PI)
+                image(kaleidoscope, -100f, -kaleidoscope.height / 2f)
+                popMatrix()
+            }
+            pop()
         }
-        pop()
-
-
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -254,7 +256,7 @@ class PApplet : processing.core.PApplet() {
                 initRealms(pGraphics = kaleidoscope)
             }
             random.maybe(probability = 0.8f) {
-                toggleSmearPixels()
+//                toggleSmearPixels()
             }
 
             random.maybe {
@@ -333,7 +335,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val FRAME_RATE = 60f
 
-        private const val DRAW_BACKGROUND_ON_DRAW = false
+        private const val DRAW_BACKGROUND_ON_DRAW = true
 
         private const val DRAW_FRAME_RATE = false
 
