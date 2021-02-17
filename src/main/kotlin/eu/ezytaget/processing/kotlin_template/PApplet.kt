@@ -4,7 +4,6 @@ import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytaget.processing.kotlin_template.realms.Realm
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
-import eu.ezytaget.processing.kotlin_template.realms.tesseract.Tesseract
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
@@ -28,15 +27,7 @@ class PApplet : processing.core.PApplet() {
 
     private var backgroundAlpha = 1f
 
-    private var xRotation = 1f
-
-    private var zRotation = 1f
-
-    private var xRotationVelocity = 0.021f
-
-    private var zRotationVelocity = 0.002f
-
-    private var tesseractProjector = TesseractRealm()
+    private var tesseractRealm = TesseractRealm()
 
     private var lastLaserClearMillis = 0L
 
@@ -105,6 +96,7 @@ class PApplet : processing.core.PApplet() {
             raster.drawIn(pApplet = this)
         }
 
+        updateClapper()
     }
 
     private fun iterateDraw() {
@@ -131,7 +123,7 @@ class PApplet : processing.core.PApplet() {
         }
         kaleidoscope.endDraw()
 
-        pushStyle()
+        push()
         val numberOfKaleidoscopeEdges = 9
         repeat(numberOfKaleidoscopeEdges) {
             pushMatrix()
@@ -140,14 +132,10 @@ class PApplet : processing.core.PApplet() {
             image(kaleidoscope, -100f, -kaleidoscope.height / 2f)
             popMatrix()
         }
-        popStyle()
+        pop()
 
-        updateClapper()
-
-        updateRotations()
-        tesseractProjector.update(pApplet = this)
-        tesseractProjector.drawIn(pApplet = this)
-
+        tesseractRealm.update(pApplet = this)
+        tesseractRealm.drawIn(pApplet = this)
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -188,7 +176,7 @@ class PApplet : processing.core.PApplet() {
 
 //        realms.add(juliaSetRealm)
 
-        tesseractProjector.setup(pApplet = this)
+        tesseractRealm.setup(pApplet = this)
     }
 
     private fun setPerspective() {
@@ -247,16 +235,6 @@ class PApplet : processing.core.PApplet() {
         popStyle()
     }
 
-    private fun updateRotations() {
-        push()
-        translate(width / 2f, height / 2f)
-        zRotation += zRotationVelocity
-        rotateZ(zRotation)
-        xRotation += xRotationVelocity
-        rotateX(xRotation)
-        pop()
-    }
-
     private fun updateClapper() {
         val clapperResult = clapper.update()
 
@@ -307,11 +285,11 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setRandomXRotationVelocity() {
-        xRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
+        tesseractRealm.xRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
     }
 
     private fun setRandomZRotationVelocity() {
-        zRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
+        tesseractRealm.zRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
     }
 
     private fun setTextSize(relativeTextSizeValue: Float) {

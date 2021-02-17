@@ -23,7 +23,15 @@ class TesseractRealm(maxColorValue: Float = 1f): Realm() {
 
     var brightness = 1f
 
-    var alpha = 0.5f
+    var alpha = 0.8f
+
+    var xRotation = 1f
+
+    var zRotation = 1f
+
+    var xRotationVelocity = 0.021f
+
+    var zRotationVelocity = 0.002f
 
     private var angle = 0f
 
@@ -52,6 +60,7 @@ class TesseractRealm(maxColorValue: Float = 1f): Realm() {
         pGraphics.push()
 
         pGraphics.translate(pGraphics.width / 2f, pGraphics.height / 2f)
+        updateRotations(pGraphics)
         pGraphics.rotateX(-PConstants.PI / 2f)
 
         pGraphics.strokeWeight(strokeWeight)
@@ -123,6 +132,13 @@ class TesseractRealm(maxColorValue: Float = 1f): Realm() {
         if (hue > maxHue) {
             hue = minHue
         }
+    }
+
+    private fun updateRotations(pGraphics: PGraphics) {
+        zRotation += zRotationVelocity
+        pGraphics.rotateZ(zRotation)
+        xRotation += xRotationVelocity
+        pGraphics.rotateX(xRotation)
     }
 
     private fun connectVertices(offset: Int = 0, index1: Int, index2: Int, vertices: List<PVector>, pGraphics: PGraphics) {
