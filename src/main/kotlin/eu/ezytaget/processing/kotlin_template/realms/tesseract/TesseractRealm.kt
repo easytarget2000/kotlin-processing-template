@@ -9,7 +9,7 @@ import processing.core.PVector
 
 class TesseractRealm(maxColorValue: Float = 1f): Realm() {
 
-    var strokeWeight = 4f
+    var strokeWeight = 1f
 
     var hue = 0.5f
 
@@ -23,7 +23,7 @@ class TesseractRealm(maxColorValue: Float = 1f): Realm() {
 
     var brightness = 1f
 
-    var alpha = 0.9f
+    var alpha = 0.5f
 
     private var angle = 0f
 
@@ -52,10 +52,9 @@ class TesseractRealm(maxColorValue: Float = 1f): Realm() {
         pGraphics.push()
 
         pGraphics.translate(pGraphics.width / 2f, pGraphics.height / 2f)
-//        pGraphics.updateRotations()
         pGraphics.rotateX(-PConstants.PI / 2f)
 
-        pGraphics.strokeWeight(1f)
+        pGraphics.strokeWeight(strokeWeight)
         repeat(3) {
             pGraphics.pushMatrix()
             pGraphics.rotateZ((it / 3f) * PConstants.TWO_PI)
@@ -100,7 +99,6 @@ class TesseractRealm(maxColorValue: Float = 1f): Realm() {
             projected
         }
 
-        pGraphics.strokeWeight(strokeWeight)
         pGraphics.stroke(hue, saturation, brightness, alpha)
 
         (0..3).forEach { vertexIndex ->

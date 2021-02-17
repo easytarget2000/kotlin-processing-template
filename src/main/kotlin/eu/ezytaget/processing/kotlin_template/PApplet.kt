@@ -50,7 +50,7 @@ class PApplet : processing.core.PApplet() {
 
     private var smearPixels = true
 
-    private var laserClearMode = true
+    private var laserClearMode = false
 
     private lateinit var kaleidoscope: PGraphics
 
@@ -144,6 +144,7 @@ class PApplet : processing.core.PApplet() {
 
         updateClapper()
 
+        updateRotations()
         tesseractProjector.update(pApplet = this)
         tesseractProjector.drawIn(pApplet = this)
 
@@ -247,10 +248,13 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun updateRotations() {
+        push()
+        translate(width / 2f, height / 2f)
         zRotation += zRotationVelocity
         rotateZ(zRotation)
         xRotation += xRotationVelocity
         rotateX(xRotation)
+        pop()
     }
 
     private fun updateClapper() {
