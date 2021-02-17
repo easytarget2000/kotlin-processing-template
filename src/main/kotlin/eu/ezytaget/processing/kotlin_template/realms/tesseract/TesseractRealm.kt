@@ -9,7 +9,7 @@ import processing.core.PVector
 
 class TesseractRealm(
         private val minNumberOfShapes: Int = 1,
-        private val maxNumberOfShapes: Int = 3,
+        private val maxNumberOfShapes: Int = 1,
         maxColorValue: Float = 1f
 ): Realm() {
 
@@ -50,7 +50,11 @@ class TesseractRealm(
     override fun setup(pGraphics: PGraphics) {
         super.setup(pGraphics)
 
-        val numberOfShapes = random.nextInt(from = minNumberOfShapes, until = maxNumberOfShapes)
+        val numberOfShapes = if (minNumberOfShapes >= maxNumberOfShapes) {
+            minNumberOfShapes
+        } else {
+            random.nextInt(from = minNumberOfShapes, until = maxNumberOfShapes)
+        }
         tesseracts = (0 until numberOfShapes).map {
             val scale = random.nextFloat(from = 0.1f, until = 0.5f)
             Tesseract(scale)
