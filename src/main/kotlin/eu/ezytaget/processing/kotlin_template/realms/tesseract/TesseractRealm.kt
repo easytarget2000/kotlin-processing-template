@@ -13,7 +13,13 @@ class TesseractRealm(
         maxColorValue: Float = 1f
 ): Realm() {
 
-    var strokeWeight = 1f
+    var strokeWeightGrowthVelocity = 0.1f
+
+    var minStrokeWeight = 2f
+
+    var maxStrokeWeight = 16f
+
+    var strokeWeight = minStrokeWeight
 
     var hue = 0.5f
 
@@ -54,6 +60,7 @@ class TesseractRealm(
     override fun update(pApplet: PApplet) {
         super.update(pApplet)
         updateColorValues()
+        updateStrokeWeight()
         angle += 0.02f
     }
 
@@ -135,6 +142,13 @@ class TesseractRealm(
         hue += hueVelocity
         if (hue > maxHue) {
             hue = minHue
+        }
+    }
+
+    private fun updateStrokeWeight() {
+        strokeWeight += strokeWeightGrowthVelocity
+        if (strokeWeight > maxStrokeWeight) {
+            strokeWeight = minStrokeWeight
         }
     }
 
