@@ -41,6 +41,8 @@ class PApplet : processing.core.PApplet() {
 
     private var laserClearMode = false
 
+    private var numberOfKaleidoscopeEdges = 4
+
     private lateinit var kaleidoscope: PGraphics
 
     private val tesseractRealm: TesseractRealm?
@@ -125,7 +127,6 @@ class PApplet : processing.core.PApplet() {
         kaleidoscope.endDraw()
 
         push()
-        val numberOfKaleidoscopeEdges = 9
         repeat(numberOfKaleidoscopeEdges) {
             pushMatrix()
             translate(width / 2f, height / 2f)
