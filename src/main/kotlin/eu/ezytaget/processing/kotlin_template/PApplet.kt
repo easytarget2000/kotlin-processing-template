@@ -327,7 +327,7 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (shouldLogFrameRate) {
-            println("frameRate: $frameRate")
+            println("PApplet: frameRate: $frameRate")
             this.lastLoggedFrameRate = frameRate
         }
     }
