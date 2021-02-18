@@ -21,11 +21,13 @@ class PApplet : processing.core.PApplet() {
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
+    private val drawBackgroundOnDraw = false
+
+    private var backgroundAlpha = 1f
+
     private var waitingForClickToDraw = false
 
     private var radiusFactorVelocity = 0f
-
-    private var backgroundAlpha = 1f
 
     private var lastLaserClearMillis = 0L
 
@@ -111,7 +113,7 @@ class PApplet : processing.core.PApplet() {
             raster.drawIn(pApplet = this)
         }
 
-//        updateClapper()
+        updateClapper()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -126,6 +128,8 @@ class PApplet : processing.core.PApplet() {
                 clearFrame()
             TOGGLE_SMEAR_PIXELS_KEY ->
                 toggleSmearPixels()
+            INIT_REALMS_KEY ->
+                initRealms()
         }
     }
 
@@ -339,8 +343,6 @@ class PApplet : processing.core.PApplet() {
 
         private const val FRAME_RATE = 60f
 
-        private const val drawBackgroundOnDraw = true
-
         private const val DRAW_FRAME_RATE = false
 
         private const val MAX_ROTATION_VELOCITY = 0.03f
@@ -350,6 +352,8 @@ class PApplet : processing.core.PApplet() {
         private const val CLEAR_FRAME_KEY = 'x'
 
         private const val TOGGLE_SMEAR_PIXELS_KEY = 's'
+
+        private const val INIT_REALMS_KEY = 'i'
 
         fun runInstance() {
             val instance = PApplet()
