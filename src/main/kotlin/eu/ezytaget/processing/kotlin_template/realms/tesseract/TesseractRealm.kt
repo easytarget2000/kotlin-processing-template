@@ -9,9 +9,11 @@ import processing.core.PVector
 
 class TesseractRealm(
         private val minNumberOfShapes: Int = 1,
-        private val maxNumberOfShapes: Int = 10,
+        private val maxNumberOfShapes: Int = 4,
         maxColorValue: Float = 1f
 ): Realm() {
+
+    var numberOfIterations = 1
 
     var strokeWeightGrowthVelocity = 0.01f
 
@@ -39,9 +41,11 @@ class TesseractRealm(
 
     var zRotation = 1f
 
-    var xRotationVelocity = 0.0021f
+    var xRotationVelocity = 0.021f
 
     var zRotationVelocity = 0.002f
+
+    var angleVelocity = random.nextFloat(from = 0.001f, until = 0.003f)
 
     private var angle = 0f
 
@@ -59,13 +63,17 @@ class TesseractRealm(
             val scale = random.nextFloat(from = 0.1f, until = 0.5f)
             Tesseract(scale)
         }
+
+        tesseracts.forEach {
+            println("TesseractRealm: setup(): scale: ${it.scale} ")
+        }
     }
 
     override fun update(pApplet: PApplet) {
         super.update(pApplet)
         updateColorValues()
         updateStrokeWeight()
-        angle += 0.002f
+        angle += angleVelocity
     }
 
     override fun drawIn(pGraphics: PGraphics) {
@@ -79,9 +87,9 @@ class TesseractRealm(
         pGraphics.rotateX(-PConstants.PI / 2f)
 
         pGraphics.strokeWeight(strokeWeight)
-        repeat(3) {
+        repeat(numberOfIterations) {
             pGraphics.pushMatrix()
-            pGraphics.rotateZ((it / 3f) * PConstants.TWO_PI)
+            pGraphics.rotateZ((it / numberOfIterations.toFloat()) * PConstants.TWO_PI)
             tesseracts.forEach { tesseract ->
                 draw(tesseract, pGraphics)
             }
