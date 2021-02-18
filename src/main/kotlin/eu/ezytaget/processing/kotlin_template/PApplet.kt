@@ -69,7 +69,7 @@ class PApplet : processing.core.PApplet() {
         kaleidoscope.colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         kaleidoscope.endDraw()
 
-        initRealms(pGraphics = kaleidoscope)
+        initRealms()
 
         setPerspective()
 
@@ -146,9 +146,9 @@ class PApplet : processing.core.PApplet() {
     Implementations
      */
 
-    private fun initRealms(pGraphics: PGraphics) {
+    private fun initRealms() {
         val juliaSetRealm = JuliaSetRealm()
-        juliaSetRealm.setup(pGraphics)
+        juliaSetRealm.setup(kaleidoscope)
         juliaSetRealm.brightness = 1f
         juliaSetRealm.alpha = 1f
 
@@ -181,6 +181,8 @@ class PApplet : processing.core.PApplet() {
         }
         kaleidoscope.endDraw()
 
+
+
         if (numberOfKaleidoscopeEdges <= 1) {
             image(kaleidoscope, 0f, 0f)
         } else {
@@ -197,7 +199,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun clearAll() {
-        initRealms(pGraphics = kaleidoscope)
+        initRealms()
         clearFrame()
     }
 
@@ -253,9 +255,9 @@ class PApplet : processing.core.PApplet() {
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
             random.maybe(probability = 0.2f) {
-                initRealms(pGraphics = kaleidoscope)
+                initRealms()
             }
-            random.maybe(probability = 0.8f) {
+            random.maybe(probability = 0.1f) {
 //                toggleSmearPixels()
             }
 
