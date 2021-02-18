@@ -47,6 +47,8 @@ class TesseractRealm(
 
     var angleVelocity = random.nextFloat(from = 0.001f, until = 0.003f)
 
+    var logTesseractInits = false
+
     private var angle = 0f
 
     private lateinit var tesseracts: List<Tesseract>
@@ -64,8 +66,10 @@ class TesseractRealm(
             Tesseract(scale)
         }
 
-        tesseracts.forEach {
-            println("TesseractRealm: setup(): scale: ${it.scale} ")
+        if (logTesseractInits) {
+            tesseracts.forEach {
+                println("TesseractRealm: setup(): scale: ${it.scale} ")
+            }
         }
     }
 
