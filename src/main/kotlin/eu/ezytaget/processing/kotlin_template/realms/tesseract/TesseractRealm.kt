@@ -17,9 +17,9 @@ class TesseractRealm(
 
     var strokeWeightGrowthVelocity = 0.01f
 
-    var minStrokeWeight = 1f
+    var minStrokeWeight = 2f
 
-    var maxStrokeWeight = 4f
+    var maxStrokeWeight = 8f
 
     var strokeWeight = minStrokeWeight
 
@@ -35,7 +35,7 @@ class TesseractRealm(
 
     var brightness = 1f
 
-    var alpha = 0.5f
+    var alpha = 0.1f
 
     var xRotation = 1f
 
@@ -91,6 +91,8 @@ class TesseractRealm(
         pGraphics.rotateX(-PConstants.PI / 2f)
 
         pGraphics.strokeWeight(strokeWeight)
+        pGraphics.stroke(hue, saturation, brightness, alpha)
+
         repeat(numberOfIterations) {
             pGraphics.pushMatrix()
             pGraphics.rotateZ((it / numberOfIterations.toFloat()) * PConstants.TWO_PI)
@@ -134,8 +136,6 @@ class TesseractRealm(
 
             projected
         }
-
-        pGraphics.stroke(hue, saturation, brightness, alpha)
 
         (0..3).forEach { vertexIndex ->
             connectVertices(0, vertexIndex, (vertexIndex + 1) % 4, projectedVerticesIn3D, pGraphics)

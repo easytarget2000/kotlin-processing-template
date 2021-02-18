@@ -26,7 +26,7 @@ class JuliaSetRealm(maxColorValue: Float = 1f, random: Random = Random.Default):
     var saturation = maxColorValue * 0.66f
     var brightness = maxColorValue * 0.7f
     var alpha = maxColorValue * 0.8f
-    var pixelStepSize = 1
+    var pixelStepSize = 2
 
     private lateinit var set: JuliaSet
 

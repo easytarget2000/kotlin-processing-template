@@ -43,7 +43,7 @@ class PApplet : processing.core.PApplet() {
 
     private var laserClearMode = false
 
-    private var numberOfKaleidoscopeEdges = 1
+    private var numberOfKaleidoscopeEdges = 5
 
     private var lastLoggedFrameRate: Float? = null
 
@@ -159,7 +159,7 @@ class PApplet : processing.core.PApplet() {
         juliaSetRealm.setup(kaleidoscope)
         juliaSetRealm.brightness = 1f
         juliaSetRealm.alpha = 1f
-//        realms.add(juliaSetRealm)
+        realms.add(juliaSetRealm)
 
         val tesseractRealm = TesseractRealm()
         tesseractRealm.setup(pApplet = this)
@@ -181,27 +181,27 @@ class PApplet : processing.core.PApplet() {
             it.update(pApplet = this)
         }
 
-//        kaleidoscope.beginDraw()
-//        kaleidoscope.clear()
+        kaleidoscope.beginDraw()
+        kaleidoscope.clear()
         realms.forEach {
-//            it.drawIn(pGraphics = kaleidoscope)
-            it.drawIn(pApplet = this)
+            it.drawIn(pGraphics = kaleidoscope)
+//            it.drawIn(pApplet = this)
         }
-//        kaleidoscope.endDraw()
+        kaleidoscope.endDraw()
 
-//        if (numberOfKaleidoscopeEdges <= 1) {
-//            image(kaleidoscope, 0f, 0f)
-//        } else {
-//            push()
-//            repeat(numberOfKaleidoscopeEdges) {
-//                pushMatrix()
-//                translate(width / 2f, height / 2f)
-//                rotate((it / numberOfKaleidoscopeEdges.toFloat()) * PConstants.TWO_PI)
-//                image(kaleidoscope, -100f, -kaleidoscope.height / 2f)
-//                popMatrix()
-//            }
-//            pop()
-//        }
+        if (numberOfKaleidoscopeEdges <= 1) {
+            image(kaleidoscope, 0f, 0f)
+        } else {
+            push()
+            repeat(numberOfKaleidoscopeEdges) {
+                pushMatrix()
+                translate(width / 2f, height / 2f)
+                rotate((it / numberOfKaleidoscopeEdges.toFloat()) * PConstants.TWO_PI)
+                image(kaleidoscope, -100f, -kaleidoscope.height / 2f)
+                popMatrix()
+            }
+            pop()
+        }
 
     }
 
