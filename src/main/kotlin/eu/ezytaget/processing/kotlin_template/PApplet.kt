@@ -45,6 +45,10 @@ class PApplet : processing.core.PApplet() {
 
     private var numberOfKaleidoscopeEdges = 5
 
+    private var minNumberOfKaleidoscopeEdges = 3
+
+    private var maxNumberOfKaleidoscopeEdges = 7
+
     private var lastLoggedFrameRate: Float? = null
 
     private var frameRateLoggingThreshold = 4.1f
@@ -132,6 +136,8 @@ class PApplet : processing.core.PApplet() {
                 toggleSmearPixels()
             INIT_REALMS_KEY ->
                 initRealms()
+            SET_NUMBER_OF_KALEIDOSCOPE_EDGES_KEY ->
+                setRandomNumberOfKaleidoscopeEdges()
         }
     }
 
@@ -258,7 +264,10 @@ class PApplet : processing.core.PApplet() {
                 initRealms()
             }
             random.maybe(probability = 0.1f) {
-//                toggleSmearPixels()
+                toggleSmearPixels()
+            }
+            random.maybe(probability = 0.1f) {
+                setRandomNumberOfKaleidoscopeEdges()
             }
 
             random.maybe {
@@ -317,6 +326,14 @@ class PApplet : processing.core.PApplet() {
         raster.setTextSize(pApplet = this, textSize = textSize)
     }
 
+    private fun setRandomNumberOfKaleidoscopeEdges() {
+        numberOfKaleidoscopeEdges = if (minNumberOfKaleidoscopeEdges >= maxNumberOfKaleidoscopeEdges) {
+            maxNumberOfKaleidoscopeEdges
+        } else {
+            random.nextInt(from = minNumberOfKaleidoscopeEdges, until = maxNumberOfKaleidoscopeEdges)
+        }
+    }
+
     private fun logFrameRateIfNeeded() {
         val lastLoggedFrameRate = lastLoggedFrameRate
         val frameRate = frameRate
@@ -358,11 +375,13 @@ class PApplet : processing.core.PApplet() {
 
         private const val CLAPPER_TAP_BPM_KEY = ' '
 
-        private const val CLEAR_FRAME_KEY = 'x'
+        private const val INIT_REALMS_KEY = 'i'
+
+        private const val SET_NUMBER_OF_KALEIDOSCOPE_EDGES_KEY = 'k'
 
         private const val TOGGLE_SMEAR_PIXELS_KEY = 's'
 
-        private const val INIT_REALMS_KEY = 'i'
+        private const val CLEAR_FRAME_KEY = 'x'
 
         fun runInstance() {
             val instance = PApplet()
