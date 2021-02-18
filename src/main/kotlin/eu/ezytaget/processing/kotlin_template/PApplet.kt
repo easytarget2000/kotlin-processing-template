@@ -39,7 +39,7 @@ class PApplet : processing.core.PApplet() {
 
     private var applyCharRaster = false
 
-    private var smearPixels = false
+    private var smearPixels = true
 
     private var laserClearMode = false
 
