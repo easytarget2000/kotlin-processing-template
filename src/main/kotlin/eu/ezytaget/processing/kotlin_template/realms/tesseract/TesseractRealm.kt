@@ -17,9 +17,9 @@ class TesseractRealm(
 
     var strokeWeightGrowthVelocity = 0.01f
 
-    var minStrokeWeight = 2f
+    var minStrokeWeight = 4f
 
-    var maxStrokeWeight = 8f
+    var maxStrokeWeight = 16f
 
     var strokeWeight = minStrokeWeight
 
@@ -35,7 +35,7 @@ class TesseractRealm(
 
     var brightness = 1f
 
-    var alpha = 0.1f
+    var alpha = 0.5f
 
     var xRotation = 1f
 
@@ -45,7 +45,7 @@ class TesseractRealm(
 
     var zRotationVelocity = 0.002f
 
-    var angleVelocity = random.nextFloat(from = 0.001f, until = 0.003f)
+    var angleVelocity = random.nextFloat(from = 0.001f, until = 0.005f)
 
     var logTesseractInits = false
 

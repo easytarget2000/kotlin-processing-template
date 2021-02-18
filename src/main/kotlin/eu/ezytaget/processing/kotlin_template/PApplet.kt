@@ -45,9 +45,9 @@ class PApplet : processing.core.PApplet() {
 
     private var numberOfKaleidoscopeEdges = 5
 
-    private var minNumberOfKaleidoscopeEdges = 3
+    private var minNumberOfKaleidoscopeEdges = 1
 
-    private var maxNumberOfKaleidoscopeEdges = 7
+    private var maxNumberOfKaleidoscopeEdges = 6
 
     private var lastLoggedFrameRate: Float? = null
 
@@ -269,7 +269,6 @@ class PApplet : processing.core.PApplet() {
             random.maybe(probability = 0.1f) {
                 setRandomNumberOfKaleidoscopeEdges()
             }
-
             random.maybe {
                 clearFrame()
             }
@@ -327,6 +326,10 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setRandomNumberOfKaleidoscopeEdges() {
+        if (random.nextFloat() < 0.5f) {
+            numberOfKaleidoscopeEdges = minNumberOfKaleidoscopeEdges
+            return
+        }
         numberOfKaleidoscopeEdges = if (minNumberOfKaleidoscopeEdges >= maxNumberOfKaleidoscopeEdges) {
             maxNumberOfKaleidoscopeEdges
         } else {

@@ -20,13 +20,13 @@ class JuliaSetRealm(maxColorValue: Float = 1f, random: Random = Random.Default):
     var maxIterationsPerPointToDraw = maxIterationsPerPoint - 1
     var maxDivergence = 4f
     var hue = 0.9f
-    var hueVelocity = 0.01f
+    var hueVelocity = 0.05f
     var maxHue = maxColorValue
     var minHue = maxColorValue * 0.7f
     var saturation = maxColorValue * 0.66f
     var brightness = maxColorValue * 0.7f
     var alpha = maxColorValue * 0.8f
-    var pixelStepSize = 2
+    var pixelStepSize = 3
 
     private lateinit var set: JuliaSet
 
