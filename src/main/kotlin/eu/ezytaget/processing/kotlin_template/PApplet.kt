@@ -47,7 +47,7 @@ class PApplet : processing.core.PApplet() {
 
     private var lastLoggedFrameRate: Float? = null
 
-    private var frameRateLoggingThreshold = 5f
+    private var frameRateLoggingThreshold = 4.1f
 
     private lateinit var kaleidoscope: PGraphics
 
