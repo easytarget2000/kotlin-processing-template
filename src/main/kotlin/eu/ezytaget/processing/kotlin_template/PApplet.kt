@@ -81,6 +81,18 @@ class PApplet : processing.core.PApplet() {
     private var numberOfIterationsPerFrame = 1
 
     override fun draw() {
+        if (CLICK_TO_DRAW && waitingForClickToDraw) {
+            return
+        }
+
+        if (drawBackgroundOnDraw) {
+            backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
+        }
+
+        if (DRAW_FRAME_RATE) {
+            drawFrameRate()
+        }
+
         (0..numberOfIterationsPerFrame).forEach { _ ->
             push()
             iterateDraw()
@@ -100,45 +112,6 @@ class PApplet : processing.core.PApplet() {
         }
 
         updateClapper()
-    }
-
-    private fun iterateDraw() {
-        if (CLICK_TO_DRAW && waitingForClickToDraw) {
-            return
-        }
-
-        if (DRAW_BACKGROUND_ON_DRAW) {
-            backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
-        }
-
-        if (DRAW_FRAME_RATE) {
-            drawFrameRate()
-        }
-
-        realms.forEach {
-            it.update(pApplet = this)
-        }
-
-        kaleidoscope.beginDraw()
-        kaleidoscope.clear()
-        realms.forEach {
-            it.drawIn(pGraphics = kaleidoscope)
-        }
-        kaleidoscope.endDraw()
-
-        if (numberOfKaleidoscopeEdges <= 1) {
-            image(kaleidoscope, 0f, 0f)
-        } else {
-            push()
-            repeat(numberOfKaleidoscopeEdges) {
-                pushMatrix()
-                translate(width / 2f, height / 2f)
-                rotate((it / numberOfKaleidoscopeEdges.toFloat()) * PConstants.TWO_PI)
-                image(kaleidoscope, -100f, -kaleidoscope.height / 2f)
-                popMatrix()
-            }
-            pop()
-        }
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -194,6 +167,33 @@ class PApplet : processing.core.PApplet() {
 //                cameraZ / 10f,
 //                cameraZ * 30f
 //        )
+    }
+
+    private fun iterateDraw() {
+        realms.forEach {
+            it.update(pApplet = this)
+        }
+
+        kaleidoscope.beginDraw()
+        kaleidoscope.clear()
+        realms.forEach {
+            it.drawIn(pGraphics = kaleidoscope)
+        }
+        kaleidoscope.endDraw()
+
+        if (numberOfKaleidoscopeEdges <= 1) {
+            image(kaleidoscope, 0f, 0f)
+        } else {
+            push()
+            repeat(numberOfKaleidoscopeEdges) {
+                pushMatrix()
+                translate(width / 2f, height / 2f)
+                rotate((it / numberOfKaleidoscopeEdges.toFloat()) * PConstants.TWO_PI)
+                image(kaleidoscope, -100f, -kaleidoscope.height / 2f)
+                popMatrix()
+            }
+            pop()
+        }
     }
 
     private fun clearAll() {
@@ -335,7 +335,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val FRAME_RATE = 60f
 
-        private const val DRAW_BACKGROUND_ON_DRAW = true
+        private const val drawBackgroundOnDraw = true
 
         private const val DRAW_FRAME_RATE = false
 
