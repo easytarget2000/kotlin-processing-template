@@ -45,6 +45,10 @@ class PApplet : processing.core.PApplet() {
 
     private var numberOfKaleidoscopeEdges = 1
 
+    private var lastLoggedFrameRate: Float? = null
+
+    private var frameRateLoggingThreshold = 5f
+
     private lateinit var kaleidoscope: PGraphics
 
     private val tesseractRealm: TesseractRealm?
@@ -91,10 +95,6 @@ class PApplet : processing.core.PApplet() {
             backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
         }
 
-        if (DRAW_FRAME_RATE) {
-            drawFrameRate()
-        }
-
         (0..numberOfIterationsPerFrame).forEach { _ ->
             push()
             iterateDraw()
@@ -118,6 +118,8 @@ class PApplet : processing.core.PApplet() {
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
         }
+
+        logFrameRateIfNeeded()
     }
 
     override fun keyPressed() {
@@ -157,7 +159,6 @@ class PApplet : processing.core.PApplet() {
         juliaSetRealm.setup(kaleidoscope)
         juliaSetRealm.brightness = 1f
         juliaSetRealm.alpha = 1f
-
 //        realms.add(juliaSetRealm)
 
         val tesseractRealm = TesseractRealm()
@@ -243,13 +244,6 @@ class PApplet : processing.core.PApplet() {
         }
     }
 
-    private fun drawFrameRate() {
-        pushStyle()
-        stroke(1f)
-        text(frameRate.toString(), 100f, 100f)
-        popStyle()
-    }
-
     private fun updateClapper() {
         val clapperResult = clapper.update()
 
@@ -321,6 +315,21 @@ class PApplet : processing.core.PApplet() {
         val textSize = map(relativeTextSizeValue, 0f, width.toFloat(), 4f, 32f)
 
         raster.setTextSize(pApplet = this, textSize = textSize)
+    }
+
+    private fun logFrameRateIfNeeded() {
+        val lastLoggedFrameRate = lastLoggedFrameRate
+        val frameRate = frameRate
+        val shouldLogFrameRate = if (lastLoggedFrameRate == null) {
+            true
+        } else {
+            abs(lastLoggedFrameRate - frameRate) > frameRateLoggingThreshold
+        }
+
+        if (shouldLogFrameRate) {
+            println("frameRate: $frameRate")
+            this.lastLoggedFrameRate = frameRate
+        }
     }
 
     companion object {
