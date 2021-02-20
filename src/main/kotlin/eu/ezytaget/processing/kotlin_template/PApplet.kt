@@ -4,6 +4,8 @@ import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytaget.processing.kotlin_template.realms.Realm
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.CellAutomaton3D
+import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.MooreNeighborCounter
+import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.VonNeumannNeighborCounter
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
 import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractRealm
 import eu.ezytarget.clapper.BeatInterval
@@ -57,7 +59,7 @@ class PApplet : processing.core.PApplet() {
     private lateinit var kaleidoscope: PGraphics
 
     private val tesseractRealm: TesseractRealm?
-    get() = realms.firstOrNull { it is TesseractRealm } as? TesseractRealm
+        get() = realms.firstOrNull { it is TesseractRealm } as? TesseractRealm
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -170,7 +172,21 @@ class PApplet : processing.core.PApplet() {
         tesseractRealm.setup(pApplet = this)
 //        realms.add(tesseractRealm)
 
-        val cellAutomaton = CellAutomaton3D(sideLength = width / 2f)
+        val automatonSize = min(width, height) * 0.9f
+
+        val neighborCounter = if (random(1f) > 0.5f) {
+            VonNeumannNeighborCounter()
+        } else {
+            MooreNeighborCounter()
+        }
+
+//            automatonUpdateDelay = random(8f, 32f).toInt()
+
+        val cellAutomaton = CellAutomaton3D(
+                numOfCellsPerSide = random(24f, 48f).toInt(),
+                sideLength = automatonSize,
+                neighborCounter = neighborCounter
+        )
         realms.add(cellAutomaton)
 
     }
