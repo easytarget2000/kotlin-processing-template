@@ -3,15 +3,13 @@ package eu.ezytaget.processing.kotlin_template
 import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytaget.processing.kotlin_template.realms.Realm
-import eu.ezytaget.processing.kotlin_template.realms.SampleRealm
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
-import eu.ezytaget.processing.kotlin_template.realms.neon_tunnel.NeonTunnel
+import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractRealm
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
-import processing.event.MouseEvent
 import processing.core.PGraphics
-import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractRealm
+import processing.event.MouseEvent
 import kotlin.random.Random
 
 
@@ -73,6 +71,8 @@ class PApplet : processing.core.PApplet() {
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         smooth()
 
+        raster.setup(pApplet = this)
+
         clearFrame()
         clapper.start()
 
@@ -101,6 +101,8 @@ class PApplet : processing.core.PApplet() {
             backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
         }
 
+        updateClapper()
+
         (0..numberOfIterationsPerFrame).forEach { _ ->
             push()
             iterateDraw()
@@ -117,12 +119,6 @@ class PApplet : processing.core.PApplet() {
 
         if (applyCharRaster) {
             raster.drawIn(pApplet = this)
-        }
-
-        updateClapper()
-
-        if (CLICK_TO_DRAW) {
-            waitingForClickToDraw = true
         }
 
         logFrameRateIfNeeded()
