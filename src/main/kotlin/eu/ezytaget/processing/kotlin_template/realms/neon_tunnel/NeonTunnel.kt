@@ -23,28 +23,24 @@ class NeonTunnel : Realm() {
 
         var angle = 0f
 
-        var radius = 16f
-        while (radius < 1024) {
+        var radius = 64f
+        while (radius < 1920f) {
             var tmp_x = 0f
             var tmp_y = 0f
-            pGraphics.rotateY(t * 0.0025f)
-            angle += t * 0.25f
+            pGraphics.rotateY(t * 0.00025f)
+            angle += t * 0.025f
 
-            //ofColor c;
-            //final color c;
-            pGraphics.stroke(map(angle.toInt() % 360f, 0f, 360f, 0f, 255f), 255f, 255f)
-            //ofSetColor(c);
-            var deg = t.toFloat()
-            while (deg < t + 256f) {
-                val x = 1920f + radius * cos(deg * DEG_TO_RAD)
-                val y = 512f + radius * sin(deg * DEG_TO_RAD)
-                if (tmp_x != 0f && tmp_y != 0f) {
-                    pGraphics.line(x, y, tmp_x, tmp_y)
-                }
-                tmp_x = x
-                tmp_y = y
-                deg += 0.1f
-            }
+            val hue = map(angle % 360f, 0f, 360f, 0f, 1f)
+            pGraphics.stroke(
+                    hue,
+                    1f,
+                    1f,
+                    0.5f
+            )
+
+            pGraphics.noFill()
+            pGraphics.strokeWeight(16f)
+            pGraphics.ellipse(1920f, 512f, radius, radius)
             radius += 32f
         }
     }

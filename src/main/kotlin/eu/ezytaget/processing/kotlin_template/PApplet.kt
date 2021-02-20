@@ -119,7 +119,7 @@ class PApplet : processing.core.PApplet() {
             raster.drawIn(pApplet = this)
         }
 
-        updateClapper()
+//        updateClapper()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
