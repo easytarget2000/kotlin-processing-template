@@ -127,6 +127,35 @@ class PApplet : processing.core.PApplet() {
         logFrameRateIfNeeded()
     }
 
+//    fun draw() {
+//        if (CLICK_TO_DRAW && waitingForClickToDraw) {
+//            return
+//        }
+//
+//        if (DRAW_BACKGROUND_ON_DRAW) {
+//            backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
+//        }
+//
+//        if (DRAW_FRAME_RATE) {
+//            drawFrameRate()
+//        }
+//
+//        translate(width / 2f, height / 2f)
+//        updateRotations()
+//        updateClapper()
+//
+////        if (frameCount % automatonUpdateDelay == 0) {
+////            cellAutomaton3D.update()
+////        }
+//
+//        lights()
+//        cellAutomaton3D.draw(pApplet = this)
+//
+//        if (CLICK_TO_DRAW) {
+//            waitingForClickToDraw = true
+//        }
+//    }
+
     override fun keyPressed() {
         when (key) {
             CLAPPER_TAP_BPM_KEY ->

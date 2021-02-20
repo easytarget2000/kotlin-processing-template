@@ -73,6 +73,7 @@ class CellAutomaton3D(
 
     override fun update(pApplet: processing.core.PApplet) {
         super.update(pApplet)
+        
         val benchmarkStartMillis = nowMillis()
 
         val newCells = cells { _, _, _ ->
@@ -117,6 +118,9 @@ class CellAutomaton3D(
 
         pGraphics.beginDraw()
         pGraphics.push()
+
+        pGraphics.lights()
+        pGraphics.translate(pGraphics.width / 2f, pGraphics.height / 2f)
 
         val benchmarkStartMillis = nowMillis()
 
