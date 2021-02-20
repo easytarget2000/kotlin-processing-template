@@ -1,12 +1,13 @@
-package eu.ezytaget.processing.kotlin_template.cell_automaton_3d
+package eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d
 
-import eu.ezytaget.processing.kotlin_template.PApplet
+import eu.ezytaget.processing.kotlin_template.realms.Realm
+import processing.core.PGraphics
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
 
 class CellAutomaton3D(
-        private val random: Random = Random.Default,
+        random: Random = Random.Default,
         private val numOfCellsPerSide: Int = 32,
         val sideLength: Float,
         private val nearDeathSurvivalCondition: ((Int) -> Boolean) = { numberOfAliveNeighbors ->
@@ -17,11 +18,13 @@ class CellAutomaton3D(
         },
         numberOfStates: Short = random.nextInt(from = 2, until = 20).toShort(),
         private val neighborCounter: NeighborCounter = MooreNeighborCounter()
-) {
+): Realm(random) {
 
     private val cellSize = sideLength / numOfCellsPerSide
     private fun nowMillis() = System.currentTimeMillis()
     private val birthValue = (numberOfStates - 1).toShort()
+
+    var cellDrawProbability: Float = 1f
 
     private var cells = cells { xIndex, yIndex, zIndex ->
         val centerIndex = numOfCellsPerSide / 2
@@ -68,7 +71,8 @@ class CellAutomaton3D(
         }
     }
 
-    fun update() {
+    override fun update(pApplet: processing.core.PApplet) {
+        super.update(pApplet)
         val benchmarkStartMillis = nowMillis()
 
         val newCells = cells { _, _, _ ->
@@ -108,40 +112,48 @@ class CellAutomaton3D(
         }
     }
 
-    fun draw(pApplet: PApplet, cellDrawProbability: Float = 1f) {
+    override fun drawIn(pGraphics: PGraphics) {
+        super.drawIn(pGraphics)
+
+        pGraphics.beginDraw()
+        pGraphics.push()
+
         val benchmarkStartMillis = nowMillis()
 
-        pApplet.push()
-        pApplet.noStroke()
-//        pApplet.stroke(1f, 1f, 1f, 1f)
+        pGraphics.push()
+        pGraphics.noStroke()
+//        pGraphics.stroke(1f, 1f, 1f, 1f)
 
         val distanceToCenter = (cells.size / 2f) * cellSize
-        pApplet.translate(
+        pGraphics.translate(
                 -distanceToCenter,
                 -distanceToCenter,
                 -distanceToCenter
         )
 
         if (DRAW_BOUNDING_BOX) {
-            drawBoundingBox(pApplet)
+            drawBoundingBox(pGraphics)
         }
 
         forEachCell { cellValue, xIndex, yIndex, zIndex ->
             if (cellDrawProbability == 1f || random.nextFloat() < cellDrawProbability) {
-                drawCell(pApplet, cellValue, xIndex, yIndex, zIndex)
+                drawCell(pGraphics, cellValue, xIndex, yIndex, zIndex)
             }
         }
 
-        pApplet.pop()
+        pGraphics.pop()
 
         if (BENCHMARK) {
             val duration = nowMillis() - benchmarkStartMillis
             println("Benchmark: draw(): $duration ms")
         }
+
+        pGraphics.pop()
+        pGraphics.endDraw()
     }
 
     private fun drawCell(
-            pApplet: PApplet,
+            pGraphics: PGraphics,
             cellValue: Short,
             xIndex: Int,
             yIndex: Int,
@@ -151,8 +163,8 @@ class CellAutomaton3D(
             return
         }
 
-        pApplet.push()
-        pApplet.translate(
+        pGraphics.push()
+        pGraphics.translate(
                 xIndex * cellSize,
                 yIndex * cellSize,
                 zIndex * cellSize
@@ -165,28 +177,28 @@ class CellAutomaton3D(
         )
 
         if (DRAW_GRID) {
-            pApplet.stroke(1f)
-            pApplet.noFill()
-            pApplet.box(cellSize)
-            pApplet.noStroke()
+            pGraphics.stroke(1f)
+            pGraphics.noFill()
+            pGraphics.box(cellSize)
+            pGraphics.noStroke()
         }
 
-        pApplet.fill(
+        pGraphics.fill(
                 distanceToCenter / centerIndex,
                 1f,
                 1f,
                 cellValue.toFloat() / (birthValue * 2f)
         )
-        pApplet.box(cellSize)
-        pApplet.pop()
+        pGraphics.box(cellSize)
+        pGraphics.pop()
     }
 
-    private fun drawBoundingBox(pApplet: PApplet) {
-        pApplet.pushStyle()
-        pApplet.stroke(1f)
-        pApplet.noFill()
-        pApplet.box(sideLength)
-        pApplet.popStyle()
+    private fun drawBoundingBox(pGraphics: processing.core.PGraphics) {
+        pGraphics.pushStyle()
+        pGraphics.stroke(1f)
+        pGraphics.noFill()
+        pGraphics.box(sideLength)
+        pGraphics.popStyle()
     }
 
     private fun forEachCell(action: (cellValue: Short, xIndex: Int, yIndex: Int, zIndex: Int) -> Unit) {

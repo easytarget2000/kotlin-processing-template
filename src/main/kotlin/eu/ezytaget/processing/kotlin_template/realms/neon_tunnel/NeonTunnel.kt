@@ -4,9 +4,6 @@ import eu.ezytaget.processing.kotlin_template.realms.Realm
 import processing.core.PApplet
 import processing.core.PApplet.map
 import processing.core.PGraphics
-import processing.core.PConstants.DEG_TO_RAD
-import kotlin.math.cos
-import kotlin.math.sin
 
 
 class NeonTunnel : Realm() {

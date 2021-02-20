@@ -1,4 +1,4 @@
-package eu.ezytaget.processing.kotlin_template.cell_automaton_3d
+package eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d
 
 class MooreNeighborCounter : NeighborCounter() {
 

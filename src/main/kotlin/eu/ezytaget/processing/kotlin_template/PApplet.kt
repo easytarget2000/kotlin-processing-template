@@ -3,6 +3,7 @@ package eu.ezytaget.processing.kotlin_template
 import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytaget.processing.kotlin_template.realms.Realm
+import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.CellAutomaton3D
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
 import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractRealm
 import eu.ezytarget.clapper.BeatInterval
@@ -168,6 +169,10 @@ class PApplet : processing.core.PApplet() {
         val tesseractRealm = TesseractRealm()
         tesseractRealm.setup(pApplet = this)
 //        realms.add(tesseractRealm)
+
+        val cellAutomaton = CellAutomaton3D(sideLength = width / 2f)
+        realms.add(cellAutomaton)
+
     }
 
     private fun setPerspective() {
@@ -188,7 +193,8 @@ class PApplet : processing.core.PApplet() {
         kaleidoscope.beginDraw()
         kaleidoscope.clear()
         realms.forEach {
-            it.drawIn(pGraphics = kaleidoscope)
+//            it.drawIn(pGraphics = kaleidoscope)
+            it.drawIn(pApplet = this)
         }
         kaleidoscope.endDraw()
 
