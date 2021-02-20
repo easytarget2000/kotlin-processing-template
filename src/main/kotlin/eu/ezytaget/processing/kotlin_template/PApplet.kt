@@ -5,6 +5,7 @@ import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytaget.processing.kotlin_template.realms.Realm
 import eu.ezytaget.processing.kotlin_template.realms.SampleRealm
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
+import eu.ezytaget.processing.kotlin_template.realms.neon_tunnel.NeonTunnel
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
@@ -22,7 +23,7 @@ class PApplet : processing.core.PApplet() {
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
-    private val drawBackgroundOnDraw = false
+    private val drawBackgroundOnDraw = true
 
     private var backgroundAlpha = 1f
 
@@ -40,11 +41,11 @@ class PApplet : processing.core.PApplet() {
 
     private var applyCharRaster = false
 
-    private var smearPixels = true
+    private var smearPixels = false
 
     private var laserClearMode = false
 
-    private var numberOfKaleidoscopeEdges = 5
+    private var numberOfKaleidoscopeEdges = 1
 
     private var minNumberOfKaleidoscopeEdges = 1
 
@@ -172,7 +173,7 @@ class PApplet : processing.core.PApplet() {
         tesseractRealm.setup(pApplet = this)
 //        realms.add(tesseractRealm)
 
-        realms.add(SampleRealm())
+        realms.add(NeonTunnel())
     }
 
     private fun setPerspective() {
@@ -192,11 +193,13 @@ class PApplet : processing.core.PApplet() {
 
         kaleidoscope.beginDraw()
         kaleidoscope.clear()
-        realms.forEach {
-            it.drawIn(pGraphics = kaleidoscope)
-//            it.drawIn(pApplet = this)
-        }
+//        realms.forEach {
+//            it.drawIn(pGraphics = kaleidoscope)
+//        }
         kaleidoscope.endDraw()
+
+        val neonTunnel = realms.first { it is NeonTunnel } as NeonTunnel
+        neonTunnel.drawIn(pApplet = this)
 
         if (numberOfKaleidoscopeEdges <= 1) {
             image(kaleidoscope, 0f, 0f)
