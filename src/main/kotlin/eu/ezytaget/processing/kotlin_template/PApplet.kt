@@ -119,7 +119,7 @@ class PApplet : processing.core.PApplet() {
             raster.drawIn(pApplet = this)
         }
 
-//        updateClapper()
+        updateClapper()
 
         if (CLICK_TO_DRAW) {
             waitingForClickToDraw = true
@@ -172,8 +172,6 @@ class PApplet : processing.core.PApplet() {
         val tesseractRealm = TesseractRealm()
         tesseractRealm.setup(pApplet = this)
 //        realms.add(tesseractRealm)
-
-        realms.add(NeonTunnel())
     }
 
     private fun setPerspective() {
@@ -193,13 +191,10 @@ class PApplet : processing.core.PApplet() {
 
         kaleidoscope.beginDraw()
         kaleidoscope.clear()
-//        realms.forEach {
-//            it.drawIn(pGraphics = kaleidoscope)
-//        }
+        realms.forEach {
+            it.drawIn(pGraphics = kaleidoscope)
+        }
         kaleidoscope.endDraw()
-
-        val neonTunnel = realms.first { it is NeonTunnel } as NeonTunnel
-        neonTunnel.drawIn(pApplet = this)
 
         if (numberOfKaleidoscopeEdges <= 1) {
             image(kaleidoscope, 0f, 0f)
