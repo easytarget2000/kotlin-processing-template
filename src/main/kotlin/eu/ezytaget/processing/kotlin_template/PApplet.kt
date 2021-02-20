@@ -3,6 +3,7 @@ package eu.ezytaget.processing.kotlin_template
 import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytaget.processing.kotlin_template.realms.Realm
+import eu.ezytaget.processing.kotlin_template.realms.SampleRealm
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
@@ -165,11 +166,13 @@ class PApplet : processing.core.PApplet() {
         juliaSetRealm.setup(kaleidoscope)
         juliaSetRealm.brightness = 1f
         juliaSetRealm.alpha = 1f
-        realms.add(juliaSetRealm)
+//        realms.add(juliaSetRealm)
 
         val tesseractRealm = TesseractRealm()
         tesseractRealm.setup(pApplet = this)
-        realms.add(tesseractRealm)
+//        realms.add(tesseractRealm)
+
+        realms.add(SampleRealm())
     }
 
     private fun setPerspective() {

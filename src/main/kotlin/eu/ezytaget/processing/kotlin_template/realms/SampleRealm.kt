@@ -27,6 +27,8 @@ class SampleRealm(
 
     var centerPointAlpha = 1f
 
+    var centerPointRadius = 8f
+
     override fun drawIn(pGraphics: PGraphics) {
         super.drawIn(pGraphics)
 
@@ -45,6 +47,7 @@ class SampleRealm(
         if (drawCenter) {
             pGraphics.noFill()
             pGraphics.stroke(centerPointHue, centerPointSaturation, centerPointBrightness, centerPointAlpha)
+            pGraphics.strokeWeight(centerPointRadius)
             pGraphics.point(width / 2f, height / 2f)
         }
 
