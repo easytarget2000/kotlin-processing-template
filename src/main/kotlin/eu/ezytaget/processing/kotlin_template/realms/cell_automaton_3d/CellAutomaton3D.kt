@@ -71,9 +71,7 @@ class CellAutomaton3D(
         }
     }
 
-    override fun update(pApplet: processing.core.PApplet) {
-        super.update(pApplet)
-        
+    fun update() {
         val benchmarkStartMillis = nowMillis()
 
         val newCells = cells { _, _, _ ->
@@ -126,7 +124,6 @@ class CellAutomaton3D(
 
         pGraphics.push()
         pGraphics.noStroke()
-//        pGraphics.stroke(1f, 1f, 1f, 1f)
 
         val distanceToCenter = (cells.size / 2f) * cellSize
         pGraphics.translate(

@@ -42,11 +42,11 @@ class PApplet : processing.core.PApplet() {
 
     private var applyCharRaster = false
 
-    private var smearPixels = false
+    private var smearPixels = true
 
     private var laserClearMode = false
 
-    private var numberOfKaleidoscopeEdges = 1
+    private var numberOfKaleidoscopeEdges = 5
 
     private var minNumberOfKaleidoscopeEdges = 1
 
@@ -60,6 +60,9 @@ class PApplet : processing.core.PApplet() {
 
     private val tesseractRealm: TesseractRealm?
         get() = realms.firstOrNull { it is TesseractRealm } as? TesseractRealm
+
+    private val cellAutomaton3D: CellAutomaton3D?
+        get() = realms.firstOrNull { it is CellAutomaton3D } as? CellAutomaton3D
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -127,35 +130,6 @@ class PApplet : processing.core.PApplet() {
         logFrameRateIfNeeded()
     }
 
-//    fun draw() {
-//        if (CLICK_TO_DRAW && waitingForClickToDraw) {
-//            return
-//        }
-//
-//        if (DRAW_BACKGROUND_ON_DRAW) {
-//            backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
-//        }
-//
-//        if (DRAW_FRAME_RATE) {
-//            drawFrameRate()
-//        }
-//
-//        translate(width / 2f, height / 2f)
-//        updateRotations()
-//        updateClapper()
-//
-////        if (frameCount % automatonUpdateDelay == 0) {
-////            cellAutomaton3D.update()
-////        }
-//
-//        lights()
-//        cellAutomaton3D.draw(pApplet = this)
-//
-//        if (CLICK_TO_DRAW) {
-//            waitingForClickToDraw = true
-//        }
-//    }
-
     override fun keyPressed() {
         when (key) {
             CLAPPER_TAP_BPM_KEY ->
@@ -209,15 +183,12 @@ class PApplet : processing.core.PApplet() {
             MooreNeighborCounter()
         }
 
-//            automatonUpdateDelay = random(8f, 32f).toInt()
-
         val cellAutomaton = CellAutomaton3D(
                 numOfCellsPerSide = random(24f, 48f).toInt(),
                 sideLength = automatonSize,
                 neighborCounter = neighborCounter
         )
         realms.add(cellAutomaton)
-
     }
 
     private fun setPerspective() {
@@ -238,8 +209,8 @@ class PApplet : processing.core.PApplet() {
         kaleidoscope.beginDraw()
         kaleidoscope.clear()
         realms.forEach {
-//            it.drawIn(pGraphics = kaleidoscope)
-            it.drawIn(pApplet = this)
+            it.drawIn(pGraphics = kaleidoscope)
+//            it.drawIn(pApplet = this)
         }
         kaleidoscope.endDraw()
 
@@ -278,7 +249,6 @@ class PApplet : processing.core.PApplet() {
                 val neighborValue = pixels[i + 10]
                 pixels[i] = pixels[i] - neighborValue
             }
-
         }
 //            pixels.forEachIndexed { index, pixelValue ->
 //                if (index + 10 == pixels.size) {
@@ -300,6 +270,12 @@ class PApplet : processing.core.PApplet() {
 
     private fun updateClapper() {
         val clapperResult = clapper.update()
+
+        if (clapperResult[BeatInterval.Quarter]?.didChange == true) {
+            random.maybe(probability = 0.5f) {
+                cellAutomaton3D?.update()
+            }
+        }
 
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
             random.maybe(probability = 0.9f) {
