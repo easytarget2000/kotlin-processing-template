@@ -81,6 +81,7 @@ class PApplet : processing.core.PApplet() {
 
         clearFrame()
         clapper.start()
+        clapper.bpm = 116.9f
 
         kaleidoscope = createGraphics(width, height, RENDERER)
         kaleidoscope.beginDraw()
@@ -169,11 +170,11 @@ class PApplet : processing.core.PApplet() {
         juliaSetRealm.setup(kaleidoscope)
         juliaSetRealm.brightness = 1f
         juliaSetRealm.alpha = 1f
-//        realms.add(juliaSetRealm)
+        realms.add(juliaSetRealm)
 
         val tesseractRealm = TesseractRealm()
         tesseractRealm.setup(pApplet = this)
-//        realms.add(tesseractRealm)
+        realms.add(tesseractRealm)
 
         val automatonSize = min(width, height) * 0.9f
 
@@ -208,8 +209,11 @@ class PApplet : processing.core.PApplet() {
 
         kaleidoscope.beginDraw()
         kaleidoscope.clear()
-        realms.forEach {
-            it.drawIn(pGraphics = kaleidoscope)
+        realms.forEachIndexed { index, realm ->
+            if (index == frameCount % realms.size) {
+                realm.drawIn(pGraphics = kaleidoscope)
+            }
+//            it.drawIn(pGraphics = kaleidoscope)
 //            it.drawIn(pApplet = this)
         }
         kaleidoscope.endDraw()
