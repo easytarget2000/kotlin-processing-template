@@ -22,4 +22,13 @@ abstract class Realm(var random: Random = Random.Default) {
 
     open fun handleMouseClick(button: Int, mouseX: Int, mouseY: Int, pApplet: PApplet) {}
 
+    protected fun beginDraw(pGraphics: PGraphics) {
+        pGraphics.beginDraw()
+        pGraphics.push()
+    }
+
+    protected fun endDraw(pGraphics: PGraphics) {
+        pGraphics.pop()
+        pGraphics.endDraw()
+    }
 }

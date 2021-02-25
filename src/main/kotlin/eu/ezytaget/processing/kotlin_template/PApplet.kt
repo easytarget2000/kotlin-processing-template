@@ -7,6 +7,7 @@ import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.CellAutom
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.MooreNeighborCounter
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.VonNeumannNeighborCounter
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
+import eu.ezytaget.processing.kotlin_template.realms.scan_stripes.ScanStripesRealm
 import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractRealm
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
@@ -42,11 +43,11 @@ class PApplet : processing.core.PApplet() {
 
     private var applyCharRaster = false
 
-    private var smearPixels = true
+    private var smearPixels = false
 
     private var laserClearMode = false
 
-    private var numberOfKaleidoscopeEdges = 5
+    private var numberOfKaleidoscopeEdges = 1
 
     private var minNumberOfKaleidoscopeEdges = 1
 
@@ -63,6 +64,9 @@ class PApplet : processing.core.PApplet() {
 
     private val cellAutomaton3D: CellAutomaton3D?
         get() = realms.firstOrNull { it is CellAutomaton3D } as? CellAutomaton3D
+
+    private val scanStripesRealm: ScanStripesRealm?
+        get() = realms.firstOrNull { it is ScanStripesRealm } as? ScanStripesRealm
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -170,11 +174,11 @@ class PApplet : processing.core.PApplet() {
         juliaSetRealm.setup(kaleidoscope)
         juliaSetRealm.brightness = 1f
         juliaSetRealm.alpha = 1f
-        realms.add(juliaSetRealm)
+//        realms.add(juliaSetRealm)
 
         val tesseractRealm = TesseractRealm()
         tesseractRealm.setup(pApplet = this)
-        realms.add(tesseractRealm)
+//        realms.add(tesseractRealm)
 
         val automatonSize = min(width, height) * 0.9f
 
@@ -189,7 +193,10 @@ class PApplet : processing.core.PApplet() {
                 sideLength = automatonSize,
                 neighborCounter = neighborCounter
         )
-        realms.add(cellAutomaton)
+//        realms.add(cellAutomaton)
+
+        val scanStripesRealm = ScanStripesRealm()
+        realms.add(scanStripesRealm)
     }
 
     private fun setPerspective() {
@@ -285,6 +292,10 @@ class PApplet : processing.core.PApplet() {
             random.maybe(probability = 0.9f) {
                 bounce()
             }
+
+            random.maybe {
+                setRandomZRotationVelocity()
+            }
         }
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
@@ -312,6 +323,9 @@ class PApplet : processing.core.PApplet() {
             random.maybe {
                 setRandomBackgroundAlpha()
             }
+            random.maybe {
+                scanStripesRealm?.resetProgress()
+            }
         }
 
         if (clapperResult[BeatInterval.EightWhole]?.didChange == true) {
@@ -335,6 +349,7 @@ class PApplet : processing.core.PApplet() {
 
     private fun setRandomZRotationVelocity() {
         tesseractRealm?.zRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
+        scanStripesRealm?.setRandomRotationVelocity()
     }
 
     private fun toggleSmearPixels() {
@@ -392,7 +407,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val RENDERER = PConstants.P3D
 
-        private const val DISPLAY_ID = 1
+        private const val DISPLAY_ID = 2
 
         private const val COLOR_MODE = PConstants.HSB
 
