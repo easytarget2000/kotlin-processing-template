@@ -220,8 +220,6 @@ class PApplet : processing.core.PApplet() {
             if (index == frameCount % realms.size) {
                 realm.drawIn(pGraphics = kaleidoscope)
             }
-//            it.drawIn(pGraphics = kaleidoscope)
-//            it.drawIn(pApplet = this)
         }
         kaleidoscope.endDraw()
 
