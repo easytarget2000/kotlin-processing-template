@@ -405,15 +405,13 @@ class PApplet : processing.core.PApplet() {
 
         private const val RENDERER = PConstants.P3D
 
-        private const val DISPLAY_ID = 2
+        private const val DISPLAY_ID = 1
 
         private const val COLOR_MODE = PConstants.HSB
 
         private const val MAX_COLOR_VALUE = 1f
 
         private const val FRAME_RATE = 60f
-
-        private const val DRAW_FRAME_RATE = false
 
         private const val MAX_ROTATION_VELOCITY = 0.03f
 

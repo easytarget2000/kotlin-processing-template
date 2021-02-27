@@ -3,10 +3,13 @@ package eu.ezytaget.processing.kotlin_template.realms.scan_stripes
 import eu.ezytaget.processing.kotlin_template.nextFloat
 import eu.ezytaget.processing.kotlin_template.realms.Realm
 import processing.core.PApplet
+import processing.core.PApplet.dist
 import processing.core.PGraphics
+import processing.core.PVector
+import kotlin.math.max
 import kotlin.random.Random
 
-class ScanStripesRealm(random: Random = Random.Default): Realm(random) {
+class ScanStripesRealm(random: Random = Random.Default) : Realm(random) {
 
     var evenLineHue = 0f
 
@@ -28,13 +31,23 @@ class ScanStripesRealm(random: Random = Random.Default): Realm(random) {
 
     var rotationVelocity = 0.01f
 
-    var maxRotationVelocity = 0.05f
+    var maxRotationVelocity = 0.02f
 
-    var density = 9
+    var density = 32
+
+    var lineWidth = density / 4f
 
     var progress = PROGRESS_START
 
-    var progressVelocity = 0.01f
+    var progressVelocity = 0.1f
+
+    var drawPoints = true
+
+    var pointDistance = density.toFloat()
+
+    var pointProbability = 0.5f
+
+    lateinit var pointOfInterest: PVector
 
     override fun update(pApplet: PApplet) {
         super.update(pApplet)
@@ -52,23 +65,43 @@ class ScanStripesRealm(random: Random = Random.Default): Realm(random) {
         val height = pGraphics.height.toFloat()
         val width = pGraphics.width.toFloat()
 
+        pointOfInterest = PVector(0f, 0f)
+
         pGraphics.translate(width / 2f, height / 2f)
         pGraphics.rotate(rotation)
+        pGraphics.strokeWeight(lineWidth)
 
         val yOverdraw = pGraphics.height / 3
         val heightHalf = pGraphics.height / 2
 
+        val startX = progress * -width
+        val endX = progress * width
+
         ((-heightHalf - yOverdraw) until (heightHalf + yOverdraw)).forEach { y ->
             if (y % density == 0) {
                 pGraphics.stroke(1f)
-            } else {
-                pGraphics.stroke(0f, 0f)
+                drawLineIn(pGraphics, startX, y.toFloat(), endX)
             }
-
-            pGraphics.line(progress * -width, y.toFloat(), progress * width, y.toFloat())
         }
 
         endDraw(pGraphics)
+    }
+
+    private fun drawLineIn(pGraphics: PGraphics, startX: Float, y: Float, endX: Float) {
+        val maxDistanceToPOI = max(pGraphics.width, pGraphics.height) / 2f
+
+        if (drawPoints) {
+            var x = startX
+            while (x <= endX) {
+                val normDistanceToPOI = dist(x, y, pointOfInterest.x, pointOfInterest.y) / maxDistanceToPOI
+                pGraphics.strokeWeight(lineWidth * (1f - normDistanceToPOI))
+                pGraphics.point(x, y)
+
+                x += pointDistance
+            }
+        } else {
+            pGraphics.line(startX, y, endX, y)
+        }
     }
 
     fun setRandomRotationVelocity() {
