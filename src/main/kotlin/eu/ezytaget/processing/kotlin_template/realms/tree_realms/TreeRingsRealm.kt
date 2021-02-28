@@ -7,11 +7,17 @@ import processing.core.PGraphics
 import kotlin.math.min
 import kotlin.random.Random
 
-class TreeRingsRealm(random: Random = Random.Default): Realm(random) {
+class TreeRingsRealm(random: Random = Random.Default) : Realm(random) {
 
     var lineWidth = 16f
 
-    var gray = 1f
+    var hue = 1f
+
+    var saturation = 1f
+
+    var brightness = 1f
+
+    var alpha = 1f
 
     var fill = false
 
@@ -48,10 +54,10 @@ class TreeRingsRealm(random: Random = Random.Default): Realm(random) {
 
         if (fill) {
             pGraphics.noStroke()
-            pGraphics.fill(gray)
+            pGraphics.fill(hue, saturation, brightness, alpha)
         } else {
             pGraphics.strokeWeight(lineWidth)
-            pGraphics.stroke(gray)
+            pGraphics.stroke(hue, saturation, brightness, alpha)
             pGraphics.noFill()
         }
         pGraphics.ellipseMode(RADIUS)
@@ -66,5 +72,10 @@ class TreeRingsRealm(random: Random = Random.Default): Realm(random) {
 
         currentRadiusFactorVelocity = maxRadiusFactorVelocity
         currentRadiusFactor = defaultRadiusFactor
+    }
+
+    override fun setRandomStyle() {
+        super.setRandomStyle()
+        hue = random.nextFloat()
     }
 }

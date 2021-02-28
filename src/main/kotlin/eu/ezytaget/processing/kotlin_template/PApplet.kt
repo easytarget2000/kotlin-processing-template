@@ -315,6 +315,9 @@ class PApplet : processing.core.PApplet() {
                 setRandomNumberOfKaleidoscopeEdges()
             }
             random.maybe {
+                setRandomStyle()
+            }
+            random.maybe {
                 clearFrame()
             }
             random.maybe {
@@ -361,6 +364,10 @@ class PApplet : processing.core.PApplet() {
 
     private fun toggleSmearPixels() {
         smearPixels = !smearPixels
+    }
+
+    private fun setRandomStyle() {
+        realms.forEach { it.setRandomStyle() }
     }
 
     private fun setTextSize(relativeTextSizeValue: Float) {
