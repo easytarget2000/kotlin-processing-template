@@ -9,6 +9,7 @@ import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.VonNeuman
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
 import eu.ezytaget.processing.kotlin_template.realms.scan_stripes.ScanStripesRealm
 import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractRealm
+import eu.ezytaget.processing.kotlin_template.realms.tree_realms.TreeRingsRealm
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
@@ -22,6 +23,8 @@ class PApplet : processing.core.PApplet() {
     private val random = Random.Default
 
     private val clapper = Clapper()
+
+    private var runClapper = false
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
@@ -112,7 +115,9 @@ class PApplet : processing.core.PApplet() {
             backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
         }
 
-        updateClapper()
+        if (runClapper) {
+            updateClapper()
+        }
 
         (0..numberOfIterationsPerFrame).forEach { _ ->
             push()
@@ -196,7 +201,10 @@ class PApplet : processing.core.PApplet() {
 //        realms.add(cellAutomaton)
 
         val scanStripesRealm = ScanStripesRealm()
-        realms.add(scanStripesRealm)
+//        realms.add(scanStripesRealm)
+
+        val treeRingsRealm = TreeRingsRealm()
+        realms.add(treeRingsRealm)
     }
 
     private fun setPerspective() {
