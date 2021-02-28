@@ -21,6 +21,18 @@ class TreeRingsRealm(random: Random = Random.Default): Realm(random) {
 
     var currentRadiusFactor = defaultRadiusFactor
 
+    var currentRadiusFactorVelocity = 0f
+
+    var maxRadiusFactorVelocity = maxRadiusFactor / 100f
+
+    override fun update(pApplet: PApplet) {
+        super.update(pApplet)
+
+        currentRadiusFactor += currentRadiusFactorVelocity
+        if (currentRadiusFactor > maxRadiusFactor) {
+            currentRadiusFactor = maxRadiusFactor
+        }
+    }
 
     override fun drawIn(pGraphics: PGraphics) {
         super.drawIn(pGraphics)
@@ -52,6 +64,7 @@ class TreeRingsRealm(random: Random = Random.Default): Realm(random) {
     override fun bounce(pApplet: PApplet) {
         super.bounce(pApplet)
 
-        
+        currentRadiusFactorVelocity = maxRadiusFactorVelocity
+        currentRadiusFactor = defaultRadiusFactor
     }
 }

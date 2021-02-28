@@ -24,7 +24,7 @@ class PApplet : processing.core.PApplet() {
 
     private val clapper = Clapper()
 
-    private var runClapper = false
+    private var runClapper = true
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
