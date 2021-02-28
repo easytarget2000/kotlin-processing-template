@@ -33,17 +33,25 @@ class ScanStripesRealm(random: Random = Random.Default) : Realm(random) {
 
     var maxRotationVelocity = 0.02f
 
-    var density = 32
+    var defaultDensity = 64f
 
-    var lineWidth = density / 4f
+    var currentDensity = defaultDensity
+
+    var maxDensity = defaultDensity * 2f
+
+    var defaultDebounceVelocity = 0.1f
+
+    var currentDensityVelocity = 2f
+
+    var lineWidth = defaultDensity / 4f
 
     var progress = PROGRESS_START
 
     var progressVelocity = 0.1f
 
-    var drawPoints = true
+    var drawPoints = false
 
-    var pointDistance = density.toFloat()
+    var pointDistance = defaultDensity
 
     var pointProbability = 0.5f
 
@@ -55,6 +63,12 @@ class ScanStripesRealm(random: Random = Random.Default) : Realm(random) {
         progress += progressVelocity
         if (progress > MAX_PROGRESS) {
             progress = MAX_PROGRESS
+        }
+
+        currentDensity += currentDensityVelocity
+        if (currentDensity > maxDensity) {
+            currentDensity = maxDensity
+            currentDensityVelocity = 0f
         }
     }
 
@@ -71,17 +85,17 @@ class ScanStripesRealm(random: Random = Random.Default) : Realm(random) {
         pGraphics.rotate(rotation)
         pGraphics.strokeWeight(lineWidth)
 
-        val yOverdraw = pGraphics.height / 3
-        val heightHalf = pGraphics.height / 2
+        val yOverdraw = pGraphics.height / 3f
+        val heightHalf = pGraphics.height / 2f
 
         val startX = progress * -width
         val endX = progress * width
 
-        ((-heightHalf - yOverdraw) until (heightHalf + yOverdraw)).forEach { y ->
-            if (y % density == 0) {
-                pGraphics.stroke(1f)
-                drawLineIn(pGraphics, startX, y.toFloat(), endX)
-            }
+        var y = (-heightHalf - yOverdraw)
+        while (y < (heightHalf + yOverdraw)) {
+            pGraphics.stroke(1f)
+            drawLineIn(pGraphics, startX, y, endX)
+            y += currentDensity
         }
 
         endDraw(pGraphics)
@@ -110,6 +124,12 @@ class ScanStripesRealm(random: Random = Random.Default) : Realm(random) {
 
     fun resetProgress() {
         progress = PROGRESS_START
+    }
+
+    override fun bounce(pApplet: PApplet) {
+        super.bounce(pApplet)
+        currentDensity = defaultDensity
+        currentDensityVelocity = defaultDebounceVelocity
     }
 
     companion object {

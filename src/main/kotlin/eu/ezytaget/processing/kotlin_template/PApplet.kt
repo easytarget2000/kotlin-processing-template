@@ -333,6 +333,7 @@ class PApplet : processing.core.PApplet() {
 
     private fun bounce() {
         radiusFactorVelocity = 0.05f
+        realms.forEach { it.bounce(pApplet = this) }
     }
 
     private fun setRandomBackgroundAlpha() {

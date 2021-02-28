@@ -20,6 +20,8 @@ abstract class Realm(var random: Random = Random.Default) {
         drawIn(pApplet.graphics)
     }
 
+    open fun bounce(pApplet: PApplet) { }
+
     open fun handleMouseClick(button: Int, mouseX: Int, mouseY: Int, pApplet: PApplet) {}
 
     protected fun beginDraw(pGraphics: PGraphics) {
