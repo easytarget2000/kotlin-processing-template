@@ -9,6 +9,7 @@ import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.VonNeuman
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
 import eu.ezytaget.processing.kotlin_template.realms.scan_stripes.ScanStripesRealm
 import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractRealm
+import eu.ezytaget.processing.kotlin_template.realms.test_image.TestImageRealm
 import eu.ezytaget.processing.kotlin_template.realms.tree_realms.TreeRingsRealm
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
@@ -28,9 +29,17 @@ class PApplet : processing.core.PApplet() {
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
-    private val drawBackgroundOnDraw = true
+    private var drawBackgroundOnDraw = true
+        set(value) {
+            field = value
+            println("PApplet: drawBackgroundOnDraw: set: $drawBackgroundOnDraw")
+        }
 
     private var backgroundAlpha = 1f
+        set(value) {
+            field = value
+            println("PApplet: backgroundAlpha: set: $backgroundAlpha")
+        }
 
     private var waitingForClickToDraw = false
 
@@ -51,6 +60,10 @@ class PApplet : processing.core.PApplet() {
     private var laserClearMode = false
 
     private var numberOfKaleidoscopeEdges = 1
+        set(value) {
+            field = value
+            println("PApplet: numberOfKaleidoscopeEdges: set: $numberOfKaleidoscopeEdges")
+        }
 
     private var minNumberOfKaleidoscopeEdges = 1
 
@@ -111,6 +124,8 @@ class PApplet : processing.core.PApplet() {
             return
         }
 
+        kaleidoscope.clear()
+
         if (drawBackgroundOnDraw) {
             backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
         }
@@ -130,7 +145,7 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (laserClearMode) {
-            laserClear()
+//            laserClear()
         }
 
         if (applyCharRaster) {
@@ -193,18 +208,24 @@ class PApplet : processing.core.PApplet() {
             MooreNeighborCounter()
         }
 
+        if (random.nextBoolean()) {
+            val testImageRealm = TestImageRealm()
+            realms.add(testImageRealm)
+        }
+
         val cellAutomaton = CellAutomaton3D(
-                numOfCellsPerSide = random(24f, 48f).toInt(),
-                sideLength = automatonSize,
-                neighborCounter = neighborCounter
+            numOfCellsPerSide = random(24f, 48f).toInt(),
+            sideLength = automatonSize,
+            neighborCounter = neighborCounter
         )
-//        realms.add(cellAutomaton)
+        realms.add(cellAutomaton)
 
         val scanStripesRealm = ScanStripesRealm()
 //        realms.add(scanStripesRealm)
 
         val treeRingsRealm = TreeRingsRealm()
         realms.add(treeRingsRealm)
+
     }
 
     private fun setPerspective() {
@@ -223,11 +244,10 @@ class PApplet : processing.core.PApplet() {
         }
 
         kaleidoscope.beginDraw()
-        kaleidoscope.clear()
         realms.forEachIndexed { index, realm ->
-            if (index == frameCount % realms.size) {
+//            if (index == frameCount % realms.size) {
                 realm.drawIn(pGraphics = kaleidoscope)
-            }
+//            }
         }
         kaleidoscope.endDraw()
 
@@ -254,8 +274,8 @@ class PApplet : processing.core.PApplet() {
 
     private fun clearFrame() {
         backgroundDrawer.draw(
-                pApplet = this,
-                alpha = 1f
+            pApplet = this,
+            alpha = 1f
         )
     }
 
@@ -348,6 +368,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setRandomBackgroundAlpha() {
+//        backgroundAlpha = random(MAX_COLOR_VALUE)
         if (!random.maybe { backgroundAlpha = random(MAX_COLOR_VALUE / 64f) }) {
             backgroundAlpha = 1f
         }
@@ -421,7 +442,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val RENDERER = PConstants.P3D
 
-        private const val DISPLAY_ID = 1
+        private const val DISPLAY_ID = 2
 
         private const val COLOR_MODE = PConstants.HSB
 
