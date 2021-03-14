@@ -8,6 +8,7 @@ import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.MooreNeig
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.VonNeumannNeighborCounter
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
 import eu.ezytaget.processing.kotlin_template.realms.scan_stripes.ScanStripesRealm
+import eu.ezytaget.processing.kotlin_template.realms.scanner.ScannerRealm
 import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractRealm
 import eu.ezytaget.processing.kotlin_template.realms.test_image.TestImageRealm
 import eu.ezytaget.processing.kotlin_template.realms.tree_realms.TreeRingsRealm
@@ -210,7 +211,7 @@ class PApplet : processing.core.PApplet() {
 
         if (random.nextBoolean()) {
             val testImageRealm = TestImageRealm()
-            realms.add(testImageRealm)
+//            realms.add(testImageRealm)
         }
 
         val cellAutomaton = CellAutomaton3D(
@@ -218,14 +219,16 @@ class PApplet : processing.core.PApplet() {
             sideLength = automatonSize,
             neighborCounter = neighborCounter
         )
-        realms.add(cellAutomaton)
+//        realms.add(cellAutomaton)
 
         val scanStripesRealm = ScanStripesRealm()
 //        realms.add(scanStripesRealm)
 
         val treeRingsRealm = TreeRingsRealm()
-        realms.add(treeRingsRealm)
+//        realms.add(treeRingsRealm)
 
+        val scannerRealm = ScannerRealm()
+        realms.add(scannerRealm)
     }
 
     private fun setPerspective() {
