@@ -9,7 +9,7 @@ class ScannerRealm(random: Random = Random.Default): Realm(random) {
 
     var progress = 0f
 
-    var speed = 0.001f
+    var speed = 0.01f
 
     var colorValue1 = 1f
 
@@ -34,15 +34,8 @@ class ScannerRealm(random: Random = Random.Default): Realm(random) {
         val width = pGraphics.width
         val height = pGraphics.height
         val numberOfPixels = width * height
-        val startPixel = numberOfPixels * progress
+        val startPixel = (numberOfPixels * progress).toInt()
         val lineLength = (numberOfPixels * speed).toInt()
-        val endPixel = startPixel + lineLength
-        val endPixelOvershot = endPixel - numberOfPixels
-        val endPixelAdjusted = if (endPixelOvershot > 0) {
-            endPixelOvershot
-        } else {
-            endPixel
-        }
 
         beginDraw(pGraphics)
         pGraphics.stroke(colorValue1, colorValue2, colorValue3, alpha)
@@ -50,15 +43,16 @@ class ScannerRealm(random: Random = Random.Default): Realm(random) {
         var x = startPixel % width
         var y = startPixel / width
         (0 until lineLength).forEach { _ ->
-            x += 1f
+            ++x
             if (x > width) {
-                y += 1f
-                x = 0f
+                ++y
+                x = 0
             }
 
-            pGraphics.point(x, y)
+            pGraphics.point(x.toFloat(), y.toFloat())
         }
 
         endDraw(pGraphics)
     }
+
 }
