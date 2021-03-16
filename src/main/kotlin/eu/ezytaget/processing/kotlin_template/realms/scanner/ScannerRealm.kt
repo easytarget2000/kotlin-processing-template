@@ -40,7 +40,7 @@ class ScannerRealm(random: Random = Random.Default): Realm(random) {
 
         beginDraw(pGraphics)
         // CONTINUE HERE.
-        pGraphics.stroke(1f, 0f, 1f, 1f)
+        pGraphics.stroke(random.nextFloat(), 1f, 1f, 1f)
 
         val startX = startPixel % width
         val startY = startPixel / width

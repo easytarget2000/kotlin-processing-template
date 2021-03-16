@@ -26,11 +26,11 @@ class PApplet : processing.core.PApplet() {
 
     private val clapper = Clapper()
 
-    private var runClapper = true
+    private var runClapper = false
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
-    private var drawBackgroundOnDraw = true
+    private var drawBackgroundOnDraw = false
         set(value) {
             field = value
             println("PApplet: drawBackgroundOnDraw: set: $drawBackgroundOnDraw")
@@ -129,6 +129,7 @@ class PApplet : processing.core.PApplet() {
 
         if (drawBackgroundOnDraw) {
             backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
+            backgroundDrawer.draw(kaleidoscope, alpha = backgroundAlpha)
         }
 
         if (runClapper) {
@@ -445,7 +446,7 @@ class PApplet : processing.core.PApplet() {
 
         private const val RENDERER = PConstants.P3D
 
-        private const val DISPLAY_ID = 2
+        private const val DISPLAY_ID = 1
 
         private const val COLOR_MODE = PConstants.HSB
 
