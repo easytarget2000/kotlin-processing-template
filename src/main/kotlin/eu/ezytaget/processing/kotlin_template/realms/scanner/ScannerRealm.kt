@@ -7,12 +7,17 @@ import kotlin.random.Random
 
 class ScannerRealm(random: Random = Random.Default): Realm(random) {
 
-
-    var lineLength = 800
-
     var progress = 0f
 
     var speed = 0.001f
+
+    var colorValue1 = 1f
+
+    var colorValue2 = 0f
+
+    var colorValue3 = 1f
+
+    var alpha = 1f
 
     override fun update(pApplet: PApplet) {
         super.update(pApplet)
@@ -30,6 +35,7 @@ class ScannerRealm(random: Random = Random.Default): Realm(random) {
         val height = pGraphics.height
         val numberOfPixels = width * height
         val startPixel = numberOfPixels * progress
+        val lineLength = (numberOfPixels * speed).toInt()
         val endPixel = startPixel + lineLength
         val endPixelOvershot = endPixel - numberOfPixels
         val endPixelAdjusted = if (endPixelOvershot > 0) {
@@ -39,19 +45,18 @@ class ScannerRealm(random: Random = Random.Default): Realm(random) {
         }
 
         beginDraw(pGraphics)
-        // CONTINUE HERE.
-        pGraphics.stroke(random.nextFloat(), 1f, 1f, 1f)
+        pGraphics.stroke(colorValue1, colorValue2, colorValue3, alpha)
 
-        val startX = startPixel % width
-        val startY = startPixel / width
-        var y = startY
-        (0 until lineLength).forEach { offset ->
-            val x = startX + offset
+        var x = startPixel % width
+        var y = startPixel / width
+        (0 until lineLength).forEach { _ ->
+            x += 1f
             if (x > width) {
-                ++y
-            } else {
-                pGraphics.point(x, y)
+                y += 1f
+                x = 0f
             }
+
+            pGraphics.point(x, y)
         }
 
         endDraw(pGraphics)
