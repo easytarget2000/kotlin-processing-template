@@ -30,7 +30,7 @@ class PApplet : processing.core.PApplet() {
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
-    private var drawBackgroundOnDraw = false
+    private var drawBackgroundOnDraw = true
         set(value) {
             field = value
             println("PApplet: drawBackgroundOnDraw: set: $drawBackgroundOnDraw")

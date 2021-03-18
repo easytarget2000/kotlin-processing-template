@@ -9,7 +9,7 @@ class ScannerRealm(random: Random = Random.Default): Realm(random) {
 
     var progress = 0f
 
-    var speed = 0.01f
+    var speed = 0.004f
 
     var colorValue1 = 1f
 
