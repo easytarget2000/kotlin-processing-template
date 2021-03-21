@@ -2,7 +2,7 @@ package eu.ezytaget.processing.kotlin_template.realms.tunnel
 
 import eu.ezytaget.processing.kotlin_template.realms.Realm
 import processing.core.PApplet
-import processing.core.PConstants.CENTER
+import processing.core.PConstants.*
 import processing.core.PGraphics
 import kotlin.random.Random
 
@@ -22,6 +22,8 @@ class TunnelReam(random: Random = Random.Default): Realm(random) {
 
     var numberOfSegments = 64
 
+    var numberOfEdges = 8
+
     var relativeSegmentOffset = 0f
 
     var velocity = 0.01f
@@ -38,11 +40,14 @@ class TunnelReam(random: Random = Random.Default): Realm(random) {
         super.drawIn(pGraphics)
         beginDraw(pGraphics)
 
-        val startZ = segmentWidth * (numberOfSegments / 3f) + (relativeSegmentOffset * segmentWidth)
+        pGraphics.lights()
+
+        val startZ = segmentWidth * (numberOfSegments / 3f) + (relativeSegmentOffset * segmentWidth * 8f)
         pGraphics.translate(pGraphics.width / 2f, pGraphics.height / 2f, startZ)
 
-        pGraphics.stroke(colorValue1, colorValue2, colorValue3, alpha)
-        pGraphics.noFill()
+        pGraphics.fill(colorValue1, colorValue2, colorValue3, 0.5f)
+        pGraphics.noStroke()
+        pGraphics.stroke(colorValue1, colorValue2, 0.5f, alpha)
         pGraphics.ellipseMode(CENTER)
 
         (0 until numberOfSegments).forEach { _ ->
@@ -54,6 +59,29 @@ class TunnelReam(random: Random = Random.Default): Realm(random) {
     }
 
     private fun drawSegment(pGraphics: PGraphics) {
-        pGraphics.ellipse(0f, 0f, tunnelDiameter, tunnelDiameter)
+        pGraphics.push()
+
+        val edgeLength = tunnelDiameter * 0.33f
+        val edgeAngle = TWO_PI / numberOfEdges.toFloat()
+
+        pGraphics.translate(-tunnelDiameter / 2f, 0f, 0f)
+
+        pGraphics.rotateX(PI_HALF)
+//        pGraphics.rotateY(PI_HALF / 2f)
+
+        (0 until numberOfEdges).forEach { _ ->
+            pGraphics.rect(0f, 0f, edgeLength, segmentWidth)
+            pGraphics.translate(edgeLength, 0f, 0f)
+            pGraphics.rotateY(edgeAngle)
+        }
+        pGraphics.pop()
+    }
+
+    companion object {
+
+        private const val TWO_PI = kotlin.math.PI.toFloat() * 2f
+
+        private const val PI_HALF = kotlin.math.PI.toFloat() / 2f
+
     }
 }
