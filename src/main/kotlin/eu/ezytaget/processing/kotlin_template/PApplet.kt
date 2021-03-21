@@ -12,6 +12,7 @@ import eu.ezytaget.processing.kotlin_template.realms.scanner.ScannerRealm
 import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractRealm
 import eu.ezytaget.processing.kotlin_template.realms.test_image.TestImageRealm
 import eu.ezytaget.processing.kotlin_template.realms.tree_realms.TreeRingsRealm
+import eu.ezytaget.processing.kotlin_template.realms.tunnel.TunnelReam
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
@@ -228,8 +229,11 @@ class PApplet : processing.core.PApplet() {
         val treeRingsRealm = TreeRingsRealm()
 //        realms.add(treeRingsRealm)
 
-        val scannerRealm = ScannerRealm()
-        realms.add(scannerRealm)
+//        val scannerRealm = ScannerRealm()
+//        realms.add(scannerRealm)
+
+        val tunnel = TunnelReam()
+        realms.add(tunnel)
     }
 
     private fun setPerspective() {
