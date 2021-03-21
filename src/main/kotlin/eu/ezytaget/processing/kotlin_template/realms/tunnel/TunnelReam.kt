@@ -18,11 +18,11 @@ class TunnelReam(random: Random = Random.Default): Realm(random) {
 
     var alpha = 1f
 
-    var segmentWidth = 40f
+    var segmentWidth = 128f
 
-    var numberOfSegments = 64
+    var numberOfSegments = 128
 
-    var numberOfEdges = 8
+    var numberOfEdges = 12
 
     var relativeSegmentOffset = 0f
 
@@ -42,7 +42,7 @@ class TunnelReam(random: Random = Random.Default): Realm(random) {
 
         pGraphics.lights()
 
-        val startZ = segmentWidth * (numberOfSegments / 3f) + (relativeSegmentOffset * segmentWidth * 8f)
+        val startZ = segmentWidth * (numberOfSegments / 24f) + (relativeSegmentOffset * segmentWidth)
         pGraphics.translate(pGraphics.width / 2f, pGraphics.height / 2f, startZ)
 
         pGraphics.fill(colorValue1, colorValue2, colorValue3, 0.5f)
@@ -52,6 +52,7 @@ class TunnelReam(random: Random = Random.Default): Realm(random) {
 
         (0 until numberOfSegments).forEach { _ ->
             drawSegment(pGraphics)
+//            pGraphics.rotateZ(0.4f)
             pGraphics.translate(0f, 0f, -segmentWidth)
         }
 
@@ -64,7 +65,7 @@ class TunnelReam(random: Random = Random.Default): Realm(random) {
         val edgeLength = tunnelDiameter * 0.33f
         val edgeAngle = TWO_PI / numberOfEdges.toFloat()
 
-        pGraphics.translate(-tunnelDiameter / 2f, 0f, 0f)
+        pGraphics.translate(-tunnelDiameter / 3f, -tunnelDiameter / 3f, 0f)
 
         pGraphics.rotateX(PI_HALF)
 //        pGraphics.rotateY(PI_HALF / 2f)
