@@ -6,11 +6,7 @@ import kotlin.random.Random
 
 abstract class Realm(var random: Random = Random.Default) {
 
-    open fun setup(pGraphics: PGraphics) {}
-
-    fun setup(pApplet: PApplet) {
-        setup(pApplet.graphics)
-    }
+    open fun setup(pApplet: PApplet, pGraphics: PGraphics = pApplet.graphics) { }
 
     open fun update(pApplet: PApplet) {}
 

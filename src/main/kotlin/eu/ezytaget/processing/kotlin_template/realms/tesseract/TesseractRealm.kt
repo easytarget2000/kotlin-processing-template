@@ -53,8 +53,8 @@ class TesseractRealm(
 
     private lateinit var tesseracts: List<Tesseract>
 
-    override fun setup(pGraphics: PGraphics) {
-        super.setup(pGraphics)
+    override fun setup(pApplet: PApplet, pGraphics: PGraphics) {
+        super.setup(pApplet, pGraphics)
 
         val numberOfShapes = if (minNumberOfShapes >= maxNumberOfShapes) {
             minNumberOfShapes

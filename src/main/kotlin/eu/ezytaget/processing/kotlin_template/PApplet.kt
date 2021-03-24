@@ -194,7 +194,7 @@ class PApplet : processing.core.PApplet() {
         realms.clear()
 
         val juliaSetRealm = JuliaSetRealm()
-        juliaSetRealm.setup(kaleidoscope)
+        juliaSetRealm.setup(pApplet = this, pGraphics = kaleidoscope)
         juliaSetRealm.brightness = 1f
         juliaSetRealm.alpha = 1f
 

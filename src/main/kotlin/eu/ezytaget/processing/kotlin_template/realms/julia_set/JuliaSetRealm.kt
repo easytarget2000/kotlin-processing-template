@@ -30,7 +30,7 @@ class JuliaSetRealm(maxColorValue: Float = 1f, random: Random = Random.Default):
 
     private lateinit var set: JuliaSet
 
-    override fun setup(pGraphics: PGraphics) {
+    override fun setup(pApplet: PApplet, pGraphics: PGraphics) {
         //initJuliaSet(): scaleWidth: 5.711875, scaleHeight: 3.569922, angle 4.8934402, angleVelocity: 0.05238408, aAngleFactor: -0.7362766
         //initJuliaSet(): scaleWidth: 3.7624247, scaleHeight: 2.3515155, angle 2.9225054, angleVelocity: 0.05977559, aAngleFactor: 0.59833264
         //initJuliaSet(): scaleWidth: 2.4918487, scaleHeight: 1.5574055, angle 5.00991, angleVelocity: -0.31708914, aAngleFactor: -0.54648113
