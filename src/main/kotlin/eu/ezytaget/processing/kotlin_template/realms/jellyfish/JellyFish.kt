@@ -41,6 +41,12 @@ class JellyFish(random: Random = Random.Default) : Realm(random) {
 
     var center = PVector(referenceWidth / 2f, referenceHeight / 2f, 0f)
 
+    var lineColorValue2 = 1f
+
+    var lineColorValue3 = 0.7f
+
+    var velocity = 0.5f
+
     private lateinit var curves: List<Curve>
 
     override fun setup(pApplet: PApplet, pGraphics: PGraphics) {
@@ -55,10 +61,10 @@ class JellyFish(random: Random = Random.Default) : Realm(random) {
         super.update(pApplet)
 
         val frameCount = pApplet.frameCount
-        val radiusNoiseOffset = frameCount.toFloat() / 100f
-        val maxControlRadiusFactor = frameCount.toFloat() / 99f
-        val point1AngleNoiseOffset = frameCount.toFloat() / 98f
-        val point2AngleNoiseOffset = frameCount.toFloat() / 71f
+        val radiusNoiseOffset = (frameCount.toFloat() / 100f) * velocity
+        val maxControlRadiusFactor = (frameCount.toFloat() / 99f) * velocity
+        val point1AngleNoiseOffset = (frameCount.toFloat() / 98f) * velocity
+        val point2AngleNoiseOffset = (frameCount.toFloat() / 71f) * velocity
 
         val radiusRange = (maxRadiusFactor - minRadiusFactor)
         val maxRadius = min(referenceWidth, referenceHeight) * maxRadiusFactor
@@ -113,14 +119,16 @@ class JellyFish(random: Random = Random.Default) : Realm(random) {
         pGraphics.smooth()
         pGraphics.curveDetail(curveDetail)
 
-        curves.forEach {
-            drawCurveIn(it, pGraphics)
+        val numberOfCurves = curves.size.toFloat()
+
+        curves.forEachIndexed { index, curve ->
+            drawCurveIn(curve, progress = (index + 1f) / numberOfCurves, pGraphics)
         }
 
         endDraw(pGraphics)
     }
 
-    private fun drawCurveIn(curve: Curve, pGraphics: PGraphics) {
+    private fun drawCurveIn(curve: Curve, progress: Float, pGraphics: PGraphics) {
         if (drawPoints) {
             pGraphics.noStroke()
             pGraphics.fill(0f, 1f, 1f, 1f)
@@ -134,7 +142,7 @@ class JellyFish(random: Random = Random.Default) : Realm(random) {
             pGraphics.circle(curve.controlPoint2.x, curve.controlPoint2.y, 8f)
         }
 
-        pGraphics.stroke(1f, 0f, 1f, lineAlpha)
+        pGraphics.stroke(progress, lineColorValue2, lineColorValue3, lineAlpha)
         pGraphics.noFill()
 
         pGraphics.curve(
