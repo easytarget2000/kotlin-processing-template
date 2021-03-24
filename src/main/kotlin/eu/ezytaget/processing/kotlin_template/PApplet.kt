@@ -61,6 +61,8 @@ class PApplet : processing.core.PApplet() {
 
     private var laserClearMode = false
 
+    private var noiseSeedSalt = System.currentTimeMillis()
+
     private var numberOfKaleidoscopeEdges = 1
         set(value) {
             field = value
@@ -148,7 +150,7 @@ class PApplet : processing.core.PApplet() {
         }
 
         if (laserClearMode) {
-//            laserClear()
+            laserClear()
         }
 
         if (applyCharRaster) {
@@ -170,6 +172,8 @@ class PApplet : processing.core.PApplet() {
                 initRealms()
             SET_NUMBER_OF_KALEIDOSCOPE_EDGES_KEY ->
                 setRandomNumberOfKaleidoscopeEdges()
+            SET_NEXT_NOISE_SEED_KEY ->
+                setNextNoiseSeed()
         }
     }
 
@@ -355,6 +359,9 @@ class PApplet : processing.core.PApplet() {
             random.maybe {
                 scanStripesRealm?.resetProgress()
             }
+            random.maybe {
+                setNextNoiseSeed()
+            }
         }
 
         if (clapperResult[BeatInterval.EightWhole]?.didChange == true) {
@@ -401,6 +408,12 @@ class PApplet : processing.core.PApplet() {
         val textSize = map(relativeTextSizeValue, 0f, width.toFloat(), 4f, 32f)
 
         raster.setTextSize(pApplet = this, textSize = textSize)
+    }
+
+    private fun setNextNoiseSeed() {
+        val seed = frameCount.toLong() + noiseSeedSalt
+        println("PApplet: setNextNoiseSeed(): noiseSeedSalt: $noiseSeedSalt, seed: $seed")
+        noiseSeed(seed)
     }
 
     private fun setRandomNumberOfKaleidoscopeEdges() {
@@ -461,6 +474,8 @@ class PApplet : processing.core.PApplet() {
         private const val TOGGLE_SMEAR_PIXELS_KEY = 's'
 
         private const val CLEAR_FRAME_KEY = 'x'
+
+        private const val SET_NEXT_NOISE_SEED_KEY = 'n'
 
         fun runInstance() {
             val instance = PApplet()

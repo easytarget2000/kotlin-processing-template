@@ -10,23 +10,20 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
 
-class JellyFish(
-    random: Random = Random.Default,
-    private val numberOfCurves: Int = 800,
-    private val minRadiusFactor: Float = 0.33f,
-    private val maxRadiusFactor: Float = 0.66f,
-    private val radiusNoiseOffset: Float = 13.17f,
-    private val maxControlRadiusFactor: Float = 8f,
-    private val point1AngleNoiseOffset: Float = 19.5f,
-    private val point2AngleNoiseOffset: Float = 29.1f
-) : Realm(random) {
+class JellyFish(random: Random = Random.Default) : Realm(random) {
 
     private data class Curve(
-        val controlPoint1: PVector,
-        val point1: PVector,
-        val point2: PVector,
-        val controlPoint2: PVector
+        var controlPoint1: PVector,
+        var point1: PVector,
+        var point2: PVector,
+        var controlPoint2: PVector
     )
+
+    var numberOfCurves: Int = 800
+
+    var minRadiusFactor: Float = 0.33f
+
+    var maxRadiusFactor: Float = 0.66f
 
     var drawPoints = false
 
@@ -38,24 +35,42 @@ class JellyFish(
 
     var curveDetail = 40
 
+    var referenceWidth = 800f
+
+    var referenceHeight = 600f
+
+    var center = PVector(referenceWidth / 2f, referenceHeight / 2f, 0f)
+
     private lateinit var curves: List<Curve>
 
     override fun setup(pApplet: PApplet, pGraphics: PGraphics) {
         super.setup(pApplet, pGraphics)
 
-        val width = pGraphics.width.toFloat()
-        val height = pGraphics.height.toFloat()
+        referenceWidth = pGraphics.width.toFloat()
+        referenceHeight = pGraphics.height.toFloat()
+        center = PVector(referenceWidth / 2f, referenceHeight / 2f, 0f)
+    }
+
+    override fun update(pApplet: PApplet) {
+        super.update(pApplet)
+
+        val frameCount = pApplet.frameCount
+        val radiusNoiseOffset = frameCount.toFloat() / 100f
+        val maxControlRadiusFactor = frameCount.toFloat() / 99f
+        val point1AngleNoiseOffset = frameCount.toFloat() / 98f
+        val point2AngleNoiseOffset = frameCount.toFloat() / 71f
+
         val radiusRange = (maxRadiusFactor - minRadiusFactor)
-        val maxRadius = min(width, height) * maxRadiusFactor
+        val maxRadius = min(referenceWidth, referenceHeight) * maxRadiusFactor
         val maxControlRadius = maxRadius * maxControlRadiusFactor
-        val center = PVector(width / 2f, height / 2f, 0f)
 
         curves = (0 until numberOfCurves).map { index ->
             val progress = ((index + 1).toFloat() / numberOfCurves)
             val radiusFactor = minRadiusFactor + (pApplet.noise(progress + radiusNoiseOffset) * radiusRange)
-            val radius = min(width, height) * radiusFactor
+            val radius = min(referenceWidth, referenceHeight) * radiusFactor
 
             val point1AngleToCenter = pApplet.noise(progress + point1AngleNoiseOffset) * TWO_PI
+//            val point1AngleToCenter = progress * TWO_PI
             val point1 = PVector(
                 center.x + (cos(point1AngleToCenter) * radius),
                 center.y + (sin(point1AngleToCenter) * radius),
@@ -68,7 +83,7 @@ class JellyFish(
                 center.y + (sin(control1AngleToCenter) * maxControlRadius)
             )
 
-            val point2AngleToCenter = pApplet.noise(progress + point2AngleNoiseOffset) * TWO_PI
+            val point2AngleToCenter = PI + (pApplet.noise(progress + point2AngleNoiseOffset) * TWO_PI)
 
             val point2 = PVector(
                 center.x + (cos(point2AngleToCenter) * radius),
