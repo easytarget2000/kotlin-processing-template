@@ -6,6 +6,7 @@ import eu.ezytaget.processing.kotlin_template.realms.Realm
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.CellAutomaton3D
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.MooreNeighborCounter
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.VonNeumannNeighborCounter
+import eu.ezytaget.processing.kotlin_template.realms.jellyfish.JellyFish
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
 import eu.ezytaget.processing.kotlin_template.realms.scan_stripes.ScanStripesRealm
 import eu.ezytaget.processing.kotlin_template.realms.scanner.ScannerRealm
@@ -196,11 +197,8 @@ class PApplet : processing.core.PApplet() {
         juliaSetRealm.setup(kaleidoscope)
         juliaSetRealm.brightness = 1f
         juliaSetRealm.alpha = 1f
-//        realms.add(juliaSetRealm)
 
         val tesseractRealm = TesseractRealm()
-        tesseractRealm.setup(pApplet = this)
-//        realms.add(tesseractRealm)
 
         val automatonSize = min(width, height) * 0.9f
 
@@ -212,7 +210,6 @@ class PApplet : processing.core.PApplet() {
 
         if (random.nextBoolean()) {
             val testImageRealm = TestImageRealm()
-//            realms.add(testImageRealm)
         }
 
         val cellAutomaton = CellAutomaton3D(
@@ -220,16 +217,15 @@ class PApplet : processing.core.PApplet() {
             sideLength = automatonSize,
             neighborCounter = neighborCounter
         )
-//        realms.add(cellAutomaton)
-
         val scanStripesRealm = ScanStripesRealm()
-//        realms.add(scanStripesRealm)
-
         val treeRingsRealm = TreeRingsRealm()
-//        realms.add(treeRingsRealm)
 
         val scannerRealm = ScannerRealm()
-        realms.add(scannerRealm)
+
+        val jellyfish = JellyFish()
+        realms.add(jellyfish)
+
+        realms.forEach { it.setup(pApplet = this) }
     }
 
     private fun setPerspective() {
