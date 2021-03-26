@@ -27,7 +27,7 @@ class PApplet : processing.core.PApplet() {
 
     private val clapper = Clapper()
 
-    private var runClapper = false
+    private var runClapper = true
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
@@ -37,7 +37,7 @@ class PApplet : processing.core.PApplet() {
             println("PApplet: drawBackgroundOnDraw: set: $drawBackgroundOnDraw")
         }
 
-    private var backgroundAlpha = 1f
+    private var backgroundAlpha = 0.1f
         set(value) {
             field = value
             println("PApplet: backgroundAlpha: set: $backgroundAlpha")
@@ -63,7 +63,7 @@ class PApplet : processing.core.PApplet() {
 
     private var noiseSeedSalt = System.currentTimeMillis()
 
-    private var numberOfKaleidoscopeEdges = 1
+    private var numberOfKaleidoscopeEdges = 5
         set(value) {
             field = value
             println("PApplet: numberOfKaleidoscopeEdges: set: $numberOfKaleidoscopeEdges")
@@ -128,11 +128,15 @@ class PApplet : processing.core.PApplet() {
             return
         }
 
-        kaleidoscope.clear()
+        backgroundAlpha = 0.1f
 
         if (drawBackgroundOnDraw) {
             backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
-            backgroundDrawer.draw(kaleidoscope, alpha = backgroundAlpha)
+//            backgroundDrawer.draw(kaleidoscope, alpha = backgroundAlpha)
+
+            kaleidoscope.beginDraw()
+            kaleidoscope.clear()
+            kaleidoscope.endDraw()
         }
 
         if (runClapper) {
@@ -225,9 +229,10 @@ class PApplet : processing.core.PApplet() {
         val treeRingsRealm = TreeRingsRealm()
 
         val scannerRealm = ScannerRealm()
+        realms.add(scannerRealm)
 
         val jellyfish = JellyFish()
-        realms.add(jellyfish)
+//        realms.add(jellyfish)
 
         realms.forEach { it.setup(pApplet = this) }
     }
@@ -250,7 +255,7 @@ class PApplet : processing.core.PApplet() {
         kaleidoscope.beginDraw()
         realms.forEachIndexed { index, realm ->
 //            if (index == frameCount % realms.size) {
-                realm.drawIn(pGraphics = kaleidoscope)
+            realm.drawIn(pGraphics = kaleidoscope)
 //            }
         }
         kaleidoscope.endDraw()
@@ -336,7 +341,7 @@ class PApplet : processing.core.PApplet() {
                 toggleSmearPixels()
             }
             random.maybe(probability = 0.1f) {
-                setRandomNumberOfKaleidoscopeEdges()
+//                setRandomNumberOfKaleidoscopeEdges()
             }
             random.maybe {
                 setRandomStyle()

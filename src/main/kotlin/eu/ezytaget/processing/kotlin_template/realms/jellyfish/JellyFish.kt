@@ -1,5 +1,6 @@
 package eu.ezytaget.processing.kotlin_template.realms.jellyfish
 
+import eu.ezytaget.processing.kotlin_template.PerlinNoiseSource
 import eu.ezytaget.processing.kotlin_template.realms.Realm
 import processing.core.PApplet
 import processing.core.PConstants.TWO_PI
@@ -47,14 +48,22 @@ class JellyFish(random: Random = Random.Default) : Realm(random) {
 
     var velocity = 0.5f
 
+    var hueNoiseOffset = 100f
+
     private lateinit var curves: List<Curve>
+
+    private lateinit var perlinNoiseSource: PerlinNoiseSource
 
     override fun setup(pApplet: PApplet, pGraphics: PGraphics) {
         super.setup(pApplet, pGraphics)
 
+        perlinNoiseSource = PerlinNoiseSource(pApplet)
+
         referenceWidth = pGraphics.width.toFloat()
         referenceHeight = pGraphics.height.toFloat()
         center = PVector(referenceWidth / 2f, referenceHeight / 2f, 0f)
+
+        hueNoiseOffset = (pApplet.frameCount.toFloat() / 70f)
     }
 
     override fun update(pApplet: PApplet) {
@@ -142,7 +151,8 @@ class JellyFish(random: Random = Random.Default) : Realm(random) {
             pGraphics.circle(curve.controlPoint2.x, curve.controlPoint2.y, 8f)
         }
 
-        pGraphics.stroke(progress, lineColorValue2, lineColorValue3, lineAlpha)
+        val hue = perlinNoiseSource.next(progress + hueNoiseOffset)
+        pGraphics.stroke(hue, lineColorValue2, lineColorValue3, lineAlpha)
         pGraphics.noFill()
 
         pGraphics.curve(
