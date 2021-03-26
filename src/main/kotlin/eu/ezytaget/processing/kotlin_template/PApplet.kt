@@ -3,6 +3,7 @@ package eu.ezytaget.processing.kotlin_template
 import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
 import eu.ezytaget.processing.kotlin_template.realms.Realm
+import eu.ezytaget.processing.kotlin_template.realms.RealmsManager
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.CellAutomaton3D
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.MooreNeighborCounter
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.VonNeumannNeighborCounter
@@ -38,10 +39,10 @@ class PApplet : processing.core.PApplet() {
         }
 
     private var backgroundAlpha = 0.1f
-        set(value) {
-            field = value
-            println("PApplet: backgroundAlpha: set: $backgroundAlpha")
-        }
+//        set(value) {
+//            field = value
+//            println("PApplet: backgroundAlpha: set: $backgroundAlpha")
+//        }
 
     private var waitingForClickToDraw = false
 
@@ -53,7 +54,7 @@ class PApplet : processing.core.PApplet() {
 
     private var clearFrameOnTextSizeFinding = false
 
-    private val realms = mutableListOf<Realm>()
+    private val realmsManager = RealmsManager()
 
     private var applyCharRaster = false
 
@@ -78,15 +79,6 @@ class PApplet : processing.core.PApplet() {
     private var frameRateLoggingThreshold = 4.1f
 
     private lateinit var kaleidoscope: PGraphics
-
-    private val tesseractRealm: TesseractRealm?
-        get() = realms.firstOrNull { it is TesseractRealm } as? TesseractRealm
-
-    private val cellAutomaton3D: CellAutomaton3D?
-        get() = realms.firstOrNull { it is CellAutomaton3D } as? CellAutomaton3D
-
-    private val scanStripesRealm: ScanStripesRealm?
-        get() = realms.firstOrNull { it is ScanStripesRealm } as? ScanStripesRealm
 
     override fun settings() {
         if (FULL_SCREEN) {
@@ -187,9 +179,7 @@ class PApplet : processing.core.PApplet() {
             return
         }
 
-        realms.forEach {
-            it.handleMouseClick(event.button, event.x, event.y, pApplet = this)
-        }
+        realmsManager.handleMouseClick(event.button, event.x, event.y, pApplet = this)
 
         setTextSize(relativeTextSizeValue = event.x.toFloat())
     }
@@ -199,42 +189,7 @@ class PApplet : processing.core.PApplet() {
      */
 
     private fun initRealms() {
-        realms.clear()
-
-        val juliaSetRealm = JuliaSetRealm()
-        juliaSetRealm.setup(pApplet = this, pGraphics = kaleidoscope)
-        juliaSetRealm.brightness = 1f
-        juliaSetRealm.alpha = 1f
-
-        val tesseractRealm = TesseractRealm()
-
-        val automatonSize = min(width, height) * 0.9f
-
-        val neighborCounter = if (random(1f) > 0.5f) {
-            VonNeumannNeighborCounter()
-        } else {
-            MooreNeighborCounter()
-        }
-
-        if (random.nextBoolean()) {
-            val testImageRealm = TestImageRealm()
-        }
-
-        val cellAutomaton = CellAutomaton3D(
-            numOfCellsPerSide = random(24f, 48f).toInt(),
-            sideLength = automatonSize,
-            neighborCounter = neighborCounter
-        )
-        val scanStripesRealm = ScanStripesRealm()
-        val treeRingsRealm = TreeRingsRealm()
-
-        val scannerRealm = ScannerRealm()
-        realms.add(scannerRealm)
-
-        val jellyfish = JellyFish()
-//        realms.add(jellyfish)
-
-        realms.forEach { it.setup(pApplet = this) }
+        realmsManager.initRandomRealms(pApplet = this, pGraphics = kaleidoscope)
     }
 
     private fun setPerspective() {
@@ -248,16 +203,10 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun iterateDraw() {
-        realms.forEach {
-            it.update(pApplet = this)
-        }
+        realmsManager.update(pApplet = this)
 
         kaleidoscope.beginDraw()
-        realms.forEachIndexed { index, realm ->
-//            if (index == frameCount % realms.size) {
-            realm.drawIn(pGraphics = kaleidoscope)
-//            }
-        }
+        realmsManager.drawIn(pGraphics = kaleidoscope)
         kaleidoscope.endDraw()
 
         if (numberOfKaleidoscopeEdges <= 1) {
@@ -316,7 +265,7 @@ class PApplet : processing.core.PApplet() {
 
         if (clapperResult[BeatInterval.Quarter]?.didChange == true) {
             random.maybe(probability = 0.5f) {
-                cellAutomaton3D?.update()
+                realmsManager.cellAutomaton3D?.update()
             }
         }
 
@@ -345,7 +294,7 @@ class PApplet : processing.core.PApplet() {
                 setRandomNumberOfKaleidoscopeEdges()
             }
             random.maybe {
-                setRandomStyle()
+                realmsManager.setRandomStyle()
             }
             random.maybe {
                 setRandomBackgroundAlpha()
@@ -360,7 +309,7 @@ class PApplet : processing.core.PApplet() {
                 setRandomBackgroundAlpha()
             }
             random.maybe {
-                scanStripesRealm?.resetProgress()
+                realmsManager.scanStripesRealm?.resetProgress()
             }
             random.maybe {
                 setNextNoiseSeed()
@@ -374,7 +323,7 @@ class PApplet : processing.core.PApplet() {
 
     private fun bounce() {
         radiusFactorVelocity = 0.05f
-        realms.forEach { it.bounce(pApplet = this) }
+        realmsManager.bounce(pApplet = this)
     }
 
     private fun setRandomBackgroundAlpha() {
@@ -385,20 +334,16 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setRandomXRotationVelocity() {
-        tesseractRealm?.xRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
+        realmsManager.tesseractRealm?.xRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
     }
 
     private fun setRandomZRotationVelocity() {
-        tesseractRealm?.zRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
-        scanStripesRealm?.setRandomRotationVelocity()
+        realmsManager.tesseractRealm?.zRotationVelocity = random(-MAX_ROTATION_VELOCITY, MAX_ROTATION_VELOCITY)
+        realmsManager.scanStripesRealm?.setRandomRotationVelocity()
     }
 
     private fun toggleSmearPixels() {
         smearPixels = !smearPixels
-    }
-
-    private fun setRandomStyle() {
-        realms.forEach { it.setRandomStyle() }
     }
 
     private fun setTextSize(relativeTextSizeValue: Float) {
