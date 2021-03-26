@@ -128,7 +128,7 @@ class PApplet : processing.core.PApplet() {
             return
         }
 
-        backgroundAlpha = 0.1f
+        backgroundAlpha = noise(frameCount / 1000f)
 
         if (drawBackgroundOnDraw) {
             backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
@@ -282,10 +282,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun clearFrame() {
-        backgroundDrawer.draw(
-            pApplet = this,
-            alpha = 1f
-        )
+        backgroundDrawer.draw(pApplet = this, alpha = 1f)
     }
 
     private fun smearPixels() {
@@ -331,6 +328,10 @@ class PApplet : processing.core.PApplet() {
             random.maybe {
                 setRandomZRotationVelocity()
             }
+
+            random.maybe(probability = 0.9f) {
+                clearFrame()
+            }
         }
 
         if (clapperResult[BeatInterval.TwoWhole]?.didChange == true) {
@@ -341,13 +342,10 @@ class PApplet : processing.core.PApplet() {
                 toggleSmearPixels()
             }
             random.maybe(probability = 0.1f) {
-//                setRandomNumberOfKaleidoscopeEdges()
+                setRandomNumberOfKaleidoscopeEdges()
             }
             random.maybe {
                 setRandomStyle()
-            }
-            random.maybe {
-                clearFrame()
             }
             random.maybe {
                 setRandomBackgroundAlpha()
