@@ -164,6 +164,8 @@ class PApplet : processing.core.PApplet() {
                 clearFrame()
             TOGGLE_SMEAR_PIXELS_KEY ->
                 toggleSmearPixels()
+            TOGGLE_LASER_CLEAR_MODE_KEY ->
+                toggleLaserClearMode()
             INIT_REALMS_KEY ->
                 initRealms()
             SET_NUMBER_OF_KALEIDOSCOPE_EDGES_KEY ->
@@ -314,6 +316,9 @@ class PApplet : processing.core.PApplet() {
             random.maybe {
                 setNextNoiseSeed()
             }
+            random.maybe {
+                toggleLaserClearMode()
+            }
         }
 
         if (clapperResult[BeatInterval.EightWhole]?.didChange == true) {
@@ -344,6 +349,10 @@ class PApplet : processing.core.PApplet() {
 
     private fun toggleSmearPixels() {
         smearPixels = !smearPixels
+    }
+
+    private fun toggleLaserClearMode() {
+        laserClearMode = !laserClearMode
     }
 
     private fun setTextSize(relativeTextSizeValue: Float) {
@@ -418,6 +427,8 @@ class PApplet : processing.core.PApplet() {
         private const val INIT_REALMS_KEY = 'i'
 
         private const val SET_NUMBER_OF_KALEIDOSCOPE_EDGES_KEY = 'k'
+
+        private const val TOGGLE_LASER_CLEAR_MODE_KEY = 'l'
 
         private const val TOGGLE_SMEAR_PIXELS_KEY = 's'
 

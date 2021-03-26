@@ -71,7 +71,7 @@ class RealmsManager {
             realms.add(cellAutomaton)
         }
 
-        random.maybe {
+        random.maybe(probability = 0.2f) {
             val scanStripesRealm = ScanStripesRealm()
             realms.add(scanStripesRealm)
         }
@@ -81,7 +81,7 @@ class RealmsManager {
             realms.add(treeRingsRealm)
         }
 
-        random.maybe {
+        random.maybe(probability = 0.2f) {
             val scannerRealm = ScannerRealm()
             realms.add(scannerRealm)
         }
