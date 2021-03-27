@@ -39,10 +39,6 @@ class PApplet : processing.core.PApplet() {
         }
 
     private var backgroundAlpha = 0.1f
-//        set(value) {
-//            field = value
-//            println("PApplet: backgroundAlpha: set: $backgroundAlpha")
-//        }
 
     private var waitingForClickToDraw = false
 
@@ -76,7 +72,7 @@ class PApplet : processing.core.PApplet() {
 
     private var lastLoggedFrameRate: Float? = null
 
-    private var frameRateLoggingThreshold = 4.1f
+    private var frameRateLoggingThreshold = 7f
 
     private lateinit var kaleidoscope: PGraphics
 
@@ -92,6 +88,8 @@ class PApplet : processing.core.PApplet() {
         frameRate(FRAME_RATE)
         colorMode(COLOR_MODE, MAX_COLOR_VALUE)
         smooth()
+        lights()
+        ambientLight(0.8f, 1f, 1f)
 
         raster.setup(pApplet = this)
 
@@ -105,8 +103,6 @@ class PApplet : processing.core.PApplet() {
         kaleidoscope.endDraw()
 
         initRealms()
-
-        setPerspective()
 
         raster.setup(pApplet = this)
 
@@ -192,16 +188,6 @@ class PApplet : processing.core.PApplet() {
 
     private fun initRealms() {
         realmsManager.initRandomRealms(pApplet = this, pGraphics = kaleidoscope)
-    }
-
-    private fun setPerspective() {
-        val cameraZ = ((height / 2f) / tan(PI * 60f / 360f))
-//        perspective(
-//                PI / 3f,
-//                width.toFloat() / height.toFloat(),
-//                cameraZ / 10f,
-//                cameraZ * 30f
-//        )
     }
 
     private fun iterateDraw() {
