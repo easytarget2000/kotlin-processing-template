@@ -54,7 +54,7 @@ class PApplet : processing.core.PApplet() {
 
     private var applyCharRaster = false
 
-    private var smearPixels = false
+    private var smearPixels = true
 
     private var laserClearMode = false
 
@@ -219,7 +219,7 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun clearFrame() {
-        backgroundDrawer.draw(pApplet = this, alpha = 1f)
+        backgroundDrawer.drawRandomColor(pApplet = this, alpha = 1f, random = random)
     }
 
     private fun smearPixels() {
@@ -230,13 +230,6 @@ class PApplet : processing.core.PApplet() {
                 pixels[i] = pixels[i] - neighborValue
             }
         }
-//            pixels.forEachIndexed { index, pixelValue ->
-//                if (index + 10 == pixels.size) {
-//                    return
-//                }
-//                val neighborValue = pixels[index + 10]
-//                pixels[index] = pixelValue - neighborValue
-//            }
         updatePixels()
     }
 
@@ -318,7 +311,6 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun setRandomBackgroundAlpha() {
-//        backgroundAlpha = random(MAX_COLOR_VALUE)
         if (!random.maybe { backgroundAlpha = random(MAX_COLOR_VALUE / 64f) }) {
             backgroundAlpha = 1f
         }
