@@ -28,7 +28,7 @@ class PApplet : processing.core.PApplet() {
 
     private val clapper = Clapper()
 
-    private var runClapper = true
+    private var runClapper = false
 
     private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
 
@@ -39,6 +39,8 @@ class PApplet : processing.core.PApplet() {
         }
 
     private var backgroundAlpha = 0.1f
+
+    private var useBackgroundDrawerPalette = false
 
     private var waitingForClickToDraw = false
 
@@ -54,13 +56,13 @@ class PApplet : processing.core.PApplet() {
 
     private var applyCharRaster = false
 
-    private var smearPixels = true
+    private var smearPixels = false
 
     private var laserClearMode = false
 
     private var noiseSeedSalt = System.currentTimeMillis()
 
-    private var numberOfKaleidoscopeEdges = 5
+    private var numberOfKaleidoscopeEdges = 1
         set(value) {
             field = value
             println("PApplet: numberOfKaleidoscopeEdges: set: $numberOfKaleidoscopeEdges")
@@ -219,7 +221,11 @@ class PApplet : processing.core.PApplet() {
     }
 
     private fun clearFrame() {
-        backgroundDrawer.drawRandomColor(pApplet = this, alpha = 1f, random = random)
+        if (useBackgroundDrawerPalette) {
+            backgroundDrawer.drawRandomColor(pApplet = this, alpha = 1f, random = random)
+        } else {
+            backgroundDrawer.draw(pApplet = this, alpha = 1f)
+        }
     }
 
     private fun smearPixels() {

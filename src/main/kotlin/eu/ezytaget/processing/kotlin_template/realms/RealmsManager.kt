@@ -4,6 +4,7 @@ import eu.ezytaget.processing.kotlin_template.maybe
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.CellAutomaton3D
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.MooreNeighborCounter
 import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.VonNeumannNeighborCounter
+import eu.ezytaget.processing.kotlin_template.realms.holodeck.Holodeck
 import eu.ezytaget.processing.kotlin_template.realms.jellyfish.JellyFish
 import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
 import eu.ezytaget.processing.kotlin_template.realms.scan_stripes.ScanStripesRealm
@@ -36,60 +37,63 @@ class RealmsManager {
     ) {
         realms.clear()
 
-        random.maybe {
-            val juliaSetRealm = JuliaSetRealm()
-            juliaSetRealm.setup(pApplet, pGraphics)
-            juliaSetRealm.brightness = 1f
-            juliaSetRealm.alpha = 1f
-            realms.add(juliaSetRealm)
-        }
+        val holodeck = Holodeck()
+        realms.add(holodeck)
 
-        random.maybe {
-            val tesseractRealm = TesseractRealm()
-            realms.add(tesseractRealm)
-        }
-
-        random.maybe {
-            val testImageRealm = TestImageRealm()
-            realms.add(testImageRealm)
-        }
-
-        random.maybe {
-            val automatonSize = min(pGraphics.width.toFloat(), pGraphics.height.toFloat()) * 0.9f
-
-            val neighborCounter = if (random.nextDouble(1.0) > 0.5) {
-                VonNeumannNeighborCounter()
-            } else {
-                MooreNeighborCounter()
-            }
-
-            val cellAutomaton = CellAutomaton3D(
-                numOfCellsPerSide = random.nextDouble(24.0, 48.0).toInt(),
-                sideLength = automatonSize,
-                neighborCounter = neighborCounter
-            )
-            realms.add(cellAutomaton)
-        }
-
-        random.maybe(probability = 0.2f) {
-            val scanStripesRealm = ScanStripesRealm()
-            realms.add(scanStripesRealm)
-        }
-
-        random.maybe {
-            val treeRingsRealm = TreeRingsRealm()
-            realms.add(treeRingsRealm)
-        }
-
-        random.maybe(probability = 0.2f) {
-            val scannerRealm = ScannerRealm()
-            realms.add(scannerRealm)
-        }
-
-        random.maybe {
-            val jellyfish = JellyFish()
-            realms.add(jellyfish)
-        }
+//        random.maybe {
+//            val juliaSetRealm = JuliaSetRealm()
+//            juliaSetRealm.setup(pApplet, pGraphics)
+//            juliaSetRealm.brightness = 1f
+//            juliaSetRealm.alpha = 1f
+//            realms.add(juliaSetRealm)
+//        }
+//
+//        random.maybe {
+//            val tesseractRealm = TesseractRealm()
+//            realms.add(tesseractRealm)
+//        }
+//
+//        random.maybe {
+//            val testImageRealm = TestImageRealm()
+//            realms.add(testImageRealm)
+//        }
+//
+//        random.maybe {
+//            val automatonSize = min(pGraphics.width.toFloat(), pGraphics.height.toFloat()) * 0.9f
+//
+//            val neighborCounter = if (random.nextDouble(1.0) > 0.5) {
+//                VonNeumannNeighborCounter()
+//            } else {
+//                MooreNeighborCounter()
+//            }
+//
+//            val cellAutomaton = CellAutomaton3D(
+//                numOfCellsPerSide = random.nextDouble(24.0, 48.0).toInt(),
+//                sideLength = automatonSize,
+//                neighborCounter = neighborCounter
+//            )
+//            realms.add(cellAutomaton)
+//        }
+//
+//        random.maybe(probability = 0.2f) {
+//            val scanStripesRealm = ScanStripesRealm()
+//            realms.add(scanStripesRealm)
+//        }
+//
+//        random.maybe {
+//            val treeRingsRealm = TreeRingsRealm()
+//            realms.add(treeRingsRealm)
+//        }
+//
+//        random.maybe(probability = 0.2f) {
+//            val scannerRealm = ScannerRealm()
+//            realms.add(scannerRealm)
+//        }
+//
+//        random.maybe {
+//            val jellyfish = JellyFish()
+//            realms.add(jellyfish)
+//        }
 
         realms.forEach { it.setup(pApplet) }
     }
