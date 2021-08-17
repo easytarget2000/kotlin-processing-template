@@ -12,17 +12,23 @@ class Holodeck(random: Random = Random.Default): Realm(random) {
 
     var colorValue2 = 1f
 
-    var colorValue3 = 0.7f
+    var colorValue3 = 1f
 
     var alpha = 1f
 
-    var numberOfColumns = 32
+    var numberOfColumns = 48
 
     var lineWidth = 2f
 
     override fun setup(pApplet: PApplet, pGraphics: PGraphics) {
         super.setup(pApplet, pGraphics)
-        lineWidth = min(pGraphics.width.toFloat(), pGraphics.height.toFloat()) / 256f
+//        lineWidth = min(pGraphics.width.toFloat(), pGraphics.height.toFloat()) / 256f
+    }
+
+    override fun update(pApplet: PApplet) {
+        super.update(pApplet)
+
+//        numberOfColumns = ((pApplet.frameCount / 100) % 32) + 16
     }
 
     override fun drawIn(pGraphics: PGraphics) {

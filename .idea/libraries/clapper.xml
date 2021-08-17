@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="clapper">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../clapper/classes/artifacts/clapper/clapper.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../Conductor/clapper/classes/artifacts/clapper/clapper.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
