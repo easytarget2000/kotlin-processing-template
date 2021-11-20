@@ -28,6 +28,10 @@ class RealmsManager {
     val scanStripesRealm: ScanStripesRealm?
         get() = realms.firstOrNull { it is ScanStripesRealm } as? ScanStripesRealm
 
+    var testImageProbability = 0.0f;
+
+    var jellyFishProbability = 0.0f;
+
     private val realms = mutableListOf<Realm>()
 
     fun initRandomRealms(
@@ -37,63 +41,63 @@ class RealmsManager {
     ) {
         realms.clear()
 
-        val holodeck = Holodeck()
-        realms.add(holodeck)
+//        val holodeck = Holodeck()
+//        realms.add(holodeck)
 
-//        random.maybe {
-//            val juliaSetRealm = JuliaSetRealm()
-//            juliaSetRealm.setup(pApplet, pGraphics)
-//            juliaSetRealm.brightness = 1f
-//            juliaSetRealm.alpha = 1f
-//            realms.add(juliaSetRealm)
-//        }
-//
-//        random.maybe {
-//            val tesseractRealm = TesseractRealm()
-//            realms.add(tesseractRealm)
-//        }
-//
-//        random.maybe {
-//            val testImageRealm = TestImageRealm()
-//            realms.add(testImageRealm)
-//        }
-//
-//        random.maybe {
-//            val automatonSize = min(pGraphics.width.toFloat(), pGraphics.height.toFloat()) * 0.9f
-//
-//            val neighborCounter = if (random.nextDouble(1.0) > 0.5) {
-//                VonNeumannNeighborCounter()
-//            } else {
-//                MooreNeighborCounter()
-//            }
-//
-//            val cellAutomaton = CellAutomaton3D(
-//                numOfCellsPerSide = random.nextDouble(24.0, 48.0).toInt(),
-//                sideLength = automatonSize,
-//                neighborCounter = neighborCounter
-//            )
-//            realms.add(cellAutomaton)
-//        }
-//
-//        random.maybe(probability = 0.2f) {
-//            val scanStripesRealm = ScanStripesRealm()
-//            realms.add(scanStripesRealm)
-//        }
-//
+        random.maybe {
+            val juliaSetRealm = JuliaSetRealm()
+            juliaSetRealm.setup(pApplet, pGraphics)
+            juliaSetRealm.brightness = 1f
+            juliaSetRealm.alpha = 1f
+            realms.add(juliaSetRealm)
+        }
+
+        random.maybe {
+            val tesseractRealm = TesseractRealm()
+            realms.add(tesseractRealm)
+        }
+
+        random.maybe(testImageProbability) {
+            val testImageRealm = TestImageRealm()
+            realms.add(testImageRealm)
+        }
+
+        random.maybe {
+            val automatonSize = min(pGraphics.width.toFloat(), pGraphics.height.toFloat()) * 0.9f
+
+            val neighborCounter = if (random.nextDouble(1.0) > 1) {
+                VonNeumannNeighborCounter()
+            } else {
+                MooreNeighborCounter()
+            }
+
+            val cellAutomaton = CellAutomaton3D(
+                numOfCellsPerSide = random.nextDouble(32.0, 64.0).toInt(),
+                sideLength = automatonSize,
+                neighborCounter = neighborCounter
+            )
+            realms.add(cellAutomaton)
+        }
+
+        random.maybe(probability = 0.2f) {
+            val scanStripesRealm = ScanStripesRealm()
+            realms.add(scanStripesRealm)
+        }
+
 //        random.maybe {
 //            val treeRingsRealm = TreeRingsRealm()
 //            realms.add(treeRingsRealm)
 //        }
-//
+
 //        random.maybe(probability = 0.2f) {
-//            val scannerRealm = ScannerRealm()
-//            realms.add(scannerRealm)
+            val scannerRealm = ScannerRealm()
+            realms.add(scannerRealm)
 //        }
-//
-//        random.maybe {
-//            val jellyfish = JellyFish()
-//            realms.add(jellyfish)
-//        }
+
+        random.maybe(jellyFishProbability) {
+            val jellyfish = JellyFish()
+            realms.add(jellyfish)
+        }
 
         realms.forEach { it.setup(pApplet) }
     }
@@ -114,7 +118,7 @@ class RealmsManager {
         realms.forEach { it.bounce(pApplet) }
     }
 
-    fun drawIn(pGraphics: PGraphics) {
+    fun drawIn(pGraphics: PGraphics, frameCount: Int) {
         realms.forEachIndexed { index, realm ->
 //            if (index == frameCount % realms.size) {
             realm.drawIn(pGraphics)

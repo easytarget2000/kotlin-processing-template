@@ -2,18 +2,7 @@ package eu.ezytaget.processing.kotlin_template
 
 import eu.ezytaget.processing.kotlin_template.char_raster.CharRaster
 import eu.ezytaget.processing.kotlin_template.palettes.DuskPalette
-import eu.ezytaget.processing.kotlin_template.realms.Realm
 import eu.ezytaget.processing.kotlin_template.realms.RealmsManager
-import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.CellAutomaton3D
-import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.MooreNeighborCounter
-import eu.ezytaget.processing.kotlin_template.realms.cell_automaton_3d.VonNeumannNeighborCounter
-import eu.ezytaget.processing.kotlin_template.realms.jellyfish.JellyFish
-import eu.ezytaget.processing.kotlin_template.realms.julia_set.JuliaSetRealm
-import eu.ezytaget.processing.kotlin_template.realms.scan_stripes.ScanStripesRealm
-import eu.ezytaget.processing.kotlin_template.realms.scanner.ScannerRealm
-import eu.ezytaget.processing.kotlin_template.realms.tesseract.TesseractRealm
-import eu.ezytaget.processing.kotlin_template.realms.test_image.TestImageRealm
-import eu.ezytaget.processing.kotlin_template.realms.tree_realms.TreeRingsRealm
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
@@ -157,7 +146,8 @@ class PApplet : processing.core.PApplet() {
     override fun keyPressed() {
         when (key) {
             CLAPPER_TAP_BPM_KEY ->
-                clapper.tapBpm()
+                clearFrame()
+//                clapper.tapBpm()
             CLEAR_FRAME_KEY ->
                 clearFrame()
             TOGGLE_SMEAR_PIXELS_KEY ->
@@ -196,7 +186,7 @@ class PApplet : processing.core.PApplet() {
         realmsManager.update(pApplet = this)
 
         kaleidoscope.beginDraw()
-        realmsManager.drawIn(pGraphics = kaleidoscope)
+        realmsManager.drawIn(pGraphics = kaleidoscope, frameCount = frameCount)
         kaleidoscope.endDraw()
 
         if (numberOfKaleidoscopeEdges <= 1) {
