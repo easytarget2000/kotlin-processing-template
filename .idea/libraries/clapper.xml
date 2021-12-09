@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="clapper">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../Conductor/clapper/classes/artifacts/clapper/clapper.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/clapper" />
+    </SOURCES>
   </library>
 </component>

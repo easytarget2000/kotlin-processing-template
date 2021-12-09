@@ -33,26 +33,26 @@ class CellAutomaton3D(
         val centerCubeStart = centerIndex - centerCubeSizeHalf
         val centerCubeEnd = centerIndex + centerCubeSizeHalf
 
-//        xIndex in centerCubeStart..centerCubeEnd &&
-//                yIndex in centerCubeStart..centerCubeEnd &&
-//                zIndex in centerCubeStart..centerCubeEnd
+        xIndex in centerCubeStart..centerCubeEnd &&
+                yIndex in centerCubeStart..centerCubeEnd &&
+                zIndex in centerCubeStart..centerCubeEnd
 
-//        ((xIndex == centerCubeStart || xIndex == centerCubeEnd) and (
-//                (yIndex in centerCubeStart..centerCubeEnd) and
-//                        (zIndex in centerCubeStart..centerCubeEnd)
-//                )) or
-//                ((xIndex in centerCubeStart..centerCubeEnd) and (
-//                        (yIndex == centerCubeStart || yIndex == centerCubeEnd) and
-//                                (zIndex in centerCubeStart..centerCubeEnd)
-//                        )) or
-//                        ((xIndex in centerCubeStart..centerCubeEnd) and
-//                                (yIndex in centerCubeStart..centerCubeEnd) and
-//                                (zIndex == centerCubeStart || zIndex == centerCubeEnd))
+        ((xIndex == centerCubeStart || xIndex == centerCubeEnd) and (
+                (yIndex in centerCubeStart..centerCubeEnd) and
+                        (zIndex in centerCubeStart..centerCubeEnd)
+                )) or
+                ((xIndex in centerCubeStart..centerCubeEnd) and (
+                        (yIndex == centerCubeStart || yIndex == centerCubeEnd) and
+                                (zIndex in centerCubeStart..centerCubeEnd)
+                        )) or
+                        ((xIndex in centerCubeStart..centerCubeEnd) and
+                                (yIndex in centerCubeStart..centerCubeEnd) and
+                                (zIndex == centerCubeStart || zIndex == centerCubeEnd))
 
-        (random.nextFloat() < 0.0001f) or
-                ((xIndex == centerIndex) and
-                        (yIndex == centerIndex) and
-                        (zIndex == centerIndex))
+//        (random.nextFloat() < 0.0001f) or
+//                ((xIndex == centerIndex) and
+//                        (yIndex == centerIndex) and
+//                        (zIndex == centerIndex))
 
 
     }

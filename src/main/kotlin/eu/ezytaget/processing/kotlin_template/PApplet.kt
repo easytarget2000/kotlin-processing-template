@@ -146,8 +146,7 @@ class PApplet : processing.core.PApplet() {
     override fun keyPressed() {
         when (key) {
             CLAPPER_TAP_BPM_KEY ->
-                clearFrame()
-//                clapper.tapBpm()
+                clapper.tapBpm()
             CLEAR_FRAME_KEY ->
                 clearFrame()
             TOGGLE_SMEAR_PIXELS_KEY ->
