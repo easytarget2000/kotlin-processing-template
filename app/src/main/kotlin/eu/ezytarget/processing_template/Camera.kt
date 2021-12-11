@@ -1,4 +1,4 @@
-package eu.ezytaget.processing.julia_set_fractals
+package eu.ezytarget.processing.julia_set_fractals
 
 import processing.core.PApplet
 import processing.core.PConstants.HALF_PI

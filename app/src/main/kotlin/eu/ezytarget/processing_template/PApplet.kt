@@ -1,10 +1,10 @@
 package eu.ezytarget.processing_template
 
+import eu.ezytarget.clapper.BeatInterval
+import eu.ezytarget.clapper.Clapper
 import eu.ezytarget.processing_template.char_raster.CharRaster
 import eu.ezytarget.processing_template.palettes.DuskPalette
 import eu.ezytarget.processing_template.realms.RealmsManager
-import eu.ezytarget.clapper.BeatInterval
-import eu.ezytarget.clapper.Clapper
 import processing.core.PConstants
 import processing.core.PGraphics
 import processing.event.MouseEvent
