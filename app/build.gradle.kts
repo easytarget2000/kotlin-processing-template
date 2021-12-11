@@ -5,6 +5,12 @@ plugins {
     application
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(14))
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -16,7 +22,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     // Common location of Processing 4 core libs on macOS:
-    implementation(files("/Applications/Processing.app/Contents/Java/core/library/core.jar"))
+    implementation(fileTree("/Applications/Processing.app/Contents/Java/core/library/"))
 
     implementation(project(":clapper", configuration = "default"))
 
