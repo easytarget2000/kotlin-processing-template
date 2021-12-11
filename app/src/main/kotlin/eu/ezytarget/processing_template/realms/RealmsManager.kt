@@ -41,8 +41,10 @@ class RealmsManager {
     ) {
         realms.clear()
 
-//        val holodeck = Holodeck()
-//        realms.add(holodeck)
+        random.maybe(probability = 0.1f) {
+            val holodeck = Holodeck()
+            realms.add(holodeck)
+        }
 
         random.maybe {
             val juliaSetRealm = JuliaSetRealm()
@@ -89,10 +91,10 @@ class RealmsManager {
 //            realms.add(treeRingsRealm)
 //        }
 
-//        random.maybe(probability = 0.2f) {
+        random.maybe(probability = 0.2f) {
             val scannerRealm = ScannerRealm()
             realms.add(scannerRealm)
-//        }
+        }
 
         random.maybe(jellyFishProbability) {
             val jellyfish = JellyFish()
