@@ -66,7 +66,7 @@ class Raster() {
 
     fun setTextSize(pApplet: PApplet, textSize: Float) {
         pApplet.push()
-        monoFont = pApplet.createFont("andalemo.ttf", textSize)
+//        monoFont = pApplet.createFont("andalemo.ttf", textSize)
         pApplet.textFont(monoFont)
         pApplet.textLeading(textLeadingRatio)
 

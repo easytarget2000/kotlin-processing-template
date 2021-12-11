@@ -67,8 +67,8 @@ class CharRaster {
 
     fun setTextSize(pApplet: PApplet, textSize: Float) {
         pApplet.push()
-        monoFont = pApplet.createFont("andalemo.ttf", textSize)
-        pApplet.textFont(monoFont)
+//        monoFont = pApplet.createFont("andalemo.ttf", textSize)
+//        pApplet.textFont(monoFont)
         pApplet.textLeading(textLeadingRatio)
 
         findRasterSizeByTextSize(pApplet)
