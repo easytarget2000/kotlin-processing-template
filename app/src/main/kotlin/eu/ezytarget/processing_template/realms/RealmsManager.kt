@@ -4,14 +4,23 @@ import eu.ezytarget.processing_template.maybe
 import eu.ezytarget.processing_template.realms.cell_automaton_3d.CellAutomaton3D
 import eu.ezytarget.processing_template.realms.cell_automaton_3d.MooreNeighborCounter
 import eu.ezytarget.processing_template.realms.cell_automaton_3d.VonNeumannNeighborCounter
+import eu.ezytarget.processing_template.realms.holodeck.HoloDeckBuilder
 import eu.ezytarget.processing_template.realms.holodeck.Holodeck
 import eu.ezytarget.processing_template.realms.jellyfish.JellyFish
+import eu.ezytarget.processing_template.realms.jellyfish.JellyFishRealmBuilder
 import eu.ezytarget.processing_template.realms.julia_set.JuliaSetRealm
+import eu.ezytarget.processing_template.realms.julia_set.JuliaSetRealmBuilder
+import eu.ezytarget.processing_template.realms.neon_tunnel.NeonTunnel
 import eu.ezytarget.processing_template.realms.scan_stripes.ScanStripesRealm
+import eu.ezytarget.processing_template.realms.scan_stripes.ScanStripesRealmBuilder
 import eu.ezytarget.processing_template.realms.scanner.ScannerRealm
+import eu.ezytarget.processing_template.realms.scanner.ScannerRealmBuilder
 import eu.ezytarget.processing_template.realms.tesseract.TesseractRealm
+import eu.ezytarget.processing_template.realms.tesseract.TesseractRealmBuilder
 import eu.ezytarget.processing_template.realms.test_image.TestImageRealm
+import eu.ezytarget.processing_template.realms.test_image.TestImageRealmBuilder
 import eu.ezytarget.processing_template.realms.tree_realms.TreeRingsRealm
+import eu.ezytarget.processing_template.realms.tree_realms.TreeRingsRealmBuilder
 import processing.core.PApplet
 import processing.core.PGraphics
 import kotlin.math.min
@@ -28,9 +37,18 @@ class RealmsManager {
     val scanStripesRealm: ScanStripesRealm?
         get() = realms.firstOrNull { it is ScanStripesRealm } as? ScanStripesRealm
 
-    var testImageProbability = 0.0f;
+    var realmBuildersAndProbabilities = mutableMapOf(
+        HoloDeckBuilder to 0.1f,
+        TesseractRealmBuilder to 0.5f,
+        TestImageRealmBuilder to 0f,
+        ScanStripesRealmBuilder to 0.2f,
+        TreeRingsRealmBuilder to 0f,
+        ScannerRealmBuilder to 0.2f,
+        JellyFishRealmBuilder to 0f,
+        JuliaSetRealmBuilder() to 0.5f
+    )
 
-    var jellyFishProbability = 0.0f;
+    var drawAllAtOnce = true
 
     private val realms = mutableListOf<Realm>()
 
@@ -41,27 +59,10 @@ class RealmsManager {
     ) {
         realms.clear()
 
-        random.maybe(probability = 0.1f) {
-            val holodeck = Holodeck()
-            realms.add(holodeck)
-        }
-
-        random.maybe {
-            val juliaSetRealm = JuliaSetRealm()
-            juliaSetRealm.setup(pApplet, pGraphics)
-            juliaSetRealm.brightness = 1f
-            juliaSetRealm.alpha = 1f
-            realms.add(juliaSetRealm)
-        }
-
-        random.maybe {
-            val tesseractRealm = TesseractRealm()
-            realms.add(tesseractRealm)
-        }
-
-        random.maybe(testImageProbability) {
-            val testImageRealm = TestImageRealm()
-            realms.add(testImageRealm)
+        realmBuildersAndProbabilities.forEach {
+            random.maybe(probability = it.value) {
+                realms.add(it.key.build())
+            }
         }
 
         random.maybe {
@@ -81,27 +82,7 @@ class RealmsManager {
             realms.add(cellAutomaton)
         }
 
-        random.maybe(probability = 0.2f) {
-            val scanStripesRealm = ScanStripesRealm()
-            realms.add(scanStripesRealm)
-        }
-
-//        random.maybe {
-//            val treeRingsRealm = TreeRingsRealm()
-//            realms.add(treeRingsRealm)
-//        }
-
-        random.maybe(probability = 0.2f) {
-            val scannerRealm = ScannerRealm()
-            realms.add(scannerRealm)
-        }
-
-        random.maybe(jellyFishProbability) {
-            val jellyfish = JellyFish()
-            realms.add(jellyfish)
-        }
-
-        realms.forEach { it.setup(pApplet) }
+        realms.forEach { it.setup(pApplet, pGraphics) }
     }
 
     fun handleMouseClick(button: Int, mouseX: Int, mouseY: Int, pApplet: PApplet) {
@@ -122,9 +103,9 @@ class RealmsManager {
 
     fun drawIn(pGraphics: PGraphics, frameCount: Int) {
         realms.forEachIndexed { index, realm ->
-//            if (index == frameCount % realms.size) {
-            realm.drawIn(pGraphics)
-//            }
+            if (drawAllAtOnce || index == frameCount % realms.size) {
+                realm.drawIn(pGraphics)
+            }
         }
     }
 
