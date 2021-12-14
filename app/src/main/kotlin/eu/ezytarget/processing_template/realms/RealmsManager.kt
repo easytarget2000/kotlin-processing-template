@@ -2,6 +2,7 @@ package eu.ezytarget.processing_template.realms
 
 import eu.ezytarget.processing_template.maybe
 import eu.ezytarget.processing_template.realms.cell_automaton_3d.CellAutomaton3D
+import eu.ezytarget.processing_template.realms.cell_automaton_3d.CellAutomaton3DBuilder
 import eu.ezytarget.processing_template.realms.cell_automaton_3d.MooreNeighborCounter
 import eu.ezytarget.processing_template.realms.cell_automaton_3d.VonNeumannNeighborCounter
 import eu.ezytarget.processing_template.realms.holodeck.HoloDeckBuilder
@@ -45,7 +46,7 @@ class RealmsManager {
         TreeRingsRealmBuilder to 0f,
         ScannerRealmBuilder to 0.2f,
         JellyFishRealmBuilder to 0f,
-        JuliaSetRealmBuilder() to 0.5f
+        JuliaSetRealmBuilder() to 0.5f,
     )
 
     var drawAllAtOnce = true
@@ -59,27 +60,17 @@ class RealmsManager {
     ) {
         realms.clear()
 
+        realmBuildersAndProbabilities.clear()
+
+        val cellAutomaton3DBuilder = CellAutomaton3DBuilder()
+        cellAutomaton3DBuilder.sideLength = min(pGraphics.width, pGraphics.height).toFloat() * 0.9f
+        cellAutomaton3DBuilder.vonNeumannProbability = 0.5f
+        realmBuildersAndProbabilities[cellAutomaton3DBuilder] = 0.3f
+
         realmBuildersAndProbabilities.forEach {
             random.maybe(probability = it.value) {
                 realms.add(it.key.build())
             }
-        }
-
-        random.maybe {
-            val automatonSize = min(pGraphics.width.toFloat(), pGraphics.height.toFloat()) * 0.9f
-
-            val neighborCounter = if (random.nextDouble(1.0) > 1) {
-                VonNeumannNeighborCounter()
-            } else {
-                MooreNeighborCounter()
-            }
-
-            val cellAutomaton = CellAutomaton3D(
-                numOfCellsPerSide = random.nextDouble(32.0, 64.0).toInt(),
-                sideLength = automatonSize,
-                neighborCounter = neighborCounter
-            )
-            realms.add(cellAutomaton)
         }
 
         realms.forEach { it.setup(pApplet, pGraphics) }
