@@ -22,6 +22,7 @@ import eu.ezytarget.processing_template.realms.test_image.TestImageRealm
 import eu.ezytarget.processing_template.realms.test_image.TestImageRealmBuilder
 import eu.ezytarget.processing_template.realms.tree_realms.TreeRingsRealm
 import eu.ezytarget.processing_template.realms.tree_realms.TreeRingsRealmBuilder
+import eu.ezytarget.processing_template.realms.vaypr.VayprRealmBuilder
 import processing.core.PApplet
 import processing.core.PGraphics
 import kotlin.math.min
@@ -41,7 +42,7 @@ class RealmsManager {
     var realmBuildersAndProbabilities = mutableMapOf(
         HoloDeckBuilder to 0.1f,
         TesseractRealmBuilder to 0.5f,
-        TestImageRealmBuilder to 0f,
+        TestImageRealmBuilder to 0.05f,
         ScanStripesRealmBuilder to 0.2f,
         TreeRingsRealmBuilder to 0f,
         ScannerRealmBuilder to 0.2f,
@@ -60,12 +61,24 @@ class RealmsManager {
     ) {
         realms.clear()
 
-        realmBuildersAndProbabilities.clear()
+        val width = pGraphics.width.toFloat()
+        val height = pGraphics.height.toFloat()
 
         val cellAutomaton3DBuilder = CellAutomaton3DBuilder()
-        cellAutomaton3DBuilder.sideLength = min(pGraphics.width, pGraphics.height).toFloat() * 0.9f
+        cellAutomaton3DBuilder.sideLength = min(width, height) * 0.9f
         cellAutomaton3DBuilder.vonNeumannProbability = 0.5f
         realmBuildersAndProbabilities[cellAutomaton3DBuilder] = 0.3f
+
+        realms.clear()
+
+        realmBuildersAndProbabilities = mutableMapOf(
+            VayprRealmBuilder().apply {
+                originX = width / 2f
+                originY = height / 2f
+                worldWidth = min(width, height)
+                worldHeight = min(width, height)
+            } to 1f
+        )
 
         realmBuildersAndProbabilities.forEach {
             random.maybe(probability = it.value) {
