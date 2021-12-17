@@ -19,9 +19,9 @@ class VayprRealm(
 
     var maxNumOfParticles: Int = 256
 
-    var drawLine = true
+    var drawLine = false
 
-    var numberOfSlices: Int = 16
+    var numberOfSlices: Int = 1
 
     var yRotationOffset: Float = 0f
 
@@ -60,6 +60,7 @@ class VayprRealm(
 
     private fun drawSlice(pGraphics: PGraphics) {
         pGraphics.stroke(1f);
+        pGraphics.strokeWeight(1f);
 
         if (drawLine) {
             pGraphics.beginShape(LINES)
@@ -69,7 +70,11 @@ class VayprRealm(
             if (drawLine) {
                 pGraphics.vertex(originX - currentParticle.position.x, originY - currentParticle.position.y)
             } else {
-                drawPoint(currentParticle)
+                pGraphics.point(
+                    currentParticle.position.x,
+                    currentParticle.position.y,
+                    currentParticle.position.z
+                );
             }
             currentParticle = currentParticle.next
         } while (currentParticle != firstParticle)
@@ -83,11 +88,6 @@ class VayprRealm(
         particle.update(random = random)
     }
 
-    private fun drawPoint(particle: Particle) {
-        if (debugDrawIDs.isNotEmpty() && !debugDrawIDs.contains(particle.id)) {
-            return
-        }
-    }
 
     private fun addParticle(random: Random) = random.nextFloat() < addParticleProbability
 
