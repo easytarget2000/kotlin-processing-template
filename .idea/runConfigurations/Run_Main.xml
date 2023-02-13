@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run Main" type="JetRunConfigurationType">
-    <option name="MAIN_CLASS_NAME" value="MainKt" />
-    <module name="kotlin-processing-template-2.app.main" />
+    <option name="MAIN_CLASS_NAME" value="eu.ezytarget.processingtemplate.MainKt" />
+    <module name="KotlinProcessingTemplate.app.main" />
     <shortenClasspath name="NONE" />
     <method v="2">
       <option name="Make" enabled="true" />

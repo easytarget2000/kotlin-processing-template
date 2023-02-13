@@ -5,7 +5,7 @@ plugins {
     application
 }
 
-group = "org.example"
+group = "eu.ezytarget.processingtemplate"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -16,12 +16,7 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
 dependencies {
-    // Common location of Processing 4 core libs on macOS:
     implementation(fileTree("/Applications/Processing.app/Contents/Java/core/library/"))
 
     implementation(project(":clapper", configuration = "default"))
@@ -32,5 +27,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("eu.ezytarget.processing_template.Main")
+    mainClass.set("eu.ezytarget.processingtemplate.Main")
 }
