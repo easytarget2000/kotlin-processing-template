@@ -4,17 +4,28 @@ import eu.ezytarget.processingtemplate.Color
 import processing.core.PGraphics
 import processing.core.PVector
 
-internal class GrainyGridLayer: Layer {
+internal class GrainyGridLayer : Layer {
+    override var intensity: Layer.Intensity = Layer.Intensity.MEDIUM
+        set(value) {
+            field = value
+            colorVelocity = colorVelocity(field)
+        }
+
     private var offset = PVector(0f, 0f, 0f)
     private var offsetVelocity = PVector(0.9f, 0.1f, 0f)
     private var lineWidth = 1f
     private var distance = 3
+    private var colorMax = 1f
     private var color = Color(1f, 0.5f, 0.5f, 1f)
+    private var colorVelocity = colorVelocity(intensity)
 
-    override var intensity: Layer.Intensity = Layer.Intensity.MEDIUM
+    override fun setColorMax(colorMax: Float) {
+        this.colorMax = colorMax
+    }
 
     override fun update(deltaTime: Long) {
         offset = PVector.add(offset, offsetVelocity)
+        color = color.wrapAroundAdd(colorVelocity, colorMax)
     }
 
     override fun draw(pGraphics: PGraphics) {
@@ -44,6 +55,14 @@ internal class GrainyGridLayer: Layer {
                     y.toFloat() + gridOffsetY,
                 )
             }
+        }
+    }
+
+    companion object {
+        private fun colorVelocity(intensity: Layer.Intensity) = when (intensity) {
+            Layer.Intensity.LOW -> Color(0.01f, 0f, 0f, 0f)
+            Layer.Intensity.MEDIUM -> Color(0.05f, 0f, 0f, 0f)
+            Layer.Intensity.HIGH -> Color(0.1f, 0f, 0f, 0f)
         }
     }
 }

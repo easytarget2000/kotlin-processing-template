@@ -7,8 +7,9 @@
     <list default="true" id="9b602cdb-080b-45fb-afe3-b3f64099434c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/Color.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/Color.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/Main.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/MainApplet.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/MainApplet.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/layer/GrainyGridLayer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/layer/GrainyGridLayer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/layer/Layer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/layer/Layer.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/clapper" beforeDir="false" afterPath="$PROJECT_DIR$/clapper" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/clapper/lib/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/clapper/lib/build.gradle.kts" afterDir="false" />
     </list>

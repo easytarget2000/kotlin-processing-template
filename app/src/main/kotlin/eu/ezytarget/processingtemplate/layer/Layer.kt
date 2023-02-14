@@ -10,7 +10,7 @@ internal interface Layer {
 
     var intensity: Intensity
 
+    fun setColorMax(colorMax: Float)
     fun update(deltaTime: Long)
-
     fun draw(pGraphics: PGraphics)
 }

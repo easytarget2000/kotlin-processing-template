@@ -20,9 +20,9 @@ internal class MainApplet : PApplet() {
     }
 
     override fun setup() {
-        colorMode(HSB, 1f)
+        colorMode(HSB, COLOR_MAX)
         lastUpdateTimestamp = now()
-        layers = mutableListOf(GrainyGridLayer())
+        initLayers()
     }
 
     override fun draw() {
@@ -33,6 +33,25 @@ internal class MainApplet : PApplet() {
         layers.forEach {
             it.draw(graphics)
         }
+    }
+
+    override fun keyPressed() {
+        when (val key = this.key) {
+            '1' -> setLayersIntensity(Layer.Intensity.LOW)
+            '2' -> setLayersIntensity(Layer.Intensity.MEDIUM)
+            '3' -> setLayersIntensity(Layer.Intensity.HIGH)
+            else -> println("keyPressed(): Unhandled key = $key")
+        }
+    }
+
+    private fun initLayers() {
+        layers = mutableListOf(GrainyGridLayer())
+        layers.forEach { it.setColorMax(COLOR_MAX) }
+    }
+
+    private fun setLayersIntensity(intensity: Layer.Intensity) {
+        println("setLayersIntensity(): intensity = $intensity")
+        layers.forEach { it.intensity = intensity }
     }
 
     private fun clearBackground() {
@@ -54,6 +73,8 @@ internal class MainApplet : PApplet() {
     }
 
     companion object {
+        const val COLOR_MAX = 1f
+
         private fun now() = System.currentTimeMillis()
     }
 }
