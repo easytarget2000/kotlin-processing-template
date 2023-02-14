@@ -7,6 +7,8 @@ import processing.core.PApplet
 internal class MainApplet : PApplet() {
     private var layers = mutableListOf<Layer>()
     private var lastUpdateTimestamp = now()
+    private var clearBackgroundOnDraw = true
+    private var clearBackgroundColor = Color.BLACK_SOLID
 
     public override fun runSketch() {
         super.runSketch()
@@ -24,11 +26,22 @@ internal class MainApplet : PApplet() {
     }
 
     override fun draw() {
-        background(0)
+        if (clearBackgroundOnDraw) {
+            clearBackground()
+        }
         update()
         layers.forEach {
             it.draw(graphics)
         }
+    }
+
+    private fun clearBackground() {
+        background(
+            clearBackgroundColor.value1,
+            clearBackgroundColor.value2,
+            clearBackgroundColor.value3,
+            clearBackgroundColor.alpha,
+        )
     }
 
     private fun update() {
