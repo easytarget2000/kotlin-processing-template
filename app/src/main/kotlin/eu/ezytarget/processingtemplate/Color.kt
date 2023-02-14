@@ -1,5 +1,7 @@
 package eu.ezytarget.processingtemplate
 
+import kotlin.random.Random
+
 internal data class Color(
     var value1: Float,
     var value2: Float,
@@ -19,5 +21,12 @@ internal data class Color(
     companion object {
         val BLACK_SOLID = Color(0f, 0f, 0f, 1f)
         val ZERO = Color(0f, 0f, 0f, 0f)
+
+        fun randomSolid(random: Random = Random.Default, max: Float) = Color(
+            random.nextFloat(max),
+            random.nextFloat(max),
+            random.nextFloat(max),
+            max,
+        )
     }
 }

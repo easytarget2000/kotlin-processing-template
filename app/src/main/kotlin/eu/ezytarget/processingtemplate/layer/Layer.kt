@@ -1,6 +1,5 @@
 package eu.ezytarget.processingtemplate.layer
 
-import processing.core.PApplet
 import processing.core.PGraphics
 
 internal interface Layer {

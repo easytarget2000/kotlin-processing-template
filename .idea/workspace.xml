@@ -5,6 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9b602cdb-080b-45fb-afe3-b3f64099434c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/RandomExt.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/layer/GrainyGridLayerFactory.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/Color.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/Color.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/MainApplet.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/MainApplet.kt" afterDir="false" />
@@ -27,6 +29,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Kotlin Interface" />
+        <option value="Kotlin Object" />
         <option value="Kotlin Class" />
       </list>
     </option>

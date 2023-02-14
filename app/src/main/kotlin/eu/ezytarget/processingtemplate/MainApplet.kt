@@ -1,14 +1,19 @@
 package eu.ezytarget.processingtemplate
 
 import eu.ezytarget.processingtemplate.layer.GrainyGridLayer
+import eu.ezytarget.processingtemplate.layer.GrainyGridLayerFactory
 import eu.ezytarget.processingtemplate.layer.Layer
 import processing.core.PApplet
+import kotlin.random.Random
 
-internal class MainApplet : PApplet() {
+internal class MainApplet(
+    val random: Random = Random.Default
+) : PApplet() {
     private var layers = mutableListOf<Layer>()
     private var lastUpdateTimestamp = now()
     private var clearBackgroundOnDraw = true
     private var clearBackgroundColor = Color.BLACK_SOLID
+    private var rotationAngle = 0f
 
     public override fun runSketch() {
         super.runSketch()
@@ -30,6 +35,7 @@ internal class MainApplet : PApplet() {
             clearBackground()
         }
         update()
+
         layers.forEach {
             it.draw(graphics)
         }
@@ -45,7 +51,10 @@ internal class MainApplet : PApplet() {
     }
 
     private fun initLayers() {
-        layers = mutableListOf(GrainyGridLayer())
+        layers = mutableListOf(
+            GrainyGridLayerFactory.next(random),
+            GrainyGridLayerFactory.next(random),
+            )
         layers.forEach { it.setColorMax(COLOR_MAX) }
     }
 
@@ -71,6 +80,8 @@ internal class MainApplet : PApplet() {
             it.update(deltaTime)
         }
     }
+
+    private fun randomAngle() = random.nextFloat() * TAU
 
     companion object {
         const val COLOR_MAX = 1f
