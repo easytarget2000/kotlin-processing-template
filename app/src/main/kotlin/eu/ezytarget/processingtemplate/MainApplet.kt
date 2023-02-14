@@ -1,14 +1,12 @@
 package eu.ezytarget.processingtemplate
 
+import eu.ezytarget.processingtemplate.layer.GrainyGridLayer
+import eu.ezytarget.processingtemplate.layer.Layer
 import processing.core.PApplet
-import processing.core.PVector
 
 internal class MainApplet : PApplet() {
-    private var gridOffset = PVector(0f, 0f, 0f)
-    private var gridOffsetVelocity = PVector(0.9f, 0.1f, 0f)
-    private var gridLineWidth = 1f
-    private var gridDistance = 3
-    private var gridColor = Color(1f, 0.5f, 0.5f, 1f)
+    private var layers = mutableListOf<Layer>()
+    private var lastUpdateTimestamp = now()
 
     public override fun runSketch() {
         super.runSketch()
@@ -21,52 +19,28 @@ internal class MainApplet : PApplet() {
 
     override fun setup() {
         colorMode(HSB, 1f)
+        lastUpdateTimestamp = now()
+        layers = mutableListOf(GrainyGridLayer())
     }
 
     override fun draw() {
         background(0)
         update()
-        drawGrid()
+        layers.forEach {
+            it.draw(graphics)
+        }
     }
 
     private fun update() {
-        gridOffset = PVector.add(gridOffset, gridOffsetVelocity)
-    }
+        val deltaTime = now() - lastUpdateTimestamp
+        lastUpdateTimestamp = now()
 
-    private fun drawGrid() {
-        strokeWeight(gridLineWidth)
-        stroke(gridColor.value1, gridColor.value2, gridColor.value3, gridColor.alpha)
-
-        val startX = 0 - gridDistance
-        val endX = width + gridDistance
-        val startY = 0 - gridDistance
-        val endY = height + gridDistance
-
-        val gridOffsetX = gridOffset.x % gridDistance.toFloat()
-        val gridOffsetY = gridOffset.y % gridDistance.toFloat()
-
-        for (x in startX..endX step gridDistance) {
-            line(
-                x.toFloat() + gridOffsetX,
-                startY.toFloat() + gridOffsetY,
-                x.toFloat() + gridOffsetX,
-                endY.toFloat() + gridOffsetY,
-            )
-            for (y in startY..endY step gridDistance) {
-                line(
-                    startX.toFloat() + gridOffsetX,
-                    y.toFloat() + gridOffsetY,
-                    endX.toFloat() + gridOffsetX,
-                    y.toFloat() + gridOffsetY,
-                )
-            }
+        layers.forEach {
+            it.update(deltaTime)
         }
     }
-}
 
-internal data class Color(
-    var value1: Float,
-    var value2: Float,
-    var value3: Float,
-    var alpha: Float,
-)
+    companion object {
+        private fun now() = System.currentTimeMillis()
+    }
+}
