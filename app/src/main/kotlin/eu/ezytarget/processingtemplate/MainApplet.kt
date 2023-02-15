@@ -2,9 +2,8 @@ package eu.ezytarget.processingtemplate
 
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
-import eu.ezytarget.processingtemplate.layers.paddedgrid.PaddedGridLayerFactory
 import eu.ezytarget.processingtemplate.layers.Layer
-import eu.ezytarget.processingtemplate.layers.grainygrid.GrainyGridLayerFactory
+import eu.ezytarget.processingtemplate.layers.testimage.TestImageLayer
 import processing.core.PApplet
 import kotlin.random.Random
 
@@ -17,6 +16,8 @@ internal class MainApplet(
     private var clearBackgroundOnDraw = true
     private var clearBackgroundColor = Color.BLACK_SOLID
     private var rotationAngle = 0f
+    private var drawTestImage = true
+    private val testImageLayer = TestImageLayer()
 
     public override fun runSketch() {
         super.runSketch()
@@ -45,6 +46,12 @@ internal class MainApplet(
             layer.draw(graphics)
             graphics.pop()
         }
+
+        if (drawTestImage) {
+            graphics.push()
+            testImageLayer.draw(graphics)
+            graphics.pop()
+        }
     }
 
     override fun keyPressed() {
@@ -60,8 +67,8 @@ internal class MainApplet(
     private fun initLayers() {
         layers = mutableListOf(
 //            GrainyGridLayerFactory.next(random),
-            PaddedGridLayerFactory.next(random),
-            PaddedGridLayerFactory.next(random),
+//            PaddedGridLayerFactory.next(random),
+//            PaddedGridLayerFactory.next(random),
         )
         layers.forEach { it.setColorMax(COLOR_MAX) }
     }
@@ -89,12 +96,14 @@ internal class MainApplet(
         layers.forEach {
             it.update(deltaTime)
         }
+        testImageLayer.update(deltaTime)
     }
 
     private fun updateClapper() {
         val result = clapper.update()
-        if (result[BeatInterval.Quarter]?.didChange == true) {
-            toggleClearBackgroundOnDraw()
+        if (result[BeatInterval.Eighth]?.didChange == true) {
+//            toggleClearBackgroundOnDraw()
+            testImageLayer.drawCircle = !testImageLayer.drawCircle
         }
     }
 
