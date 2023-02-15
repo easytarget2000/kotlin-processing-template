@@ -54,7 +54,7 @@ internal class PaddedGridLayer(
         pGraphics.strokeCap(SQUARE)
         pGraphics.stroke(color.value1, color.value2, color.value3, color.alpha)
 
-        val canvasSize = pGraphics.width.coerceAtLeast(pGraphics.height) / 2
+        val canvasSize = pGraphics.width.coerceAtLeast(pGraphics.height)
         val canvasWidth = canvasSize
         val canvasHeight = canvasSize
 

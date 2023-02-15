@@ -1,5 +1,7 @@
 package eu.ezytarget.processingtemplate
 
+import eu.ezytarget.clapper.BeatInterval
+import eu.ezytarget.clapper.Clapper
 import eu.ezytarget.processingtemplate.layers.paddedgrid.PaddedGridLayerFactory
 import eu.ezytarget.processingtemplate.layers.Layer
 import eu.ezytarget.processingtemplate.layers.grainygrid.GrainyGridLayerFactory
@@ -10,6 +12,7 @@ internal class MainApplet(
     val random: Random = Random.Default
 ) : PApplet() {
     private var layers = mutableListOf<Layer>()
+    private val clapper = Clapper().also { it.bpm = 130f }
     private var lastUpdateTimestamp = now()
     private var clearBackgroundOnDraw = true
     private var clearBackgroundColor = Color.BLACK_SOLID
@@ -28,6 +31,7 @@ internal class MainApplet(
         colorMode(HSB, COLOR_MAX)
         lastUpdateTimestamp = now()
         initLayers()
+        clapper.start()
     }
 
     override fun draw() {
@@ -55,9 +59,9 @@ internal class MainApplet(
 
     private fun initLayers() {
         layers = mutableListOf(
-            GrainyGridLayerFactory.next(random),
-//            PaddedGridLayerFactory.next(random),
-//            PaddedGridLayerFactory.next(random),
+//            GrainyGridLayerFactory.next(random),
+            PaddedGridLayerFactory.next(random),
+            PaddedGridLayerFactory.next(random),
         )
         layers.forEach { it.setColorMax(COLOR_MAX) }
     }
@@ -80,8 +84,17 @@ internal class MainApplet(
         val deltaTime = now() - lastUpdateTimestamp
         lastUpdateTimestamp = now()
 
+        updateClapper()
+
         layers.forEach {
             it.update(deltaTime)
+        }
+    }
+
+    private fun updateClapper() {
+        val result = clapper.update()
+        if (result[BeatInterval.Quarter]?.didChange == true) {
+            toggleClearBackgroundOnDraw()
         }
     }
 

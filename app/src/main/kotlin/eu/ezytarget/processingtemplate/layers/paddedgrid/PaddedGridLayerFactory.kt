@@ -1,6 +1,7 @@
 package eu.ezytarget.processingtemplate.layers.paddedgrid
 
 import eu.ezytarget.processingtemplate.Color
+import eu.ezytarget.processingtemplate.nextFloat
 import eu.ezytarget.processingtemplate.nextFloatInRange
 import processing.core.PApplet
 import kotlin.random.Random
@@ -15,7 +16,12 @@ internal object PaddedGridLayerFactory {
         rotationRadian = random.nextFloat() * PApplet.TAU,
         lineWidth = random.nextFloatInRange(MIN_LINE_WIDTH, MAX_LINE_WIDTH),
         gridSize = random.nextInt(MIN_GRID_SIZE, MAX_GRID_SIZE),
-        initialColor = Color.randomSolid(random, 1f),
+        initialColor = Color(
+            random.nextFloat(1f),
+            random.nextFloatInRange(0.5f, 1f),
+            1f,
+            1f,
+        )
     )
 
 }
