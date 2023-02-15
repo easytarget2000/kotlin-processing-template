@@ -35,8 +35,10 @@ internal class MainApplet(
         }
         update()
 
-        layers.forEach {
-            it.draw(graphics)
+        layers.forEach { layer ->
+            graphics.push()
+            layer.draw(graphics)
+            graphics.pop()
         }
     }
 
@@ -52,7 +54,7 @@ internal class MainApplet(
     private fun initLayers() {
         layers = mutableListOf(
             GrainyGridLayerFactory.next(random),
-            GrainyGridLayerFactory.next(random),
+//            GrainyGridLayerFactory.next(random),
             )
         layers.forEach { it.setColorMax(COLOR_MAX) }
     }
