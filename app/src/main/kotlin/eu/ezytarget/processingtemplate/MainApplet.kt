@@ -1,6 +1,6 @@
 package eu.ezytarget.processingtemplate
 
-import eu.ezytarget.processingtemplate.layers.grainygrid.GrainyGridLayerFactory
+import eu.ezytarget.processingtemplate.layers.paddedgrid.PaddedGridLayerFactory
 import eu.ezytarget.processingtemplate.layers.Layer
 import processing.core.PApplet
 import kotlin.random.Random
@@ -53,7 +53,7 @@ internal class MainApplet(
 
     private fun initLayers() {
         layers = mutableListOf(
-            GrainyGridLayerFactory.next(random),
+            PaddedGridLayerFactory.solid(random),
 //            GrainyGridLayerFactory.next(random),
             )
         layers.forEach { it.setColorMax(COLOR_MAX) }

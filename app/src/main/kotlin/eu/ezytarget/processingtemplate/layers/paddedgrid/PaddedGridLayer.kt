@@ -1,11 +1,11 @@
-package eu.ezytarget.processingtemplate.layers.grainygrid
+package eu.ezytarget.processingtemplate.layers.paddedgrid
 
 import eu.ezytarget.processingtemplate.Color
 import eu.ezytarget.processingtemplate.layers.Layer
 import processing.core.PGraphics
 import processing.core.PVector
 
-internal class GrainyGridLayer(
+internal class PaddedGridLayer(
     var rotationRadian: Float = 0f,
     var lineWidth: Float = 4f,
     var gridSize: Int = 90,
