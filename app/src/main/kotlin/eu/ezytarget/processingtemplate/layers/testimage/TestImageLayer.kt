@@ -13,26 +13,28 @@ internal class TestImageLayer : Layer {
     private var colorMax = 1f
     private var rotationRadian = 0f
 
+
     override fun setColorMax(colorMax: Float) {
         this.colorMax = colorMax
     }
 
     override fun update(deltaTime: Long) {
-        rotationRadian += 0.001f
+//        rotationRadian += 0.001f
     }
 
     override fun draw(pGraphics: PGraphics) {
         val canvasWidth = pGraphics.width.toFloat()
         val canvasHeight = pGraphics.height.toFloat()
+        val canvasCenter = PVector(canvasWidth / 2f, canvasHeight / 2f)
 
         pGraphics.strokeWeight(5f)
         pGraphics.stroke(colorMax)
         pGraphics.noFill()
         pGraphics.rectMode(CORNERS)
 
-        pGraphics.translate(canvasWidth / 2f, canvasHeight / 2f)
+        pGraphics.translate(canvasCenter.x, canvasCenter.y)
         pGraphics.rotate(rotationRadian)
-        pGraphics.translate(-canvasWidth / 2f, -canvasHeight / 2f)
+        pGraphics.translate(-canvasCenter.x, -canvasCenter.y)
 
         pGraphics.rect(0f, 0f, canvasWidth, canvasHeight)
 
@@ -46,7 +48,24 @@ internal class TestImageLayer : Layer {
 
         if (drawCircle) {
             pGraphics.ellipseMode(CENTER)
-            pGraphics.ellipse(canvasWidth / 2f, canvasHeight / 2f, canvasWidth / 3f, canvasWidth / 3f)
+            pGraphics.ellipse(canvasCenter.x, canvasCenter.y, canvasWidth / 3f, canvasWidth / 3f)
         }
+
+        pGraphics.line(
+            canvasCenter.x - CROSSHAIR_RADIUS,
+            canvasCenter.y,
+            canvasCenter.x + CROSSHAIR_RADIUS,
+            canvasCenter.y
+        )
+        pGraphics.line(
+            canvasCenter.x,
+            canvasCenter.y - CROSSHAIR_RADIUS,
+            canvasCenter.x,
+            canvasCenter.y + CROSSHAIR_RADIUS
+        )
+    }
+
+    companion object {
+        const val CROSSHAIR_RADIUS = 40f
     }
 }

@@ -3,6 +3,7 @@ package eu.ezytarget.processingtemplate
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import eu.ezytarget.processingtemplate.layers.Layer
+import eu.ezytarget.processingtemplate.layers.paddedgrid.PaddedGridLayerFactory
 import eu.ezytarget.processingtemplate.layers.testimage.TestImageLayer
 import processing.core.PApplet
 import kotlin.random.Random
@@ -16,7 +17,7 @@ internal class MainApplet(
     private var clearBackgroundOnDraw = true
     private var clearBackgroundColor = Color.BLACK_SOLID
     private var rotationAngle = 0f
-    private var drawTestImage = true
+    private var drawTestImage = false
     private val testImageLayer = TestImageLayer()
 
     public override fun runSketch() {
@@ -36,6 +37,15 @@ internal class MainApplet(
     }
 
     override fun draw() {
+        if (drawTestImage) {
+            clearBackground()
+
+            graphics.push()
+            testImageLayer.draw(graphics)
+            graphics.pop()
+            return
+        }
+
         if (clearBackgroundOnDraw) {
             clearBackground()
         }
@@ -44,12 +54,6 @@ internal class MainApplet(
         layers.forEach { layer ->
             graphics.push()
             layer.draw(graphics)
-            graphics.pop()
-        }
-
-        if (drawTestImage) {
-            graphics.push()
-            testImageLayer.draw(graphics)
             graphics.pop()
         }
     }
@@ -67,8 +71,8 @@ internal class MainApplet(
     private fun initLayers() {
         layers = mutableListOf(
 //            GrainyGridLayerFactory.next(random),
-//            PaddedGridLayerFactory.next(random),
-//            PaddedGridLayerFactory.next(random),
+            PaddedGridLayerFactory.next(random),
+            PaddedGridLayerFactory.next(random),
         )
         layers.forEach { it.setColorMax(COLOR_MAX) }
     }
@@ -102,7 +106,7 @@ internal class MainApplet(
     private fun updateClapper() {
         val result = clapper.update()
         if (result[BeatInterval.Eighth]?.didChange == true) {
-//            toggleClearBackgroundOnDraw()
+            toggleClearBackgroundOnDraw()
             testImageLayer.drawCircle = !testImageLayer.drawCircle
         }
     }
