@@ -2,6 +2,8 @@ package eu.ezytarget.processingtemplate.layers.paddedgrid
 
 import eu.ezytarget.processingtemplate.Color
 import eu.ezytarget.processingtemplate.layers.Layer
+import processing.core.PConstants.HALF_PI
+import processing.core.PConstants.SQUARE
 import processing.core.PGraphics
 import processing.core.PVector
 
@@ -49,18 +51,22 @@ internal class PaddedGridLayer(
 
     override fun draw(pGraphics: PGraphics) {
         pGraphics.strokeWeight(lineWidth)
+        pGraphics.strokeCap(SQUARE)
         pGraphics.stroke(color.value1, color.value2, color.value3, color.alpha)
-//        pGraphics.stroke(1f, 0f, 1f, 0.3f)
 
-        pGraphics.point(pGraphics.width / 2f, pGraphics.height / 2f)
-
-        val canvasSize = pGraphics.width.coerceAtLeast(pGraphics.height)
+        val canvasSize = pGraphics.width.coerceAtLeast(pGraphics.height) / 2
         val canvasWidth = canvasSize
         val canvasHeight = canvasSize
 
         val gridSizeF = gridSize.toFloat()
 
+        val canvasCenter = PVector(pGraphics.width / 2f, pGraphics.height / 2f)
+        pGraphics.translate(canvasCenter.x, canvasCenter.y)
+        pGraphics.rotate(HALF_PI / 2)
+        pGraphics.translate(-canvasCenter.x, -canvasCenter.y)
+
         pGraphics.translate(offset.x % gridSizeF, offset.y % gridSizeF)
+
         drawHorizontalLines(pGraphics, canvasWidth, canvasHeight, gridSizeF)
         drawVerticalLines(pGraphics, canvasWidth, canvasHeight, gridSizeF)
     }

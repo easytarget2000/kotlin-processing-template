@@ -2,6 +2,7 @@ package eu.ezytarget.processingtemplate
 
 import eu.ezytarget.processingtemplate.layers.paddedgrid.PaddedGridLayerFactory
 import eu.ezytarget.processingtemplate.layers.Layer
+import eu.ezytarget.processingtemplate.layers.grainygrid.GrainyGridLayerFactory
 import processing.core.PApplet
 import kotlin.random.Random
 
@@ -47,15 +48,17 @@ internal class MainApplet(
             '1' -> setLayersIntensity(Layer.Intensity.LOW)
             '2' -> setLayersIntensity(Layer.Intensity.MEDIUM)
             '3' -> setLayersIntensity(Layer.Intensity.HIGH)
+            'b' -> toggleClearBackgroundOnDraw()
             else -> println("keyPressed(): Unhandled key = $key")
         }
     }
 
     private fun initLayers() {
         layers = mutableListOf(
-            PaddedGridLayerFactory.solid(random),
-//            GrainyGridLayerFactory.next(random),
-            )
+            GrainyGridLayerFactory.next(random),
+//            PaddedGridLayerFactory.next(random),
+//            PaddedGridLayerFactory.next(random),
+        )
         layers.forEach { it.setColorMax(COLOR_MAX) }
     }
 
@@ -83,6 +86,10 @@ internal class MainApplet(
     }
 
     private fun randomAngle() = random.nextFloat() * TAU
+
+    private fun toggleClearBackgroundOnDraw() {
+        clearBackgroundOnDraw = !clearBackgroundOnDraw
+    }
 
     companion object {
         const val COLOR_MAX = 1f
