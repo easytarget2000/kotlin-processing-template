@@ -1,4 +1,4 @@
-package eu.ezytarget.processingtemplate.layer
+package eu.ezytarget.processingtemplate.layers.grainygrid
 
 import eu.ezytarget.processingtemplate.Color
 import eu.ezytarget.processingtemplate.nextFloatInRange

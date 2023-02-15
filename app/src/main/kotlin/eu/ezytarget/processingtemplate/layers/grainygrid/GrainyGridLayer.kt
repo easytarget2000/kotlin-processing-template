@@ -1,9 +1,9 @@
-package eu.ezytarget.processingtemplate.layer
+package eu.ezytarget.processingtemplate.layers.grainygrid
 
 import eu.ezytarget.processingtemplate.Color
+import eu.ezytarget.processingtemplate.layers.Layer
 import processing.core.PGraphics
 import processing.core.PVector
-import java.lang.Math.max
 
 internal class GrainyGridLayer(
     var rotationRadian: Float = 0f,

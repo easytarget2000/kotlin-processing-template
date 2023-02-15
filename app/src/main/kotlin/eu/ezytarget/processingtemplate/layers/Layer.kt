@@ -1,4 +1,4 @@
-package eu.ezytarget.processingtemplate.layer
+package eu.ezytarget.processingtemplate.layers
 
 import processing.core.PGraphics
 

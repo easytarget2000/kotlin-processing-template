@@ -1,8 +1,7 @@
 package eu.ezytarget.processingtemplate
 
-import eu.ezytarget.processingtemplate.layer.GrainyGridLayer
-import eu.ezytarget.processingtemplate.layer.GrainyGridLayerFactory
-import eu.ezytarget.processingtemplate.layer.Layer
+import eu.ezytarget.processingtemplate.layers.grainygrid.GrainyGridLayerFactory
+import eu.ezytarget.processingtemplate.layers.Layer
 import processing.core.PApplet
 import kotlin.random.Random
 
