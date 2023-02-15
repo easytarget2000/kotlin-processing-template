@@ -62,7 +62,7 @@ internal class PaddedGridLayer(
 
         val canvasCenter = PVector(pGraphics.width / 2f, pGraphics.height / 2f)
         pGraphics.translate(canvasCenter.x, canvasCenter.y)
-        pGraphics.rotate(HALF_PI / 2)
+        pGraphics.rotate(rotationRadian)
         pGraphics.translate(-canvasCenter.x, -canvasCenter.y)
 
         pGraphics.translate(offset.x % gridSizeF, offset.y % gridSizeF)

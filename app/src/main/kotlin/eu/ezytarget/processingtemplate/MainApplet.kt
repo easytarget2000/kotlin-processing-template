@@ -12,7 +12,7 @@ internal class MainApplet(
     val random: Random = Random.Default
 ) : PApplet() {
     private var layers = mutableListOf<Layer>()
-    private val clapper = Clapper().also { it.bpm = 130f }
+    private val clapper = Clapper().also { it.bpm = 140f }
     private var lastUpdateTimestamp = now()
     private var clearBackgroundOnDraw = true
     private var clearBackgroundColor = Color.BLACK_SOLID
@@ -64,6 +64,7 @@ internal class MainApplet(
             '2' -> setLayersIntensity(Layer.Intensity.MEDIUM)
             '3' -> setLayersIntensity(Layer.Intensity.HIGH)
             'b' -> toggleClearBackgroundOnDraw()
+            ' ' -> clapper.tapBpm()
             else -> println("keyPressed(): Unhandled key = $key")
         }
     }
@@ -105,9 +106,23 @@ internal class MainApplet(
 
     private fun updateClapper() {
         val result = clapper.update()
-        if (result[BeatInterval.Eighth]?.didChange == true) {
+        if (result[BeatInterval.Quarter]?.didChange == true) {
             toggleClearBackgroundOnDraw()
             testImageLayer.drawCircle = !testImageLayer.drawCircle
+
+            random.maybe(0.1f) {
+                setLayersIntensity(Layer.Intensity.MEDIUM)
+            }
+            random.maybe(0.1f) {
+                setLayersIntensity(Layer.Intensity.LOW)
+            }
+            random.maybe(0.1f) {
+                setLayersIntensity(Layer.Intensity.HIGH)
+            }
+        }
+
+        if (result[BeatInterval.Whole]?.didChange == true) {
+            initLayers()
         }
     }
 
