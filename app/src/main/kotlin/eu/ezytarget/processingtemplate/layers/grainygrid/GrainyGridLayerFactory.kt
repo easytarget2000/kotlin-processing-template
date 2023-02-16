@@ -4,5 +4,4 @@ import kotlin.random.Random
 
 internal object GrainyGridLayerFactory {
     fun next(random: Random) = GrainyGridLayer()
-
 }

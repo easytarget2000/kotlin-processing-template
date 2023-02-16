@@ -1,6 +1,8 @@
 package eu.ezytarget.processingtemplate.layers.grainygrid
 
-import eu.ezytarget.processingtemplate.Color
+import eu.ezytarget.clapper.BeatInterval
+import eu.ezytarget.clapper.BeatIntervalUpdate
+import eu.ezytarget.processingtemplate.HSB1Color
 import eu.ezytarget.processingtemplate.layers.Layer
 import processing.core.PGraphics
 import processing.core.PVector
@@ -10,22 +12,19 @@ internal class GrainyGridLayer: Layer {
     private var offsetVelocity = PVector(0.9f, 0.1f, 0f)
     private var lineWidth = 1f
     private var distance = 3
-    private var color = Color(1f, 0.5f, 0.5f, 1f)
-    private var colorMax = 0f
+    private var color = HSB1Color(1f, 0.5f, 0.5f, 1f)
 
     override var intensity: Layer.Intensity = Layer.Intensity.MEDIUM
-
-    override fun setColorMax(colorMax: Float) {
-        this.colorMax = colorMax
-    }
 
     override fun update(deltaTime: Long) {
         offset = PVector.add(offset, offsetVelocity)
     }
 
+    override fun update(beatStatus: Map<BeatInterval, BeatIntervalUpdate>) {}
+
     override fun draw(pGraphics: PGraphics) {
         pGraphics.strokeWeight(lineWidth)
-        pGraphics.stroke(color.value1, color.value2, color.value3, color.alpha)
+        pGraphics.stroke(color.hue, color.saturation, color.brightness, color.alpha)
 
         val startX = 0 - distance
         val endX = pGraphics.width + distance

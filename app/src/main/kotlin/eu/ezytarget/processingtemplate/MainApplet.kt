@@ -5,6 +5,7 @@ import eu.ezytarget.clapper.Clapper
 import eu.ezytarget.processingtemplate.layers.Layer
 import eu.ezytarget.processingtemplate.layers.paddedgrid.PaddedGridLayerFactory
 import eu.ezytarget.processingtemplate.layers.testimage.TestImageLayer
+import eu.ezytarget.processingtemplate.layers.tiles.TileLayer
 import processing.core.PApplet
 import kotlin.random.Random
 
@@ -15,7 +16,7 @@ internal class MainApplet(
     private val clapper = Clapper().also { it.bpm = 140f }
     private var lastUpdateTimestamp = now()
     private var clearBackgroundOnDraw = true
-    private var clearBackgroundColor = Color.BLACK_SOLID
+    private var clearBackgroundColor = HSB1Color.BLACK_SOLID
     private var rotationAngle = 0f
     private var drawTestImage = false
     private val testImageLayer = TestImageLayer()
@@ -74,8 +75,8 @@ internal class MainApplet(
 //            GrainyGridLayerFactory.next(random),
             PaddedGridLayerFactory.next(random),
             PaddedGridLayerFactory.next(random),
+            TileLayer(random),
         )
-        layers.forEach { it.setColorMax(COLOR_MAX) }
     }
 
     private fun setLayersIntensity(intensity: Layer.Intensity) {
@@ -85,9 +86,9 @@ internal class MainApplet(
 
     private fun clearBackground() {
         background(
-            clearBackgroundColor.value1,
-            clearBackgroundColor.value2,
-            clearBackgroundColor.value3,
+            clearBackgroundColor.hue,
+            clearBackgroundColor.saturation,
+            clearBackgroundColor.brightness,
             clearBackgroundColor.alpha,
         )
     }
@@ -106,6 +107,9 @@ internal class MainApplet(
 
     private fun updateClapper() {
         val result = clapper.update()
+
+        layers.forEach { it.update(result) }
+
         if (result[BeatInterval.Quarter]?.didChange == true) {
             toggleClearBackgroundOnDraw()
             testImageLayer.drawCircle = !testImageLayer.drawCircle

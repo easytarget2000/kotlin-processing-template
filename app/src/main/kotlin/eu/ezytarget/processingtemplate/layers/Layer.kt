@@ -1,5 +1,7 @@
 package eu.ezytarget.processingtemplate.layers
 
+import eu.ezytarget.clapper.BeatInterval
+import eu.ezytarget.clapper.BeatIntervalUpdate
 import processing.core.PGraphics
 
 internal interface Layer {
@@ -9,7 +11,7 @@ internal interface Layer {
 
     var intensity: Intensity
 
-    fun setColorMax(colorMax: Float)
     fun update(deltaTime: Long)
+    fun update(beatStatus: Map<BeatInterval, BeatIntervalUpdate>)
     fun draw(pGraphics: PGraphics)
 }

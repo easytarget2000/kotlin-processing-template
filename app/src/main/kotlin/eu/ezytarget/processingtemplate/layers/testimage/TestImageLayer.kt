@@ -1,5 +1,7 @@
 package eu.ezytarget.processingtemplate.layers.testimage
 
+import eu.ezytarget.clapper.BeatInterval
+import eu.ezytarget.clapper.BeatIntervalUpdate
 import eu.ezytarget.processingtemplate.layers.Layer
 import processing.core.PConstants.CENTER
 import processing.core.PConstants.CORNERS
@@ -10,16 +12,15 @@ internal class TestImageLayer : Layer {
     override var intensity: Layer.Intensity = Layer.Intensity.MEDIUM
 
     var drawCircle = true
-    private var colorMax = 1f
     private var rotationRadian = 0f
 
 
-    override fun setColorMax(colorMax: Float) {
-        this.colorMax = colorMax
-    }
-
     override fun update(deltaTime: Long) {
 //        rotationRadian += 0.001f
+    }
+
+    override fun update(beatStatus: Map<BeatInterval, BeatIntervalUpdate>) {
+
     }
 
     override fun draw(pGraphics: PGraphics) {
@@ -28,7 +29,7 @@ internal class TestImageLayer : Layer {
         val canvasCenter = PVector(canvasWidth / 2f, canvasHeight / 2f)
 
         pGraphics.strokeWeight(5f)
-        pGraphics.stroke(colorMax)
+        pGraphics.stroke(1f)
         pGraphics.noFill()
         pGraphics.rectMode(CORNERS)
 
