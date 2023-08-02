@@ -37,8 +37,8 @@ internal class MainApplet(
     }
 
     override fun settings() {
-//        size(800, 600, P2D)
-        fullScreen(P2D, 2)
+        size(800, 600, P2D)
+//        fullScreen(P2D, 2)
     }
 
     override fun setup() {
@@ -46,11 +46,12 @@ internal class MainApplet(
         this.lastUpdateTimestamp = now()
         this.initLayers()
         this.clapper.start()
-        this.captureManager.startCapture(pApplet = this, qualifier = "facetime")
+        this.captureManager.startCapture(pApplet = this, qualifier = "webcam")
 
         val fonts = PFont.list()
-        val bpmFontName = fonts.first { it.contains("mono", ignoreCase = true) }
-            ?: fonts.first()
+        val bpmFontName = fonts.first {
+            it.contains("mono", ignoreCase = true)
+        } ?: fonts.first()
         bpmFont = createFont(bpmFontName, 1000f, true)
         this.background(0F)
     }

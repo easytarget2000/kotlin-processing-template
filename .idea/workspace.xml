@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9b602cdb-080b-45fb-afe3-b3f64099434c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/CameraCaptureManager.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/CameraCaptureManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/CameraCaptureManager.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/MainApplet.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/MainApplet.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/layers/cathode_ray/CathodeRayer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/layers/cathode_ray/CathodeRayer.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/clapper" beforeDir="false" afterPath="$PROJECT_DIR$/clapper" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/clapper/lib/src/main/kotlin/eu/ezytarget/clapper/Clapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/clapper/lib/src/main/kotlin/eu/ezytarget/clapper/Clapper.kt" afterDir="false" />
     </list>
@@ -64,19 +62,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "camera-pulses",
-    "last_opened_file_path": "/Users/mitch/Projects/_InProcessing/kotlin-processing-template",
-    "project.structure.last.edited": "Libraries",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.41034484",
-    "settings.editor.selected.configurable": "preferences.sourceCode"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;camera-pulses&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/mitch/Projects/_InProcessing/kotlin-processing-template&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.41034484&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate" />
@@ -184,13 +182,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/CameraCaptureManager.kt</url>
-          <line>45</line>
+          <line>50</line>
           <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/CameraCaptureManager.kt</url>
-          <line>35</line>
-          <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

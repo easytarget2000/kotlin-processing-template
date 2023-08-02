@@ -10,29 +10,34 @@ internal class CameraCaptureManager {
     fun startCapture(pApplet: MainApplet, qualifier: String? = null) {
         val requestedWidth = pApplet.width
         val requestedHeight = pApplet.height
-        val fps = 60F
+        val fps = 20F
 
-        val devices = Capture.list()
+        val deviceNames = Capture.list()
 
-        if (devices.isEmpty()) {
+        if (deviceNames.isEmpty()) {
             System.err.println("There are no cameras available for capture.")
             this.capture = null
             return
         }
 
         println("Available cameras:")
-        devices.forEach(::println)
+        deviceNames.forEach(::println)
 
-        val selectedDeviceId = if (qualifier.isNullOrBlank()) {
-            devices.firstOrNull()
+        val selectedDeviceIndex = if (qualifier.isNullOrBlank()) {
+            0
         } else {
-            devices.firstOrNull { it.contains(qualifier, ignoreCase = true) }
+            deviceNames.indexOfFirst {
+                it.contains(qualifier, ignoreCase = true)
+            }
         }
 
-        println("Selected camera: $selectedDeviceId")
+        println("Selected camera: $deviceNames[selectedDeviceIndex]")
 
-//        this.capture = Capture(pApplet, requestedWidth, requestedHeight, selectedDeviceId, fps)
-        this.capture = Capture(pApplet, selectedDeviceId)
+        val fullDeviceId =
+            "pipeline:avfvideosrc device-index=$selectedDeviceIndex"
+        this.capture =
+            Capture(pApplet, requestedWidth, requestedHeight, fullDeviceId, fps)
+//        this.capture = Capture(pApplet, selectedDeviceId, 30F)
         this.capture?.start()
     }
 
@@ -44,5 +49,9 @@ internal class CameraCaptureManager {
         }
 
         return capture
+    }
+
+    fun stop() {
+        this.capture?.stop()
     }
 }
