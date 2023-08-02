@@ -4,8 +4,14 @@ import eu.ezytarget.processingtemplate.layers.Layer
 import processing.core.PGraphics
 import kotlin.math.floor
 
-internal class CathodeRayer(override var intensity: Layer.Intensity) : Layer {
-    var progressSpeed = 0.0043F
+internal class CathodeRayer : Layer {
+    override var intensity: Layer.Intensity = Layer.Intensity.LOW
+        set(value) {
+            field = value
+            this.progressSpeed = progressSpeedForIntensity(this.intensity)
+        }
+
+    var progressSpeed = progressSpeedForIntensity(this.intensity)
     var numberOfLines = 16
         set(value) {
             require(value > 0)
@@ -33,7 +39,8 @@ internal class CathodeRayer(override var intensity: Layer.Intensity) : Layer {
         val progressPerLine = this.progressPerLine
         val lineIndex = floor(this.progress / progressPerLine)
         val progressOnLine = lineIndex * progressPerLine
-        val horizontalProgress = (this.progress - progressOnLine) / progressPerLine
+        val horizontalProgress =
+            (this.progress - progressOnLine) / progressPerLine
         val lineHeight = pGraphics.height / (this.numberOfLines + 1).toFloat()
         val rayDiameter = this.rayDiameterScale * lineHeight
 
@@ -44,5 +51,14 @@ internal class CathodeRayer(override var intensity: Layer.Intensity) : Layer {
             (lineIndex + 1) * lineHeight,
             rayDiameter
         )
+    }
+
+    companion object {
+        private fun progressSpeedForIntensity(intensity: Layer.Intensity) =
+            when (intensity) {
+                Layer.Intensity.LOW -> 0.0023F
+                Layer.Intensity.MEDIUM -> 0.0043F
+                Layer.Intensity.HIGH -> 0.0077F
+            }
     }
 }

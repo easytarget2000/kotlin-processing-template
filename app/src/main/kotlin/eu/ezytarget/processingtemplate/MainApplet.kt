@@ -15,7 +15,7 @@ import kotlin.random.Random
 internal class MainApplet(
     val random: Random = Random.Default
 ) : PApplet() {
-    private var layers = mutableListOf<Layer>()
+    private var layers = mutableListOf<Layer>(CathodeRayer())
     private val clapper = Clapper().also {
         it.bpm = 139.9f
         it.bpmListener = { requestShowBpm() }
@@ -26,10 +26,11 @@ internal class MainApplet(
     private var lastUpdateTimestamp = now()
     private var clearBackgroundOnDraw = true
     private var clearBackgroundColor = HSB1Color(0f, 0f, 0f, 1F)
+    private var drawCameraCapture = true
     private var rotationAngle = 0f
     private var drawTestImage = false
     private val testImageLayer = TestImageLayer()
-    private var cameraCapture: Capture? = null
+    private val captureManager = CameraCaptureManager()
 
     public override fun runSketch() {
         super.runSketch()
@@ -41,13 +42,15 @@ internal class MainApplet(
     }
 
     override fun setup() {
-        colorMode(HSB, COLOR_MAX)
-        lastUpdateTimestamp = now()
-        initLayers()
-        clapper.start()
+        this.colorMode(HSB, COLOR_MAX)
+        this.lastUpdateTimestamp = now()
+        this.initLayers()
+        this.clapper.start()
+        this.captureManager.startCapture(pApplet = this, qualifier = "facetime")
 
         val fonts = PFont.list()
-        val bpmFontName = fonts.first { it.contains("mono", ignoreCase = true) } ?: fonts.first()
+        val bpmFontName = fonts.first { it.contains("mono", ignoreCase = true) }
+            ?: fonts.first()
         bpmFont = createFont(bpmFontName, 1000f, true)
         this.background(0F)
     }
@@ -62,19 +65,31 @@ internal class MainApplet(
             return
         }
 
-        if (clearBackgroundOnDraw) {
-            clearBackground()
+        if (this.clearBackgroundOnDraw) {
+            this.clearBackground()
         }
-        update()
+        this.update()
 
-        layers.forEach { layer ->
-            graphics.push()
+        if (this.drawCameraCapture) {
+            this.captureManager.read()?.let {
+                this.graphics.image(
+                    it,
+                    0F,
+                    0F,
+                    this.graphics.width.toFloat(),
+                    this.graphics.height.toFloat()
+                )
+            }
+        }
+
+        this.layers.forEach { layer ->
+            this.graphics.push()
             layer.draw(graphics)
-            graphics.pop()
+            this.graphics.pop()
         }
 
-        random.maybe(0.05f) { requestShowBpm() }
-        showBpmIfRequested()
+        this.random.maybe(0.05f) { requestShowBpm() }
+        this.showBpmIfRequested()
     }
 
     override fun keyPressed() {
@@ -89,7 +104,7 @@ internal class MainApplet(
     }
 
     private fun initLayers() {
-        layers = mutableListOf(
+//        layers = mutableListOf(
 //            GrainyGridLayerFactory.next(random),
 //            PaddedGridLayerFactory.next(random),
 //            PaddedGridLayerFactory.next(random),
@@ -98,8 +113,8 @@ internal class MainApplet(
 //            TestImageLayer(),
 //            TileLayer(random),
 //            TileLayer(random),
-            CathodeRayer(Layer.Intensity.LOW),
-        )
+//            CathodeRayer(),
+//        )
     }
 
     private fun setLayersIntensity(intensity: Layer.Intensity) {
@@ -115,7 +130,12 @@ internal class MainApplet(
             this.clearBackgroundColor.brightness,
             this.clearBackgroundColor.alpha,
         )
-        this.graphics.rect(0F, 0F, this.graphics.width.toFloat(), this.graphics.height.toFloat())
+        this.graphics.rect(
+            0F,
+            0F,
+            this.graphics.width.toFloat(),
+            this.graphics.height.toFloat()
+        )
         this.graphics.popStyle()
     }
 
@@ -132,7 +152,6 @@ internal class MainApplet(
     }
 
     private fun updateClapper() {
-        return
         val result = clapper.update()
 
         layers.forEach { it.update(result) }
@@ -175,7 +194,8 @@ internal class MainApplet(
 
         val formattedBpm = "%.1f".format(interestingBpm)
         val textSize = width.coerceAtLeast(height) * 0.3f
-        val alpha = showBpmFrameCount.toFloat() / SHOW_BPM_FRAME_DURATION.toFloat()
+        val alpha =
+            showBpmFrameCount.toFloat() / SHOW_BPM_FRAME_DURATION.toFloat()
 
         textFont(bpmFont)
         textAlign(CENTER)
