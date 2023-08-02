@@ -18,6 +18,7 @@ tasks.test {
 
 dependencies {
     implementation(fileTree("/Applications/Processing.app/Contents/Java/core/library/"))
+    implementation(fileTree("/Users/mitch/Documents/Processing/libraries/video/library/"))
 
     implementation(project(":clapper", configuration = "default"))
 

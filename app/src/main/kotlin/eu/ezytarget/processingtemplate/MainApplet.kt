@@ -7,19 +7,28 @@ import eu.ezytarget.processingtemplate.layers.paddedgrid.PaddedGridLayerFactory
 import eu.ezytarget.processingtemplate.layers.testimage.TestImageLayer
 import eu.ezytarget.processingtemplate.layers.tiles.TileLayer
 import processing.core.PApplet
+import processing.core.PFont
+import processing.video.Capture
 import kotlin.random.Random
 
 internal class MainApplet(
     val random: Random = Random.Default
 ) : PApplet() {
     private var layers = mutableListOf<Layer>()
-    private val clapper = Clapper().also { it.bpm = 140f }
+    private val clapper = Clapper().also {
+        it.bpm = 139.9f
+        it.bpmListener = { requestShowBpm() }
+    }
+    private var interestingBpm = clapper.bpm
+    private lateinit var bpmFont: PFont
+    private var showBpmFrameCount = 0
     private var lastUpdateTimestamp = now()
     private var clearBackgroundOnDraw = true
     private var clearBackgroundColor = HSB1Color.BLACK_SOLID
     private var rotationAngle = 0f
     private var drawTestImage = false
     private val testImageLayer = TestImageLayer()
+    private var cameraCapture: Capture? = null
 
     public override fun runSketch() {
         super.runSketch()
@@ -35,6 +44,10 @@ internal class MainApplet(
         lastUpdateTimestamp = now()
         initLayers()
         clapper.start()
+
+        val fonts = PFont.list()
+        val bpmFontName = fonts.first { it.contains("mono", ignoreCase = true) } ?: fonts.first()
+        bpmFont = createFont(bpmFontName, 1000f, true)
     }
 
     override fun draw() {
@@ -57,6 +70,9 @@ internal class MainApplet(
             layer.draw(graphics)
             graphics.pop()
         }
+
+        random.maybe(0.05f) { requestShowBpm() }
+        showBpmIfRequested()
     }
 
     override fun keyPressed() {
@@ -75,6 +91,10 @@ internal class MainApplet(
 //            GrainyGridLayerFactory.next(random),
             PaddedGridLayerFactory.next(random),
             PaddedGridLayerFactory.next(random),
+            PaddedGridLayerFactory.next(random),
+            PaddedGridLayerFactory.next(random),
+
+            TileLayer(random),
             TileLayer(random),
         )
     }
@@ -136,8 +156,34 @@ internal class MainApplet(
         clearBackgroundOnDraw = !clearBackgroundOnDraw
     }
 
+    private fun requestShowBpm() {
+        showBpmFrameCount = SHOW_BPM_FRAME_DURATION
+    }
+
+    private fun showBpmIfRequested() {
+        if (showBpmFrameCount <= 0) {
+            interestingBpm = clapper.bpm + random.nextFloatInRange(-1f, 1f)
+            return
+        }
+
+        val formattedBpm = "%.1f".format(interestingBpm)
+        val textSize = width.coerceAtLeast(height) * 0.3f
+        val alpha = showBpmFrameCount.toFloat() / SHOW_BPM_FRAME_DURATION.toFloat()
+
+        textFont(bpmFont)
+        textAlign(CENTER)
+        textSize(textSize)
+        noStroke()
+        fill(0f, alpha)
+
+        text(formattedBpm, width / 2f, height * 0.7f)
+
+        --showBpmFrameCount
+    }
+
     companion object {
         const val COLOR_MAX = 1f
+        const val SHOW_BPM_FRAME_DURATION = 10
 
         private fun now() = System.currentTimeMillis()
     }
