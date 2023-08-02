@@ -12,7 +12,7 @@ internal class CathodeRayer : Layer {
         }
 
     var progressSpeed = progressSpeedForIntensity(this.intensity)
-    var numberOfLines = 16
+    var numberOfLines = 400
         set(value) {
             require(value > 0)
             field = value
@@ -44,12 +44,22 @@ internal class CathodeRayer : Layer {
         val lineHeight = pGraphics.height / (this.numberOfLines + 1).toFloat()
         val rayDiameter = this.rayDiameterScale * lineHeight
 
-        pGraphics.noStroke()
-        pGraphics.fill(1F)
-        pGraphics.circle(
-            horizontalProgress * pGraphics.width,
-            (lineIndex + 1) * lineHeight,
-            rayDiameter
+        val x = horizontalProgress * pGraphics.width
+        val y = (lineIndex + 1) * lineHeight
+//        pGraphics.noStroke()
+//        pGraphics.fill(1F, 0.5F)
+//        pGraphics.circle(
+//            x,
+//            y,
+//            rayDiameter * 2F
+//        )
+        pGraphics.stroke(1F, 0.5F)
+        pGraphics.strokeWeight = rayDiameter
+        pGraphics.line(
+            x,
+            y,
+            x - 400F,
+            y
         )
     }
 

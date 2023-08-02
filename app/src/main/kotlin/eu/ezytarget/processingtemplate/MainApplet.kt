@@ -17,7 +17,7 @@ internal class MainApplet(
 ) : PApplet() {
     private var layers = mutableListOf<Layer>(CathodeRayer())
     private val clapper = Clapper().also {
-        it.bpm = 139.9f
+        it.bpm = 133F
         it.bpmListener = { requestShowBpm() }
     }
     private var interestingBpm = clapper.bpm
@@ -25,8 +25,8 @@ internal class MainApplet(
     private var showBpmFrameCount = 0
     private var lastUpdateTimestamp = now()
     private var clearBackgroundOnDraw = true
-    private var clearBackgroundColor = HSB1Color(0f, 0f, 0f, 1F)
-    private var drawCameraCapture = true
+    private var clearBackgroundColor = HSB1Color(0f, 0f, 0f, 0.19F)
+    private var drawCameraCapture = false
     private var rotationAngle = 0f
     private var drawTestImage = false
     private val testImageLayer = TestImageLayer()
@@ -37,8 +37,8 @@ internal class MainApplet(
     }
 
     override fun settings() {
-        size(800, 600, P2D)
-//        fullScreen(P2D, 2)
+//        size(800, 600, P2D)
+        fullScreen(P2D, 2)
     }
 
     override fun setup() {
@@ -71,7 +71,7 @@ internal class MainApplet(
         }
         this.update()
 
-        if (this.drawCameraCapture) {
+        if (this.frameCount % 4 == 0) {
             this.captureManager.read()?.let {
                 this.graphics.image(
                     it,
@@ -90,7 +90,7 @@ internal class MainApplet(
         }
 
         this.random.maybe(0.05f) { requestShowBpm() }
-        this.showBpmIfRequested()
+//        this.showBpmIfRequested()
     }
 
     override fun keyPressed() {
@@ -158,7 +158,7 @@ internal class MainApplet(
         layers.forEach { it.update(result) }
 
         if (result[BeatInterval.Quarter]?.didChange == true) {
-            toggleClearBackgroundOnDraw()
+//            toggleClearBackgroundOnDraw()
             testImageLayer.drawCircle = !testImageLayer.drawCircle
 
             random.maybe(0.1f) {
@@ -169,6 +169,10 @@ internal class MainApplet(
             }
             random.maybe(0.1f) {
                 setLayersIntensity(Layer.Intensity.HIGH)
+            }
+
+            random.maybe(0.1F) {
+                this.graphics.background(1F)
             }
         }
 

@@ -8,8 +8,8 @@ internal class CameraCaptureManager {
     private var capture: Capture? = null
 
     fun startCapture(pApplet: MainApplet, qualifier: String? = null) {
-        val requestedWidth = pApplet.width
-        val requestedHeight = pApplet.height
+        val requestedWidth = 1920//pApplet.width
+        val requestedHeight = 1080
         val fps = 20F
 
         val deviceNames = Capture.list()
@@ -31,13 +31,12 @@ internal class CameraCaptureManager {
             }
         }
 
-        println("Selected camera: $deviceNames[selectedDeviceIndex]")
+        println("Selected camera: ${deviceNames[selectedDeviceIndex]}")
 
         val fullDeviceId =
             "pipeline:avfvideosrc device-index=$selectedDeviceIndex"
         this.capture =
             Capture(pApplet, requestedWidth, requestedHeight, fullDeviceId, fps)
-//        this.capture = Capture(pApplet, selectedDeviceId, 30F)
         this.capture?.start()
     }
 

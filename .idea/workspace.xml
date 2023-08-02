@@ -8,6 +8,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/CameraCaptureManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/CameraCaptureManager.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/MainApplet.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/MainApplet.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/layers/cathode_ray/CathodeRayer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/layers/cathode_ray/CathodeRayer.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/clapper" beforeDir="false" afterPath="$PROJECT_DIR$/clapper" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/clapper/lib/src/main/kotlin/eu/ezytarget/clapper/Clapper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/clapper/lib/src/main/kotlin/eu/ezytarget/clapper/Clapper.kt" afterDir="false" />
     </list>
@@ -182,7 +183,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="kotlin-line">
           <url>file://$PROJECT_DIR$/app/src/main/kotlin/eu/ezytarget/processingtemplate/CameraCaptureManager.kt</url>
-          <line>50</line>
+          <line>49</line>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
       </breakpoints>
