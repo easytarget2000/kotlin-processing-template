@@ -1,5 +1,6 @@
 package eu.ezytarget.processingtemplate
 
+import CathodeRayer
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import eu.ezytarget.processingtemplate.layers.Layer
@@ -24,7 +25,7 @@ internal class MainApplet(
     private var showBpmFrameCount = 0
     private var lastUpdateTimestamp = now()
     private var clearBackgroundOnDraw = true
-    private var clearBackgroundColor = HSB1Color.BLACK_SOLID
+    private var clearBackgroundColor = HSB1Color(0f, 0f, 0f, 1F)
     private var rotationAngle = 0f
     private var drawTestImage = false
     private val testImageLayer = TestImageLayer()
@@ -48,6 +49,7 @@ internal class MainApplet(
         val fonts = PFont.list()
         val bpmFontName = fonts.first { it.contains("mono", ignoreCase = true) } ?: fonts.first()
         bpmFont = createFont(bpmFontName, 1000f, true)
+        this.background(0F)
     }
 
     override fun draw() {
@@ -89,13 +91,14 @@ internal class MainApplet(
     private fun initLayers() {
         layers = mutableListOf(
 //            GrainyGridLayerFactory.next(random),
-            PaddedGridLayerFactory.next(random),
-            PaddedGridLayerFactory.next(random),
-            PaddedGridLayerFactory.next(random),
-            PaddedGridLayerFactory.next(random),
-
-            TileLayer(random),
-            TileLayer(random),
+//            PaddedGridLayerFactory.next(random),
+//            PaddedGridLayerFactory.next(random),
+//            PaddedGridLayerFactory.next(random),
+//            PaddedGridLayerFactory.next(random),
+//            TestImageLayer(),
+//            TileLayer(random),
+//            TileLayer(random),
+            CathodeRayer(Layer.Intensity.LOW),
         )
     }
 
@@ -105,12 +108,15 @@ internal class MainApplet(
     }
 
     private fun clearBackground() {
-        background(
-            clearBackgroundColor.hue,
-            clearBackgroundColor.saturation,
-            clearBackgroundColor.brightness,
-            clearBackgroundColor.alpha,
+        this.graphics.pushStyle()
+        this.graphics.fill(
+            this.clearBackgroundColor.hue,
+            this.clearBackgroundColor.saturation,
+            this.clearBackgroundColor.brightness,
+            this.clearBackgroundColor.alpha,
         )
+        this.graphics.rect(0F, 0F, this.graphics.width.toFloat(), this.graphics.height.toFloat())
+        this.graphics.popStyle()
     }
 
     private fun update() {
@@ -126,6 +132,7 @@ internal class MainApplet(
     }
 
     private fun updateClapper() {
+        return
         val result = clapper.update()
 
         layers.forEach { it.update(result) }
