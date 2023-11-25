@@ -3,8 +3,10 @@ import eu.ezytarget.clapper.BeatIntervalUpdate
 import eu.ezytarget.processingtemplate.layers.Layer
 import processing.core.PGraphics
 import kotlin.math.floor
+import kotlin.random.Random
 
-internal class CathodeRayer : Layer {
+internal class CathodeRayer(private var progress: Float = Random.nextFloat()) :
+    Layer {
     override var intensity: Layer.Intensity = Layer.Intensity.LOW
         set(value) {
             field = value
@@ -22,7 +24,6 @@ internal class CathodeRayer : Layer {
             require(field > 0F)
             field = value
         }
-    private var progress = 0F
     private val progressPerLine: Float
         get() = 1F / this.numberOfLines.toFloat()
 

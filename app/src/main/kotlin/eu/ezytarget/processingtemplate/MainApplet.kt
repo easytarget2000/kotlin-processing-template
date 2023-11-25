@@ -4,12 +4,12 @@ import CathodeRayer
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
 import eu.ezytarget.processingtemplate.layers.Layer
+import eu.ezytarget.processingtemplate.layers.grainygrid.GrainyGridLayerFactory
 import eu.ezytarget.processingtemplate.layers.paddedgrid.PaddedGridLayerFactory
 import eu.ezytarget.processingtemplate.layers.testimage.TestImageLayer
 import eu.ezytarget.processingtemplate.layers.tiles.TileLayer
 import processing.core.PApplet
 import processing.core.PFont
-import processing.video.Capture
 import kotlin.random.Random
 
 internal class MainApplet(
@@ -45,7 +45,7 @@ internal class MainApplet(
         this.lastUpdateTimestamp = now()
         this.initLayers()
         this.clapper.start()
-//        this.captureManager.startCapture(pApplet = this, qualifier = "webcam")
+        this.captureManager.startCapture(pApplet = this, qualifier = "webcam")
 
         val fonts = PFont.list()
         val bpmFontName = fonts.first {
@@ -104,17 +104,14 @@ internal class MainApplet(
     }
 
     private fun initLayers() {
-//        layers = mutableListOf(
-//            GrainyGridLayerFactory.next(random),
-//            PaddedGridLayerFactory.next(random),
-//            PaddedGridLayerFactory.next(random),
+        layers = mutableListOf(
 //            PaddedGridLayerFactory.next(random),
 //            PaddedGridLayerFactory.next(random),
 //            TestImageLayer(),
-//            TileLayer(random),
-//            TileLayer(random),
 //            CathodeRayer(),
-//        )
+//            GrainyGridLayerFactory.next(random),
+//            CathodeRayer(),
+            )
     }
 
     private fun setLayersIntensity(intensity: Layer.Intensity) {
