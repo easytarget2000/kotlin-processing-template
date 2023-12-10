@@ -3,33 +3,47 @@ package eu.ezytarget.processingtemplate
 import CathodeRayer
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
+import eu.ezytarget.processingtemplate.palettes.DuskPalette
 import eu.ezytarget.processingtemplate.layers.Layer
-import eu.ezytarget.processingtemplate.layers.grainygrid.GrainyGridLayerFactory
-import eu.ezytarget.processingtemplate.layers.paddedgrid.PaddedGridLayerFactory
 import eu.ezytarget.processingtemplate.layers.testimage.TestImageLayer
-import eu.ezytarget.processingtemplate.layers.tiles.TileLayer
 import processing.core.PApplet
+import processing.core.PConstants
 import processing.core.PFont
+import processing.core.PGraphics
 import kotlin.random.Random
 
 internal class MainApplet(
     val random: Random = Random.Default
 ) : PApplet() {
+    private lateinit var kaleidoscope: PGraphics
+    private var numberOfKaleidoscopeEdges = 1
+        set(value) {
+            field = value
+            println("PApplet: numberOfKaleidoscopeEdges: set: $numberOfKaleidoscopeEdges")
+        }
+    private var minNumberOfKaleidoscopeEdges = 1
+    private var maxNumberOfKaleidoscopeEdges = 6
+
     private var layers = mutableListOf<Layer>(CathodeRayer())
+
     private val clapper = Clapper().also {
         it.bpm = 133F
     }
+
+    private val backgroundDrawer = BackgroundDrawer(DuskPalette(), alpha = 0.01f)
+    private var backgroundAlpha = 0.1f
+
     private var interestingBpm = clapper.bpm
     private lateinit var bpmFont: PFont
     private var showBpmFrameCount = 0
     private var lastUpdateTimestamp = now()
     private var clearBackgroundOnDraw = true
-    private var clearBackgroundColor = HSB1Color(0f, 0f, 0f, 0.19F)
     private var drawCameraCapture = false
     private var rotationAngle = 0f
     private var drawTestImage = false
     private val testImageLayer = TestImageLayer()
     private val captureManager = CameraCaptureManager()
+    private var numberOfIterationsPerFrame = 1
 
     public override fun runSketch() {
         super.runSketch()
@@ -37,11 +51,17 @@ internal class MainApplet(
 
     override fun settings() {
 //        size(800, 600, P2D)
-        fullScreen(P2D, 2)
+        fullScreen(RENDERER, 2)
     }
 
     override fun setup() {
-        this.colorMode(HSB, COLOR_MAX)
+        this.colorMode(COLOR_MODE, MAX_COLOR_VALUE)
+
+        this.kaleidoscope = createGraphics(width, height, RENDERER)
+        this.kaleidoscope.beginDraw()
+        this.kaleidoscope.colorMode(COLOR_MODE, MAX_COLOR_VALUE)
+        this.kaleidoscope.endDraw()
+
         this.lastUpdateTimestamp = now()
         this.initLayers()
         this.clapper.start()
@@ -70,7 +90,7 @@ internal class MainApplet(
         }
         this.update()
 
-        if (this.frameCount % 4 == 0) {
+        if (this.drawCameraCapture && this.frameCount % 4 == 0) {
             this.captureManager.read()?.let {
                 this.graphics.image(
                     it,
@@ -82,14 +102,35 @@ internal class MainApplet(
             }
         }
 
+        this.kaleidoscope.beginDraw()
+        //        realmsManager.drawIn(pGraphics = kaleidoscope, frameCount = frameCount)
         this.layers.forEach { layer ->
-            this.graphics.push()
-            layer.draw(graphics)
-            this.graphics.pop()
+            this.kaleidoscope.push()
+            layer.draw(this.kaleidoscope)
+            this.kaleidoscope.pop()
         }
+        this.kaleidoscope.endDraw()
 
-        this.random.maybe(0.05f) { requestShowBpm() }
-//        this.showBpmIfRequested()
+        if (this.numberOfKaleidoscopeEdges <= 1) {
+            image(this.kaleidoscope, 0f, 0f)
+        } else {
+            push()
+            repeat(this.numberOfKaleidoscopeEdges) {
+                pushMatrix()
+                translate(this.width / 2f, this.height / 2f)
+                rotate(
+                    (it / this.numberOfKaleidoscopeEdges.toFloat())
+                            * PConstants.TWO_PI
+                )
+                image(
+                    this.kaleidoscope,
+                    -100f,
+                    -this.kaleidoscope.height / 2f
+                )
+                popMatrix()
+            }
+            pop()
+        }
     }
 
     override fun keyPressed() {
@@ -120,20 +161,26 @@ internal class MainApplet(
     }
 
     private fun clearBackground() {
-        this.graphics.pushStyle()
-        this.graphics.fill(
-            this.clearBackgroundColor.hue,
-            this.clearBackgroundColor.saturation,
-            this.clearBackgroundColor.brightness,
-            this.clearBackgroundColor.alpha,
-        )
-        this.graphics.rect(
-            0F,
-            0F,
-            this.graphics.width.toFloat(),
-            this.graphics.height.toFloat()
-        )
-        this.graphics.popStyle()
+        this.backgroundDrawer.draw(pApplet = this, alpha = this.backgroundAlpha)
+//            backgroundDrawer.draw(kaleidoscope, alpha = this.backgroundAlpha)
+
+        this.kaleidoscope.beginDraw()
+        this.kaleidoscope.clear()
+        this.kaleidoscope.endDraw()
+//        this.graphics.pushStyle()
+//        this.graphics.fill(
+//            this.clearBackgroundColor.hue,
+//            this.clearBackgroundColor.saturation,
+//            this.clearBackgroundColor.brightness,
+//            this.clearBackgroundColor.alpha,
+//        )
+//        this.graphics.rect(
+//            0F,
+//            0F,
+//            this.graphics.width.toFloat(),
+//            this.graphics.height.toFloat()
+//        )
+//        this.graphics.popStyle()
     }
 
     private fun update() {
@@ -210,7 +257,9 @@ internal class MainApplet(
     }
 
     companion object {
-        const val COLOR_MAX = 1f
+        private const val RENDERER = PConstants.P3D
+        private const val COLOR_MODE = PConstants.HSB
+        private const val MAX_COLOR_VALUE = 1f
         const val SHOW_BPM_FRAME_DURATION = 10
 
         private fun now() = System.currentTimeMillis()
