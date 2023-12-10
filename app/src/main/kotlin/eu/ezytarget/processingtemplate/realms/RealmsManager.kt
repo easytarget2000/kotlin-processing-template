@@ -31,11 +31,10 @@ class RealmsManager {
         get() = realms.firstOrNull { it is ScanStripesRealm } as? ScanStripesRealm
 
     var realmBuildersAndProbabilities = mutableMapOf(
-        HoloDeckBuilder to 0.1f,
+        HoloDeckBuilder to 0.05f,
         TesseractRealmBuilder to 0.5f,
-        TestImageRealmBuilder to 0.05f,
         ScanStripesRealmBuilder to 0.2f,
-        TreeRingsRealmBuilder to 0f,
+        TreeRingsRealmBuilder to 0.5f,
         ScannerRealmBuilder to 0.2f,
         JellyFishRealmBuilder to 0f,
         JuliaSetRealmBuilder() to 0.5f,
@@ -58,17 +57,18 @@ class RealmsManager {
         val cellAutomaton3DBuilder = CellAutomaton3DBuilder()
         cellAutomaton3DBuilder.sideLength = min(width, height) * 0.9f
         cellAutomaton3DBuilder.vonNeumannProbability = 0.5f
-        realmBuildersAndProbabilities[cellAutomaton3DBuilder] = 0.3f
+        this.realmBuildersAndProbabilities[cellAutomaton3DBuilder] = 0.05f
 
         realms.clear()
 
-        realmBuildersAndProbabilities = mutableMapOf(
+        this.realmBuildersAndProbabilities.put(
             VayprRealmBuilder().apply {
                 originX = width / 2f
                 originY = height / 2f
                 worldWidth = min(width, height)
                 worldHeight = min(width, height)
-            } to 1f
+            },
+            1f
         )
 
         realmBuildersAndProbabilities.forEach {
@@ -80,7 +80,12 @@ class RealmsManager {
         realms.forEach { it.setup(pApplet, pGraphics) }
     }
 
-    fun handleMouseClick(button: Int, mouseX: Int, mouseY: Int, pApplet: PApplet) {
+    fun handleMouseClick(
+        button: Int,
+        mouseX: Int,
+        mouseY: Int,
+        pApplet: PApplet
+    ) {
         realms.forEach {
             it.handleMouseClick(button, mouseX, mouseY, pApplet)
         }

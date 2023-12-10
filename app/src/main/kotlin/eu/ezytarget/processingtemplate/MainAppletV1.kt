@@ -95,10 +95,10 @@ class MainAppletV1 : processing.core.PApplet() {
             return
         }
 
-        backgroundAlpha = noise(frameCount / 1000f)
+        this.backgroundAlpha = noise(frameCount / 1000f)
 
-        if (drawBackgroundOnDraw) {
-            backgroundDrawer.draw(pApplet = this, alpha = backgroundAlpha)
+        if (this.drawBackgroundOnDraw) {
+            backgroundDrawer.draw(pApplet = this, alpha = this.backgroundAlpha)
 //            backgroundDrawer.draw(kaleidoscope, alpha = backgroundAlpha)
 
             kaleidoscope.beginDraw()
@@ -116,12 +116,12 @@ class MainAppletV1 : processing.core.PApplet() {
             pop()
         }
 
-        if (smearPixels) {
-            smearPixels()
+        if (this.smearPixels) {
+            this.smearPixels()
         }
 
-        if (laserClearMode) {
-            laserClear()
+        if (this.laserClearMode) {
+            this.laserClear()
         }
 
         if (applyCharRaster) {
@@ -232,9 +232,11 @@ class MainAppletV1 : processing.core.PApplet() {
 
     private fun laserClear() {
         val nowMillis = System.currentTimeMillis()
-        if (random.nextBoolean() && (nowMillis - lastLaserClearMillis) > 70L) {
+        val clearNow = this.random.nextBoolean() &&
+                (nowMillis - this.lastLaserClearMillis) > 70L
+        if (clearNow) {
             clearFrame()
-            lastLaserClearMillis = nowMillis
+            this.lastLaserClearMillis = nowMillis
         }
     }
 
@@ -336,7 +338,7 @@ class MainAppletV1 : processing.core.PApplet() {
     }
 
     private fun toggleLaserClearMode() {
-        laserClearMode = !laserClearMode
+        this.laserClearMode = !this.laserClearMode
     }
 
     private fun setTextSize(relativeTextSizeValue: Float) {
