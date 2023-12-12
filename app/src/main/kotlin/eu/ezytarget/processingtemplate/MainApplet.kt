@@ -50,6 +50,8 @@ internal class MainApplet(
         super.runSketch()
     }
 
+
+
     override fun settings() {
 //        size(800, 600, P2D)
         fullScreen(RENDERER, 2)
@@ -67,13 +69,7 @@ internal class MainApplet(
         this.initLayers()
         this.clapper.start()
         this.captureManager.startCapture(pApplet = this, qualifier = "webcam")
-        MidiBus.list()
 
-        val fonts = PFont.list()
-        val bpmFontName = fonts.first {
-            it.contains("mono", ignoreCase = true)
-        } ?: fonts.first()
-        bpmFont = createFont(bpmFontName, 1000f, true)
         this.background(0F)
     }
 

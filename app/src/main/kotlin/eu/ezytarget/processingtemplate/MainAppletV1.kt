@@ -8,6 +8,7 @@ import eu.ezytarget.processingtemplate.realms.RealmsManager
 import processing.core.PConstants
 import processing.core.PGraphics
 import processing.event.MouseEvent
+import themidibus.MidiBus
 import kotlin.random.Random
 
 
@@ -48,6 +49,7 @@ class MainAppletV1 : processing.core.PApplet() {
     private var lastLoggedFrameRate: Float? = null
     private var frameRateLoggingThreshold = 7f
     private lateinit var kaleidoscope: PGraphics
+    private var numberOfIterationsPerFrame = 1
 
     public override fun runSketch() {
         super.runSketch()
@@ -68,27 +70,28 @@ class MainAppletV1 : processing.core.PApplet() {
         lights()
         ambientLight(0.8f, 1f, 1f)
 
-        raster.setup(pApplet = this)
-
-        this.clearFrame()
-        this.clapper.start()
-
         this.kaleidoscope = createGraphics(width, height, AppletConfig.RENDERER)
         this.kaleidoscope.beginDraw()
         this.kaleidoscope.colorMode(
             AppletConfig.COLOR_MODE,
             AppletConfig.MAX_COLOR_VALUE
         )
+        this.kaleidoscope.smooth()
+        this.kaleidoscope.lights()
+        this.kaleidoscope.ambientLight(0.8f, 1f, 1f)
         this.kaleidoscope.endDraw()
 
+        this.setupMidiInput()
+
+        this.raster.setup(pGraphics = this.kaleidoscope)
+
         initRealms()
-
-        raster.setup(pApplet = this)
-
         randomSeed(System.currentTimeMillis())
+
+        this.clearFrame()
+        this.clapper.start()
     }
 
-    private var numberOfIterationsPerFrame = 1
 
     override fun draw() {
         if (AppletConfig.CLICK_TO_DRAW && this.waitingForClickToDraw) {
@@ -175,6 +178,13 @@ class MainAppletV1 : processing.core.PApplet() {
     /*
     Implementations
      */
+
+    private fun setupMidiInput() {
+        val midiDevices = MidiBus.availableInputs()
+        midiDevices.forEach {
+            println("MIDI input: $it")
+        }
+    }
 
     private fun initRealms() {
         realmsManager.initRandomRealms(pApplet = this, pGraphics = kaleidoscope)
@@ -350,7 +360,7 @@ class MainAppletV1 : processing.core.PApplet() {
 
         val textSize = map(relativeTextSizeValue, 0f, width.toFloat(), 4f, 32f)
 
-        raster.setTextSize(pApplet = this, textSize = textSize)
+        raster.setTextSize(pGraphics = this.kaleidoscope, textSize = textSize)
     }
 
     private fun setNextNoiseSeed() {

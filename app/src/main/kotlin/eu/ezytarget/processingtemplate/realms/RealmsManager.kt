@@ -3,9 +3,11 @@ package eu.ezytarget.processingtemplate.realms
 import eu.ezytarget.processingtemplate.maybe
 import eu.ezytarget.processingtemplate.realms.cell_automaton_3d.CellAutomaton3D
 import eu.ezytarget.processingtemplate.realms.cell_automaton_3d.CellAutomaton3DBuilder
+import eu.ezytarget.processingtemplate.realms.cotton_ball.CottonBallRealm
 import eu.ezytarget.processingtemplate.realms.holodeck.HoloDeckBuilder
 import eu.ezytarget.processingtemplate.realms.jellyfish.JellyFishRealmBuilder
 import eu.ezytarget.processingtemplate.realms.julia_set.JuliaSetRealmBuilder
+import eu.ezytarget.processingtemplate.realms.neon_tunnel.NeonTunnel
 import eu.ezytarget.processingtemplate.realms.scan_stripes.ScanStripesRealm
 import eu.ezytarget.processingtemplate.realms.scan_stripes.ScanStripesRealmBuilder
 import eu.ezytarget.processingtemplate.realms.scanner.ScannerRealmBuilder

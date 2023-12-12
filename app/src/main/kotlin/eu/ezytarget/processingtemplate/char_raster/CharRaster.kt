@@ -7,6 +7,7 @@ import processing.core.PConstants.*
 import processing.core.PImage
 
 import processing.core.PFont
+import processing.core.PGraphics
 
 
 class CharRaster {
@@ -61,19 +62,19 @@ class CharRaster {
 
     private var numberOfSamplesHalf = numberOfSamples / 2
 
-    fun setup(pApplet: PApplet, baseFontSize: Float = 24f) {
-        setTextSize(pApplet, baseFontSize)
+    fun setup(pGraphics: PGraphics, baseFontSize: Float = 24f) {
+        setTextSize(pGraphics, baseFontSize)
     }
 
-    fun setTextSize(pApplet: PApplet, textSize: Float) {
-        pApplet.push()
+    fun setTextSize(pGraphics: PGraphics, textSize: Float) {
+        pGraphics.push()
 //        monoFont = pApplet.createFont("andalemo.ttf", textSize)
 //        pApplet.textFont(monoFont)
-        pApplet.textLeading(textLeadingRatio)
+        pGraphics.textLeading(textLeadingRatio)
 
-        findRasterSizeByTextSize(pApplet)
+        findRasterSizeByTextSize(pGraphics)
 
-        pApplet.pop()
+        pGraphics.pop()
 
         this.textSize = textSize
     }
@@ -166,18 +167,18 @@ class CharRaster {
         pApplet.pop()
     }
 
-    fun findRasterSizeByTextSize(pApplet: PApplet) {
-        val width = pApplet.width
+    fun findRasterSizeByTextSize(pGraphics: PGraphics) {
+        val width = pGraphics.width
         val maxNumberOfColumns = width / 2
         val floatWidth = width.toFloat()
 
         numberOfColumns = (minNumberOfColumns..maxNumberOfColumns).firstOrNull {
             val testString = (0..it).joinToString(separator = "") { rasterSizeFinderChar }
-            pApplet.textWidth(testString) >= floatWidth
+            pGraphics.textWidth(testString) >= floatWidth
         } ?: maxNumberOfColumns
 
-        val height = pApplet.height
-        val rowHeight = pApplet.textAscent() * textLeadingRatio
+        val height = pGraphics.height
+        val rowHeight = pGraphics.textAscent() * textLeadingRatio
 
         numberOfRows = (height.toFloat() / rowHeight).toInt()
 
