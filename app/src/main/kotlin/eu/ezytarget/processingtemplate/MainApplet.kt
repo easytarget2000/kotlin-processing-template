@@ -10,6 +10,7 @@ import processing.core.PApplet
 import processing.core.PConstants
 import processing.core.PFont
 import processing.core.PGraphics
+import themidibus.MidiBus
 import kotlin.random.Random
 
 internal class MainApplet(
@@ -66,6 +67,7 @@ internal class MainApplet(
         this.initLayers()
         this.clapper.start()
         this.captureManager.startCapture(pApplet = this, qualifier = "webcam")
+        MidiBus.list()
 
         val fonts = PFont.list()
         val bpmFontName = fonts.first {

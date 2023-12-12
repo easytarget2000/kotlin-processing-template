@@ -30,14 +30,14 @@ class RealmsManager {
     val scanStripesRealm: ScanStripesRealm?
         get() = realms.firstOrNull { it is ScanStripesRealm } as? ScanStripesRealm
 
-    var realmBuildersAndProbabilities = mutableMapOf(
+    var realmBuildersAndProbabilities: Map<RealmBuilder, Float> = mutableMapOf(
         HoloDeckBuilder to 0.05f,
-        TesseractRealmBuilder to 0.5f,
-        ScanStripesRealmBuilder to 0.2f,
-        TreeRingsRealmBuilder to 0.5f,
-        ScannerRealmBuilder to 0.2f,
-        JellyFishRealmBuilder to 0f,
-        JuliaSetRealmBuilder() to 0.5f,
+        TesseractRealmBuilder to 0.3f,
+        ScanStripesRealmBuilder to 0.3f,
+        TreeRingsRealmBuilder to 0.3f,
+        ScannerRealmBuilder to 0.3f,
+        JellyFishRealmBuilder to 0.3f,
+        JuliaSetRealmBuilder() to 0.3f,
     )
 
     var drawAllAtOnce = true
@@ -57,19 +57,19 @@ class RealmsManager {
         val cellAutomaton3DBuilder = CellAutomaton3DBuilder()
         cellAutomaton3DBuilder.sideLength = min(width, height) * 0.9f
         cellAutomaton3DBuilder.vonNeumannProbability = 0.5f
-        this.realmBuildersAndProbabilities[cellAutomaton3DBuilder] = 0.05f
+//        this.realmBuildersAndProbabilities[cellAutomaton3DBuilder] = 0.05f
 
         realms.clear()
 
-        this.realmBuildersAndProbabilities.put(
-            VayprRealmBuilder().apply {
-                originX = width / 2f
-                originY = height / 2f
-                worldWidth = min(width, height)
-                worldHeight = min(width, height)
-            },
-            1f
-        )
+//        this.realmBuildersAndProbabilities.put(
+//            VayprRealmBuilder().apply {
+//                originX = width / 2f
+//                originY = height / 2f
+//                worldWidth = min(width, height)
+//                worldHeight = min(width, height)
+//            },
+//            1f
+//        )
 
         realmBuildersAndProbabilities.forEach {
             random.maybe(probability = it.value) {

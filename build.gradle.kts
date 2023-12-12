@@ -13,7 +13,6 @@ repositories {
 }
 
 dependencies {
-    implementation(fileTree("/Applications/Processing.app/Contents/Java/core/library/"))
     testImplementation(kotlin("test"))
 }
 
