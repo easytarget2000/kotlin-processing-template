@@ -97,45 +97,24 @@ class MainAppletV1 : processing.core.PApplet() {
     }
 
     override fun draw() {
-        if (AppletConfig.CLICK_TO_DRAW && this.waitingForClickToDraw) {
-            return
-        }
+        this.background(
+            this.frameCount % 60f * 0.01f,
+            0.8f,
+            0.5f
+        )
 
-        this.backgroundAlpha = noise(frameCount / 1000f)
-
-        if (this.drawBackgroundOnDraw) {
-            backgroundDrawer.draw(pApplet = this, alpha = this.backgroundAlpha)
-//            backgroundDrawer.draw(kaleidoscope, alpha = backgroundAlpha)
-
-            kaleidoscope.beginDraw()
-            kaleidoscope.clear()
-            kaleidoscope.endDraw()
-        }
-
-        if (runClapper) {
-            updateClapper()
-        }
-
-        (0..numberOfIterationsPerFrame).forEach { _ ->
-            push()
-            iterateDraw()
-            pop()
-        }
-
-        if (this.smearPixels) {
-            this.smearPixels()
-        }
-
-        if (this.laserClearMode) {
-            this.laserClear()
-        }
-
-        if (applyCharRaster) {
-            raster.drawIn(pApplet = this)
-        }
+        this.push()
+        this.translate(this.width / 2f, this.height / 2f)
+        this.rotateY((this.frameCount % 360f) * 0.059f)
+        this.rotateX((this.frameCount % 360f) * 0.041f)
+        this.noFill()
+        this.stroke(1f, 0f, 1f, 1f)
+        this.strokeWeight(64f)
+        this.box(this.width / 3f)
+        this.pop()
 
         if (this.applyWatergrate) {
-            val filteredGraphics = this.watergrate.apply(this.kaleidoscope)
+            val filteredGraphics = this.watergrate.apply(this.graphics)
             image(filteredGraphics, 0f, 0f)
         }
 

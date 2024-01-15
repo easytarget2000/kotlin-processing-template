@@ -9,7 +9,7 @@ internal class Watergrate {
     private lateinit var targetGraphics: PGraphics
     var numberOfRows = 16u
 
-    fun setup(pApplet: PApplet){
+    fun setup(pApplet: PApplet) {
         this.targetGraphics = pApplet.createGraphics(
             pApplet.width, pApplet.height,
             PApplet.P2D
@@ -24,14 +24,20 @@ internal class Watergrate {
             return this.targetGraphics
         }
 
+        sourceGraphics.loadPixels()
+
         this.targetGraphics.beginDraw()
         this.targetGraphics.push()
         this.targetGraphics.background(0f)
+//        this.targetGraphics.rect(
+//            0f,
+//            0f,
+//            this.targetGraphics.width.toFloat(),
+//            this.targetGraphics.height.toFloat()
+//        )
 
         this.targetGraphics.ellipseMode(CENTER)
         this.targetGraphics.noFill()
-
-        sourceGraphics.loadPixels()
 
         val elementSize = this.targetGraphics.height / this.numberOfRows.toInt()
 
@@ -67,13 +73,14 @@ internal class Watergrate {
     ) {
         val centerXFloat = centerX.toFloat()
         val centerYFloat = centerY.toFloat()
+        val size2 = size * 2f
 
-        for (i in size.toInt() downTo 0 step 1) {
+        for (i in size.toInt() downTo 0 step 2) {
             val ringRadius = i.toFloat()
             val inter = map(ringRadius, 0f, size, 0f, 1f)
-            val ringColor =
-                targetGraphics.lerpColor(color, 0x0, inter)
-            targetGraphics.stroke(ringColor)
+//            val ringColor =
+//                targetGraphics.lerpColor(color, 0x0, inter)
+            targetGraphics.stroke(color, (1f - inter) * 255f)
             targetGraphics.ellipse(
                 centerXFloat,
                 centerYFloat,
@@ -84,8 +91,6 @@ internal class Watergrate {
     }
 
     companion object {
-
-
         private fun colorAroundPixel(
             pixels: IntArray,
             x: Int,
