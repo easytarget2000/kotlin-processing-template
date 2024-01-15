@@ -34,6 +34,7 @@ class MainAppletV1 : processing.core.PApplet() {
     private var clearFrameOnTextSizeFinding = false
     private val realmsManager = RealmsManager()
     private var applyCharRaster = false
+    private var applyWatergrate = true
     private var smearPixels = false
     private var laserClearMode = false
     private var noiseSeedSalt = System.currentTimeMillis()
@@ -50,6 +51,7 @@ class MainAppletV1 : processing.core.PApplet() {
     private var frameRateLoggingThreshold = 7f
     private lateinit var kaleidoscope: PGraphics
     private var numberOfIterationsPerFrame = 1
+    private val watergrate = Watergrate()
 
     public override fun runSketch() {
         super.runSketch()
@@ -81,6 +83,8 @@ class MainAppletV1 : processing.core.PApplet() {
         this.kaleidoscope.ambientLight(0.8f, 1f, 1f)
         this.kaleidoscope.endDraw()
 
+        this.watergrate.setup(this)
+
         this.setupMidiInput()
 
         this.raster.setup(pGraphics = this.kaleidoscope)
@@ -91,7 +95,6 @@ class MainAppletV1 : processing.core.PApplet() {
         this.clearFrame()
         this.clapper.start()
     }
-
 
     override fun draw() {
         if (AppletConfig.CLICK_TO_DRAW && this.waitingForClickToDraw) {
@@ -129,6 +132,11 @@ class MainAppletV1 : processing.core.PApplet() {
 
         if (applyCharRaster) {
             raster.drawIn(pApplet = this)
+        }
+
+        if (this.applyWatergrate) {
+            val filteredGraphics = this.watergrate.apply(this.kaleidoscope)
+            image(filteredGraphics, 0f, 0f)
         }
 
         logFrameRateIfNeeded()

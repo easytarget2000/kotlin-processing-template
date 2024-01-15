@@ -3,14 +3,13 @@ package eu.ezytarget.processingtemplate
 import CathodeRayer
 import eu.ezytarget.clapper.BeatInterval
 import eu.ezytarget.clapper.Clapper
-import eu.ezytarget.processingtemplate.palettes.DuskPalette
 import eu.ezytarget.processingtemplate.layers.Layer
 import eu.ezytarget.processingtemplate.layers.testimage.TestImageLayer
+import eu.ezytarget.processingtemplate.palettes.DuskPalette
 import processing.core.PApplet
 import processing.core.PConstants
 import processing.core.PFont
 import processing.core.PGraphics
-import themidibus.MidiBus
 import kotlin.random.Random
 
 internal class MainApplet(
