@@ -9,21 +9,13 @@ import kotlin.math.min
 import kotlin.math.sin
 
 class VayprRealmBuilder : RealmBuilder {
-
     var worldWidth = 100f
-
     var worldHeight = 100f
-
     var originX = worldWidth / 2f
-
     var originY = worldHeight / 2f
-
-    var numberOfParticles = 256
-
+    var numberOfParticles = 1024
     var z = 0f
-
     var verbose = false;
-
     var preferredDistancePushFactor = 1.01f
 
     override fun build(): Realm {
@@ -48,7 +40,8 @@ class VayprRealmBuilder : RealmBuilder {
             val offsetX = offsetLength * cos(x = progress * twoPi)
             val offsetY = offsetLength * sin(x = progress * twoPi)
 
-            val particlePosition = PVector(originX + offsetX, originY + offsetY, z)
+            val particlePosition =
+                PVector(originX + offsetX, originY + offsetY, z)
             val particle = Particle(
                 id = particleIndex,
                 position = particlePosition,

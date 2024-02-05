@@ -131,6 +131,8 @@ class MainAppletV1 : processing.core.PApplet() {
             raster.drawIn(pApplet = this)
         }
 
+        stroke(1f)
+        point(this.width / 2f, this.height / 2f)
         logFrameRateIfNeeded()
     }
 
@@ -190,7 +192,10 @@ class MainAppletV1 : processing.core.PApplet() {
     }
 
     private fun initRealms() {
-        realmsManager.initRandomRealms(pApplet = this, pGraphics = kaleidoscope)
+        this.realmsManager.initRandomRealms(
+            pApplet = this,
+            pGraphics = kaleidoscope
+        )
     }
 
     private fun iterateDraw() {

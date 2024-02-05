@@ -65,8 +65,8 @@ class RealmsManager {
 
         this.realmBuildersAndProbabilities = mapOf(
             VayprRealmBuilder().apply {
-                originX = width / 2f
-                originY = height / 2f
+                originX = width / 3f
+                originY = height / 3f
                 worldWidth = min(width, height)
                 worldHeight = min(width, height)
             } to 1f,
