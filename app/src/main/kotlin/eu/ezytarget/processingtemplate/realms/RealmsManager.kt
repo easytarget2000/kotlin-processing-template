@@ -33,13 +33,13 @@ class RealmsManager {
         get() = realms.firstOrNull { it is ScanStripesRealm } as? ScanStripesRealm
 
     var realmBuildersAndProbabilities: Map<RealmBuilder, Float> = mutableMapOf(
-        HoloDeckBuilder to 0.05f,
-        TesseractRealmBuilder to 0.3f,
+//        HoloDeckBuilder to 0.05f,
+//        TesseractRealmBuilder to 0.3f,
         ScanStripesRealmBuilder to 0.3f,
-        TreeRingsRealmBuilder to 0.3f,
-        ScannerRealmBuilder to 0.3f,
-        JellyFishRealmBuilder to 0.3f,
-        JuliaSetRealmBuilder() to 0.3f,
+//        TreeRingsRealmBuilder to 0.3f,
+        ScannerRealmBuilder to 0.9f,
+        JellyFishRealmBuilder to 1f,
+//        JuliaSetRealmBuilder() to 0.3f,
     )
 
     var drawAllAtOnce = true
@@ -63,13 +63,13 @@ class RealmsManager {
 
         realms.clear()
 
-        this.realmBuildersAndProbabilities = mapOf(
+        this.realmBuildersAndProbabilities.plus(
             VayprRealmBuilder().apply {
                 originX = width / 3f
                 originY = height / 3f
                 worldWidth = min(width, height)
                 worldHeight = min(width, height)
-            } to 1f,
+            } to 0.7f,
         )
 
         realmBuildersAndProbabilities.forEach {

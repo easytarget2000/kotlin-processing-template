@@ -286,7 +286,7 @@ class MainAppletV1 : processing.core.PApplet() {
             random.maybe(probability = 0.2f) {
                 initRealms()
             }
-            random.maybe(probability = 0.1f) {
+            random.maybe(probability = 0.5f) {
                 toggleSmearPixels()
             }
             random.maybe {
