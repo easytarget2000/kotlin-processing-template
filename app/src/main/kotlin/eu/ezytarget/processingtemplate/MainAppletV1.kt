@@ -45,7 +45,7 @@ class MainAppletV1 : processing.core.PApplet() {
         }
 
     private var minNumberOfKaleidoscopeEdges = 1
-    private var maxNumberOfKaleidoscopeEdges = 6
+    private var maxNumberOfKaleidoscopeEdges = 8
     private var lastLoggedFrameRate: Float? = null
     private var frameRateLoggingThreshold = 7f
     private lateinit var kaleidoscope: PGraphics
@@ -141,6 +141,9 @@ class MainAppletV1 : processing.core.PApplet() {
 
             AppletConfig.CLEAR_FRAME_KEY ->
                 clearFrame()
+
+            AppletConfig.TOGGLE_CLEAR_BACKGROUND_KEY ->
+                toggleClearBackground()
 
             AppletConfig.TOGGLE_SMEAR_PIXELS_KEY ->
                 toggleSmearPixels()
@@ -260,16 +263,17 @@ class MainAppletV1 : processing.core.PApplet() {
         }
 
         if (clapperResult[BeatInterval.Whole]?.didChange == true) {
-            random.maybe(probability = 0.9f) {
+            this.random.maybe(probability = 0.9f) {
                 bounce()
             }
-
-            random.maybe {
+            this.random.maybe {
                 setRandomZRotationVelocity()
             }
-
-            random.maybe(probability = 0.9f) {
+            this.random.maybe(probability = 0.9f) {
                 clearFrame()
+            }
+            this.random.maybe(probability = 0.1f) {
+                setRandomNumberOfKaleidoscopeEdges()
             }
         }
 
@@ -279,9 +283,6 @@ class MainAppletV1 : processing.core.PApplet() {
             }
             random.maybe(probability = 0.1f) {
                 toggleSmearPixels()
-            }
-            random.maybe(probability = 0.1f) {
-                setRandomNumberOfKaleidoscopeEdges()
             }
             random.maybe {
                 realmsManager.setRandomStyle()
@@ -343,6 +344,10 @@ class MainAppletV1 : processing.core.PApplet() {
         realmsManager.scanStripesRealm?.setRandomRotationVelocity()
     }
 
+    private fun toggleClearBackground() {
+        this.drawBackgroundOnDraw = !this.drawBackgroundOnDraw
+    }
+
     private fun toggleSmearPixels() {
         smearPixels = !smearPixels
     }
@@ -373,19 +378,14 @@ class MainAppletV1 : processing.core.PApplet() {
     }
 
     private fun setRandomNumberOfKaleidoscopeEdges() {
-        if (random.nextFloat() < 0.5f) {
-            numberOfKaleidoscopeEdges = minNumberOfKaleidoscopeEdges
+        if (this.random.nextFloat() < 0.3f) {
+            this.numberOfKaleidoscopeEdges = this.minNumberOfKaleidoscopeEdges
             return
         }
-        numberOfKaleidoscopeEdges =
-            if (minNumberOfKaleidoscopeEdges >= maxNumberOfKaleidoscopeEdges) {
-                maxNumberOfKaleidoscopeEdges
-            } else {
-                random.nextInt(
-                    from = minNumberOfKaleidoscopeEdges,
-                    until = maxNumberOfKaleidoscopeEdges
-                )
-            }
+        this.numberOfKaleidoscopeEdges = this.random.nextInt(
+            from = this.minNumberOfKaleidoscopeEdges,
+            until = this.maxNumberOfKaleidoscopeEdges
+        )
     }
 
     private fun logFrameRateIfNeeded() {

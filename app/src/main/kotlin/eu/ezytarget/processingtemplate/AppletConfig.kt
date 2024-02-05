@@ -15,6 +15,7 @@ object AppletConfig {
     const val MAX_ROTATION_VELOCITY = 0.03f
     const val CLAPPER_TAP_BPM_KEY = ' '
     const val INIT_REALMS_KEY = 'i'
+    const val TOGGLE_CLEAR_BACKGROUND_KEY = 'b'
     const val SET_NUMBER_OF_KALEIDOSCOPE_EDGES_KEY = 'k'
     const val TOGGLE_LASER_CLEAR_MODE_KEY = 'l'
     const val TOGGLE_SMEAR_PIXELS_KEY = 's'

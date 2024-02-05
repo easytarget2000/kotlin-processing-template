@@ -63,15 +63,14 @@ class RealmsManager {
 
         realms.clear()
 
-//        this.realmBuildersAndProbabilities.put(
-//            VayprRealmBuilder().apply {
-//                originX = width / 2f
-//                originY = height / 2f
-//                worldWidth = min(width, height)
-//                worldHeight = min(width, height)
-//            },
-//            1f
-//        )
+        this.realmBuildersAndProbabilities = mapOf(
+            VayprRealmBuilder().apply {
+                originX = width / 2f
+                originY = height / 2f
+                worldWidth = min(width, height)
+                worldHeight = min(width, height)
+            } to 1f,
+        )
 
         realmBuildersAndProbabilities.forEach {
             random.maybe(probability = it.value) {
