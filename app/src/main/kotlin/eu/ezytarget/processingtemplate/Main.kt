@@ -5,5 +5,5 @@ fun main(args: Array<String>) {
     val updatedPath = "$processingNativeLibs:${System.getProperty("java.library.path")}"
     System.setProperty("java.library.path", updatedPath)
 
-    MainAppletV1().runSketch()
+    MainApplet().runSketch()
 }

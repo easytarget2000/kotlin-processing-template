@@ -1,5 +1,6 @@
 package eu.ezytarget.processingtemplate
 
+import processing.core.PApplet
 import processing.core.PImage
 import processing.video.Capture
 
@@ -7,7 +8,7 @@ import processing.video.Capture
 internal class CameraCaptureManager {
     private var capture: Capture? = null
 
-    fun startCapture(pApplet: MainApplet, qualifier: String) {
+    fun startCapture(pApplet: PApplet, qualifier: String) {
         val requestedWidth = 1920//pApplet.width
         val requestedHeight = 1080
         val fps = 20F
