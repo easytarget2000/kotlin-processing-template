@@ -22,7 +22,10 @@ class MainApplet : processing.core.PApplet() {
     private var drawBackgroundOnDraw = true
         set(value) {
             field = value
-            println("PApplet: drawBackgroundOnDraw: set: $drawBackgroundOnDraw")
+            println(
+                "PApplet: drawBackgroundOnDraw: set: " +
+                        this.drawBackgroundOnDraw
+            )
         }
 
     private var backgroundAlpha = 0.1f
@@ -36,10 +39,11 @@ class MainApplet : processing.core.PApplet() {
     private val realmsManager = RealmsManager()
     private var smearPixels = false
     private var laserClearMode = false
-    private val captureManager = CameraCaptureManager()
-    private var drawCameraCapture = false
     private var cameraFpsModulo = 4
     private var noiseSeedSalt = System.currentTimeMillis()
+
+    private val captureManager = CameraCaptureManager()
+    private var drawCameraCapture = true
 
     private lateinit var kaleidoscope: PGraphics
     private var minNumberOfKaleidoscopeEdges = 2
@@ -270,14 +274,15 @@ class MainApplet : processing.core.PApplet() {
         if (this.frameCount % this.cameraFpsModulo != 0) {
             return
         }
+        this.imageMode(CENTER)
 
         this.captureManager.read()?.let {
-            this.graphics.image(
+            this.image(
                 it,
                 0F,
                 0F,
-                this.graphics.width.toFloat(),
-                this.graphics.height.toFloat()
+                this.width.toFloat(),
+                this.height.toFloat()
             )
         }
     }
@@ -398,10 +403,10 @@ class MainApplet : processing.core.PApplet() {
     }
 
     private fun setNextNoiseSeed() {
-        val seed = frameCount.toLong() + noiseSeedSalt
+        val seed = this.frameCount.toLong() + this.noiseSeedSalt
         println(
             "PApplet: setNextNoiseSeed(): " +
-                    "noiseSeedSalt: $noiseSeedSalt, seed: $seed"
+                    "noiseSeedSalt: ${this.noiseSeedSalt}, seed: $seed"
         )
         noiseSeed(seed)
     }
