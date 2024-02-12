@@ -100,12 +100,18 @@ class MainApplet : processing.core.PApplet() {
             return
         }
 
-        if (this.drawBackgroundOnDraw) {
+        if (this.runClapper) {
+            this.updateClapper()
+        }
+
+        if (this.laserClearMode) {
+            this.laserClear()
+        } else if (this.drawBackgroundOnDraw) {
             this.clearWithBackground()
         }
 
-        if (this.runClapper) {
-            this.updateClapper()
+        if (this.drawCameraCapture) {
+            this.drawCameraCaptureIfScheduled()
         }
 
         (0..this.numberOfIterationsPerFrame).forEach { _ ->
@@ -118,16 +124,8 @@ class MainApplet : processing.core.PApplet() {
             this.smearPixels()
         }
 
-        if (this.laserClearMode) {
-            this.laserClear()
-        }
-
         if (this.applyCharRaster) {
             this.raster.drawIn(pApplet = this)
-        }
-
-        if (this.drawCameraCapture) {
-            this.drawCameraCaptureIfScheduled()
         }
 
         this.logFrameRateIfNeeded()
@@ -210,26 +208,35 @@ class MainApplet : processing.core.PApplet() {
     }
 
 
-
     private fun iterateDraw() {
-        realmsManager.update(pApplet = this)
+        this.realmsManager.update(pApplet = this)
 
-        kaleidoscope.beginDraw()
-        realmsManager.drawIn(pGraphics = kaleidoscope, frameCount = frameCount)
-        kaleidoscope.endDraw()
+        this.kaleidoscope.beginDraw()
+        this.realmsManager.drawIn(
+            pGraphics = this.kaleidoscope,
+            frameCount = this.frameCount
+        )
+        this.kaleidoscope.endDraw()
 
-        if (numberOfKaleidoscopeEdges <= 1) {
-            image(kaleidoscope, 0f, 0f)
+        if (this.numberOfKaleidoscopeEdges <= 1) {
+            this.image(this.kaleidoscope, 0f, 0f)
         } else {
-            push()
-            repeat(numberOfKaleidoscopeEdges) {
-                pushMatrix()
-                translate(width / 2f, height / 2f)
-                rotate((it / numberOfKaleidoscopeEdges.toFloat()) * PConstants.TWO_PI)
-                image(kaleidoscope, -100f, -kaleidoscope.height / 2f)
-                popMatrix()
+            this.push()
+            repeat(this.numberOfKaleidoscopeEdges) {
+                this.pushMatrix()
+                this.translate(this.width / 2f, this.height / 2f)
+                this.rotate(
+                    (it / this.numberOfKaleidoscopeEdges.toFloat())
+                            * PConstants.TWO_PI
+                )
+                this.image(
+                    this.kaleidoscope,
+                    -100f,
+                    -this.kaleidoscope.height / 2f
+                )
+                this.popMatrix()
             }
-            pop()
+            this.pop()
         }
     }
 
