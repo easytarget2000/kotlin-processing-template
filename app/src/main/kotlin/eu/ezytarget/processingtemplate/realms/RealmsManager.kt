@@ -34,9 +34,9 @@ class RealmsManager {
 
     var realmBuildersAndProbabilities: Map<RealmBuilder, Float> = mutableMapOf(
 //        HoloDeckBuilder to 0.05f,
-//        TesseractRealmBuilder to 0.3f,
+        TesseractRealmBuilder to 0.3f,
         ScanStripesRealmBuilder to 0.3f,
-//        TreeRingsRealmBuilder to 0.3f,
+        TreeRingsRealmBuilder to 0.3f,
         ScannerRealmBuilder to 0.9f,
 //        JellyFishRealmBuilder to 1f,
 //        JuliaSetRealmBuilder() to 0.3f,
@@ -61,7 +61,7 @@ class RealmsManager {
         cellAutomaton3DBuilder.vonNeumannProbability = 0.5f
 //        this.realmBuildersAndProbabilities[cellAutomaton3DBuilder] = 0.05f
 
-        realms.clear()
+        this.realms.clear()
 
         this.realmBuildersAndProbabilities.plus(
             VayprRealmBuilder().apply {

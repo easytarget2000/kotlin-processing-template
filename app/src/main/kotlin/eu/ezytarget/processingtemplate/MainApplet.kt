@@ -32,7 +32,7 @@ class MainApplet : processing.core.PApplet() {
     private var lastLaserClearMillis = 0L
     private var raster: CharRaster = CharRaster()
     private var applyCharRaster = false
-    private var clearFrameOnTextSizeFinding = false
+    private var clearWithBackgroundOnTextSizeFinding = false
     private val realmsManager = RealmsManager()
     private var smearPixels = false
     private var laserClearMode = false
@@ -91,7 +91,7 @@ class MainApplet : processing.core.PApplet() {
         this.initRealms()
         this.randomSeed(System.currentTimeMillis())
 
-        this.clearFrame()
+        this.clearWithBackground()
         this.clapper.start()
     }
 
@@ -100,20 +100,18 @@ class MainApplet : processing.core.PApplet() {
             return
         }
 
-//        this.backgroundAlpha = noise(frameCount / 1000f)
-
         if (this.drawBackgroundOnDraw) {
             this.clearWithBackground()
         }
 
-        if (runClapper) {
+        if (this.runClapper) {
             this.updateClapper()
         }
 
-        (0..numberOfIterationsPerFrame).forEach { _ ->
-            push()
-            iterateDraw()
-            pop()
+        (0..this.numberOfIterationsPerFrame).forEach { _ ->
+            this.push()
+            this.iterateDraw()
+            this.pop()
         }
 
         if (this.smearPixels) {
@@ -136,12 +134,12 @@ class MainApplet : processing.core.PApplet() {
     }
 
     override fun keyPressed() {
-        when (key) {
+        when (this.key) {
             AppletConfig.CLAPPER_TAP_BPM_KEY ->
                 clapper.tapBpm()
 
             AppletConfig.CLEAR_FRAME_KEY ->
-                clearFrame()
+                clearWithBackground()
 
             AppletConfig.TOGGLE_CLEAR_BACKGROUND_KEY ->
                 toggleClearBackground()
@@ -196,15 +194,22 @@ class MainApplet : processing.core.PApplet() {
     }
 
     private fun clearWithBackground() {
-        this.backgroundDrawer.draw(
-            pApplet = this,
-            alpha = this.backgroundAlpha
-        )
+        if (this.useBackgroundDrawerPalette) {
+            this.backgroundDrawer.drawRandomColor(
+                pApplet = this,
+                alpha = 1f,
+                random = random
+            )
+        } else {
+            this.backgroundDrawer.draw(pApplet = this, alpha = 1f)
+        }
 //            backgroundDrawer.draw(kaleidoscope, alpha = backgroundAlpha)
         this.kaleidoscope.beginDraw()
         this.kaleidoscope.clear()
         this.kaleidoscope.endDraw()
     }
+
+
 
     private fun iterateDraw() {
         realmsManager.update(pApplet = this)
@@ -229,20 +234,8 @@ class MainApplet : processing.core.PApplet() {
     }
 
     private fun clearAll() {
-        initRealms()
-        clearFrame()
-    }
-
-    private fun clearFrame() {
-        if (this.useBackgroundDrawerPalette) {
-            this.backgroundDrawer.drawRandomColor(
-                pApplet = this,
-                alpha = 1f,
-                random = random
-            )
-        } else {
-            this.backgroundDrawer.draw(pApplet = this, alpha = 1f)
-        }
+        this.initRealms()
+        this.clearWithBackground()
     }
 
     private fun smearPixels() {
@@ -261,7 +254,7 @@ class MainApplet : processing.core.PApplet() {
         val clearNow = this.random.nextBoolean() &&
                 (nowMillis - this.lastLaserClearMillis) > 70L
         if (clearNow) {
-            clearFrame()
+            clearWithBackground()
             this.lastLaserClearMillis = nowMillis
         }
     }
@@ -299,7 +292,7 @@ class MainApplet : processing.core.PApplet() {
                 setRandomZRotationVelocity()
             }
             this.random.maybe(probability = 0.9f) {
-                clearFrame()
+                clearWithBackground()
             }
             this.random.maybe(probability = 0.1f) {
                 setRandomNumberOfKaleidoscopeEdges()
@@ -388,7 +381,7 @@ class MainApplet : processing.core.PApplet() {
     private fun setTextSize(relativeTextSizeValue: Float) {
         val raster = raster ?: return
 
-        if (clearFrameOnTextSizeFinding) {
+        if (clearWithBackgroundOnTextSizeFinding) {
             background(0.1f, 1f, 1f, 1f)
         }
 
