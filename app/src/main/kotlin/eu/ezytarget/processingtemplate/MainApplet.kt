@@ -31,27 +31,27 @@ class MainApplet : processing.core.PApplet() {
     private var radiusFactorVelocity = 0f
     private var lastLaserClearMillis = 0L
     private var raster: CharRaster = CharRaster()
-    private val captureManager = CameraCaptureManager()
+    private var applyCharRaster = false
     private var clearFrameOnTextSizeFinding = false
     private val realmsManager = RealmsManager()
-    private var applyCharRaster = false
     private var smearPixels = false
     private var laserClearMode = false
+    private val captureManager = CameraCaptureManager()
     private var drawCameraCapture = false
     private var cameraFpsModulo = 4
     private var noiseSeedSalt = System.currentTimeMillis()
 
-    private var numberOfKaleidoscopeEdges = 1
+    private lateinit var kaleidoscope: PGraphics
+    private var minNumberOfKaleidoscopeEdges = 2
+    private var maxNumberOfKaleidoscopeEdges = 8
+    private var numberOfKaleidoscopeEdges = this.minNumberOfKaleidoscopeEdges
         set(value) {
             field = value
             println("PApplet: numberOfKaleidoscopeEdges: set: $numberOfKaleidoscopeEdges")
         }
 
-    private var minNumberOfKaleidoscopeEdges = 1
-    private var maxNumberOfKaleidoscopeEdges = 8
     private var lastLoggedFrameRate: Float? = null
     private var frameRateLoggingThreshold = 7f
-    private lateinit var kaleidoscope: PGraphics
     private var numberOfIterationsPerFrame = 1
 
     public override fun runSketch() {
@@ -69,11 +69,9 @@ class MainApplet : processing.core.PApplet() {
     override fun setup() {
         frameRate(AppletConfig.FRAME_RATE)
         colorMode(AppletConfig.COLOR_MODE, AppletConfig.MAX_COLOR_VALUE)
-//        smooth()
-//        lights()
-//        ambientLight(0.8f, 1f, 1f)
 
-        this.kaleidoscope = createGraphics(width, height, AppletConfig.RENDERER)
+        this.kaleidoscope =
+            this.createGraphics(width, height, AppletConfig.RENDERER)
         this.kaleidoscope.beginDraw()
         this.kaleidoscope.colorMode(
             AppletConfig.COLOR_MODE,
@@ -90,8 +88,8 @@ class MainApplet : processing.core.PApplet() {
 
         this.captureManager.startCapture(pApplet = this, qualifier = "webcam")
 
-        initRealms()
-        randomSeed(System.currentTimeMillis())
+        this.initRealms()
+        this.randomSeed(System.currentTimeMillis())
 
         this.clearFrame()
         this.clapper.start()
@@ -102,18 +100,14 @@ class MainApplet : processing.core.PApplet() {
             return
         }
 
-        this.backgroundAlpha = noise(frameCount / 1000f)
+//        this.backgroundAlpha = noise(frameCount / 1000f)
 
         if (this.drawBackgroundOnDraw) {
-            backgroundDrawer.draw(pApplet = this, alpha = this.backgroundAlpha)
-//            backgroundDrawer.draw(kaleidoscope, alpha = backgroundAlpha)
-            kaleidoscope.beginDraw()
-            kaleidoscope.clear()
-            kaleidoscope.endDraw()
+            this.clearWithBackground()
         }
 
         if (runClapper) {
-            updateClapper()
+            this.updateClapper()
         }
 
         (0..numberOfIterationsPerFrame).forEach { _ ->
@@ -130,17 +124,15 @@ class MainApplet : processing.core.PApplet() {
             this.laserClear()
         }
 
-        if (applyCharRaster) {
-            raster.drawIn(pApplet = this)
+        if (this.applyCharRaster) {
+            this.raster.drawIn(pApplet = this)
         }
 
         if (this.drawCameraCapture) {
             this.drawCameraCaptureIfScheduled()
         }
 
-        stroke(1f)
-        point(this.width / 2f, this.height / 2f)
-        logFrameRateIfNeeded()
+        this.logFrameRateIfNeeded()
     }
 
     override fun keyPressed() {
@@ -183,8 +175,6 @@ class MainApplet : processing.core.PApplet() {
             event.y,
             pApplet = this
         )
-
-        setTextSize(relativeTextSizeValue = event.x.toFloat())
     }
 
     /*
@@ -203,6 +193,17 @@ class MainApplet : processing.core.PApplet() {
             pApplet = this,
             pGraphics = kaleidoscope
         )
+    }
+
+    private fun clearWithBackground() {
+        this.backgroundDrawer.draw(
+            pApplet = this,
+            alpha = this.backgroundAlpha
+        )
+//            backgroundDrawer.draw(kaleidoscope, alpha = backgroundAlpha)
+        this.kaleidoscope.beginDraw()
+        this.kaleidoscope.clear()
+        this.kaleidoscope.endDraw()
     }
 
     private fun iterateDraw() {
@@ -233,26 +234,26 @@ class MainApplet : processing.core.PApplet() {
     }
 
     private fun clearFrame() {
-        if (useBackgroundDrawerPalette) {
-            backgroundDrawer.drawRandomColor(
+        if (this.useBackgroundDrawerPalette) {
+            this.backgroundDrawer.drawRandomColor(
                 pApplet = this,
                 alpha = 1f,
                 random = random
             )
         } else {
-            backgroundDrawer.draw(pApplet = this, alpha = 1f)
+            this.backgroundDrawer.draw(pApplet = this, alpha = 1f)
         }
     }
 
     private fun smearPixels() {
-        loadPixels()
-        pixels.forEachIndexed { i, _ ->
+        this.loadPixels()
+        this.pixels.forEachIndexed { i, _ ->
             if (i + 10 < pixels.size) {
                 val neighborValue = pixels[i + 10]
                 pixels[i] = pixels[i] - neighborValue
             }
         }
-        updatePixels()
+        this.updatePixels()
     }
 
     private fun laserClear() {

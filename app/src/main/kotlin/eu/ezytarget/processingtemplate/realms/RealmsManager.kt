@@ -38,7 +38,7 @@ class RealmsManager {
         ScanStripesRealmBuilder to 0.3f,
 //        TreeRingsRealmBuilder to 0.3f,
         ScannerRealmBuilder to 0.9f,
-        JellyFishRealmBuilder to 1f,
+//        JellyFishRealmBuilder to 1f,
 //        JuliaSetRealmBuilder() to 0.3f,
     )
 
